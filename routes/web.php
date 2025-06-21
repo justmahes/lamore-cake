@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\HandleRole;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,6 +19,10 @@ Route::get("/gallery", function () {
 Route::get("/about", function () {
     return Inertia::render("home/about");
 });
+
+Route::get("/admin", function () {
+    return Inertia::render("home/about");
+})->middleware(HandleRole::class);
 
 Route::middleware(["auth", "verified"])->group(function () {
     Route::get("dashboard", function () {
