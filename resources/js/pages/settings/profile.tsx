@@ -22,14 +22,18 @@ const breadcrumbs: BreadcrumbItem[] = [
 type ProfileForm = {
     name: string;
     email: string;
+    phone: any;
+    address: any;
 };
 
-export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
+export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string; }) {
     const { auth } = usePage<SharedData>().props;
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
         email: auth.user.email,
+        phone: auth.user.phone,
+        address: auth.user.address,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -82,6 +86,40 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             <InputError className="mt-2" message={errors.email} />
                         </div>
 
+                        <div className="grid gap-2">
+                            <Label htmlFor="text">Phone Number</Label>
+
+                            <Input
+                                name="phone"
+                                required
+                                id="phone"
+                                type="phone"
+                                className="mt-1 block w-full"
+                                value={data.phone}
+                                onChange={(e) => setData("phone", e.target.value)}
+                                placeholder="Phone Number"
+                            />
+
+                            <InputError className="mt-2" message={errors.phone} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="text">Address</Label>
+
+                            <Input
+                                name="address"
+                                required
+                                id="address"
+                                type="address"
+                                className="mt-1 block w-full"
+                                value={data.address}
+                                onChange={(e) => setData("address", e.target.value)}
+                                placeholder="Address"
+                            />
+
+                            <InputError className="mt-2" message={errors.phone} />
+                        </div>
+
                         {mustVerifyEmail && auth.user.email_verified_at === null && (
                             <div>
                                 <p className="-mt-4 text-sm text-muted-foreground">
@@ -105,7 +143,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         )}
 
                         <div className="flex items-center gap-4">
-                            <Button disabled={processing}>Save</Button>
+                            <Button disabled={processing} className="cursor-pointer">Save</Button>
 
                             <Transition
                                 show={recentlySuccessful}
