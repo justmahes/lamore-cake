@@ -1,4 +1,4 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 
@@ -11,6 +11,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Cart() {
     const { cartItems, subtotal } = usePage().props as any;
+    const { delete: destroy } = useForm({});
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Cart" />
@@ -32,8 +33,13 @@ export default function Cart() {
                                 <td>{item.quantity}</td>
                                 <td>Rp {item.product.price}</td>
                                 <td>
-                                    <form method="post" action={`/cart/remove/${item.id}`} className="inline">
-                                        <input type="hidden" name="_method" value="delete" />
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            destroy(`/cart/remove/${item.id}`);
+                                        }}
+                                        className="inline"
+                                    >
                                         <button type="submit" className="text-red-500">Remove</button>
                                     </form>
                                 </td>
