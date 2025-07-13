@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminCustomerController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
@@ -34,7 +35,18 @@ Route::get("/admin", function () {
 
 Route::middleware(["auth", "verified"])->group(function () {
     Route::get("dashboard", function () {
-        return Inertia::render("dashboard");
+        $user = auth()->user();
+        if ($user->role === 'admin') {
+            return Inertia::render('dashboard', [
+                'summary' => [
+                    'products' => \App\Models\Product::count(),
+                    'orders' => \App\Models\Order::count(),
+                    'customers' => \App\Models\User::where('role', 'user')->count(),
+                ],
+            ]);
+        }
+
+        return Inertia::render('dashboard');
     })->name("dashboard");
 });
 
@@ -76,4 +88,9 @@ Route::middleware(['auth', HandleRole::class])->prefix('admin')->name('admin.')-
     Route::patch('/orders/{order}/verify-payment', [AdminOrderController::class, 'verifyPayment'])->name('orders.verify_payment');
 
     Route::get('/reports/sales', [AdminReportController::class, 'salesReport'])->name('reports.sales');
+
+    Route::get('/customers', [AdminCustomerController::class, 'index'])->name('customers.index');
+    Route::post('/customers', [AdminCustomerController::class, 'store'])->name('customers.store');
+    Route::put('/customers/{user}', [AdminCustomerController::class, 'update'])->name('customers.update');
+    Route::delete('/customers/{user}', [AdminCustomerController::class, 'destroy'])->name('customers.destroy');
 });
