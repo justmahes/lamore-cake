@@ -1,24 +1,10 @@
 import { NavFooter } from "@/components/nav-footer";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { type NavItem, type SharedData } from "@/types";
 import { Link, usePage } from "@inertiajs/react";
-import {
-    BarChart,
-    LayoutGrid,
-    Package,
-    ShoppingCart,
-    FileText,
-} from "lucide-react";
+import { BarChart, FileText, LayoutGrid, Package, ShoppingCart, Users } from "lucide-react";
 import AppLogo from "./app-logo";
 
 function useMainNavItems(): NavItem[] {
@@ -26,13 +12,11 @@ function useMainNavItems(): NavItem[] {
         auth: { user },
     } = usePage<SharedData>().props;
 
-    const items: NavItem[] = [
-        {
-            title: "Dashboard",
-            href: "/dashboard",
-            icon: LayoutGrid,
-        },
-    ];
+    const items: NavItem[] = [];
+
+    if (user.role === "admin") {
+        items.push({ title: "Dashboard", href: "/dashboard", icon: LayoutGrid });
+    }
 
     if (user.role === "user") {
         items.push(
@@ -45,6 +29,7 @@ function useMainNavItems(): NavItem[] {
     if (user.role === "admin") {
         items.push(
             { title: "Products", href: "/admin/products", icon: Package },
+            { title: "Customers", href: "/admin/customers", icon: Users },
             { title: "Orders", href: "/admin/orders", icon: FileText },
             { title: "Reports", href: "/admin/reports/sales", icon: BarChart },
         );
