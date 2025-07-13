@@ -14,11 +14,9 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->integer('order_id');
-            $table->string('bank_account_number')->nullable();
-            $table->integer('amount');
-            $table->string('proof_of_payment_url')->nullable();
-            $table->enum('status', ['pending', 'verified', 'rejected'])->default('pending');
-            $table->timestamp('paid_at')->nullable();
+            $table->string('transfer_to');
+            $table->string('proof_file')->nullable();
+            $table->timestamp('verified_at')->nullable();
             $table->timestamps();
         });
     }
