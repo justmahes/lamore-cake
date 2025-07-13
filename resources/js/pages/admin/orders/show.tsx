@@ -1,4 +1,4 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 
@@ -11,6 +11,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function AdminOrderShow() {
     const { order } = usePage().props as any;
+    const { data, setData, patch } = useForm({ status: "processed" });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        patch(`/admin/orders/${order.id}/verify-payment`);
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Order ${order.id}`} />
@@ -25,9 +32,13 @@ export default function AdminOrderShow() {
                     <img src={order.payment.proof_file} alt="proof" className="w-48" />
                 </div>
             )}
-            <form method="post" action={`/admin/orders/${order.id}/verify-payment`}>
-                <input type="hidden" name="_method" value="patch" />
-                <select name="status" className="border mr-2">
+            <form onSubmit={handleSubmit}>
+                <select
+                    name="status"
+                    className="border mr-2"
+                    value={data.status}
+                    onChange={(e) => setData("status", e.target.value)}
+                >
                     <option value="processed">Processed</option>
                     <option value="done">Done</option>
                     <option value="rejected">Rejected</option>

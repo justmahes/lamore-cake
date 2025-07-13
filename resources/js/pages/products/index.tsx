@@ -1,4 +1,4 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 
@@ -11,6 +11,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Products() {
     const { products } = usePage().props as any;
+    const { post } = useForm({});
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Products" />
@@ -21,9 +22,15 @@ export default function Products() {
                         <div key={p.id} className="border rounded p-4">
                             <img src={p.image} alt={p.name} className="h-40 w-full object-cover mb-2" />
                             <h2 className="font-semibold">{p.name}</h2>
-                            <p>{p.description}</p>
+                            <div dangerouslySetInnerHTML={{ __html: p.description }} />
                             <p className="font-bold">Rp {p.price}</p>
-                            <form method="post" action={`/cart/add/${p.id}`} className="mt-2">
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    post(`/cart/add/${p.id}`);
+                                }}
+                                className="mt-2"
+                            >
                                 <button type="submit" className="bg-primary text-white px-3 py-1 rounded">
                                     Add to Cart
                                 </button>
