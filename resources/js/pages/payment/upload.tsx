@@ -11,7 +11,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function UploadPayment() {
     const { order } = usePage().props as any;
-    const { data, setData, post } = useForm({ proof: null as File | null });
+    const { setData, post } = useForm({ proof: null as File | null });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

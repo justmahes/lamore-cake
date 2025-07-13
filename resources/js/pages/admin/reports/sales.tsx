@@ -1,6 +1,13 @@
-import { Head, usePage } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { Head, usePage } from "@inertiajs/react";
+import AppLayout from "@/layouts/app-layout";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { type BreadcrumbItem } from "@/types";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -10,18 +17,35 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function SalesReport() {
-    const { sales, bestSellers } = usePage().props as any;
+    const { bestSellers } = usePage().props as any;
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Sales Report" />
-            <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Sales Report</h1>
-            <h2 className="font-semibold mb-2">Best Sellers</h2>
-            <ul>
-                {bestSellers.map((b: any) => (
-                    <li key={b.product_id}>{b.product.name} ({b.qty})</li>
-                ))}
-            </ul>
+            <div className="container mx-auto space-y-6 p-4">
+            <h1 className="text-2xl font-bold">Sales Report</h1>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Best Sellers</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Product</TableHead>
+                                <TableHead>Sold</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {bestSellers.map((b: any) => (
+                                <TableRow key={b.product_id}>
+                                    <TableCell>{b.product.name}</TableCell>
+                                    <TableCell>{b.qty}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
             </div>
         </AppLayout>
     );
