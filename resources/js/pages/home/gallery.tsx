@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { Navbar } from "@/components/home/Navbar";
 import { Head } from "@inertiajs/react";
 import "../../../css/gallery.css";
@@ -33,28 +32,24 @@ const Gallery = () => {
             <Head title="Gallery" />
             <Navbar />
             <div className="container mx-auto font-sans mt-5">
-                <ResponsiveMasonry
-                    columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}
-                >
-                    <Masonry gutter="10px">
-                        {images.map((image, index) => (
-                            <div
-                                key={index}
-                                className="relative overflow-hidden rounded-lg shadow-md cursor-pointer transition-transform duration-200 hover:scale-[1.01]"
-                                onClick={() => openModal(image)}
-                            >
-                                <img
-                                    src={image.src}
-                                    alt={image.alt}
-                                    className="w-full h-auto block rounded-lg"
-                                />
-                                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-2 text-sm text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                                    {image.alt}
-                                </div>
+                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                    {images.map((image, index) => (
+                        <div
+                            key={index}
+                            className="relative overflow-hidden rounded-lg shadow-md cursor-pointer transition-transform duration-200 hover:scale-[1.01]"
+                            onClick={() => openModal(image)}
+                        >
+                            <img
+                                src={image.src}
+                                alt={image.alt}
+                                className="w-full h-auto block rounded-lg"
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-2 text-sm text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                {image.alt}
                             </div>
-                        ))}
-                    </Masonry>
-                </ResponsiveMasonry>
+                        </div>
+                    ))}
+                </div>
 
                 {selectedImage && (
                     <div className="fixed inset-0 bg-white/50 backdrop-blur-md bg-opacity-70 flex justify-center items-center z-50 p-4" onClick={closeModal}>
