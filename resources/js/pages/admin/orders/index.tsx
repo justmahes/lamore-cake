@@ -1,10 +1,20 @@
 import { Head, usePage } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: "Admin Orders",
+        href: "/admin/orders",
+    },
+];
 
 export default function AdminOrders() {
     const { orders } = usePage().props as any;
     return (
-        <div className="container mx-auto p-4">
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Admin Orders" />
+            <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Orders</h1>
             <table className="w-full">
                 <thead>
@@ -28,6 +38,7 @@ export default function AdminOrders() {
                     ))}
                 </tbody>
             </table>
-        </div>
+            </div>
+        </AppLayout>
     );
 }

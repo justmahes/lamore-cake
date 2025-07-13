@@ -1,19 +1,57 @@
 import { NavFooter } from "@/components/nav-footer";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { type NavItem } from "@/types";
-import { Link } from "@inertiajs/react";
-import { BookOpen, Folder, LayoutGrid } from "lucide-react";
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { type NavItem, type SharedData } from "@/types";
+import { Link, usePage } from "@inertiajs/react";
+import {
+    BarChart,
+    LayoutGrid,
+    Package,
+    ShoppingCart,
+    FileText,
+} from "lucide-react";
 import AppLogo from "./app-logo";
 
-const mainNavItems: NavItem[] = [
-    {
-        title: "Dashboard",
-        href: "/dashboard",
-        icon: LayoutGrid,
-    },
-];
+function useMainNavItems(): NavItem[] {
+    const {
+        auth: { user },
+    } = usePage<SharedData>().props;
+
+    const items: NavItem[] = [
+        {
+            title: "Dashboard",
+            href: "/dashboard",
+            icon: LayoutGrid,
+        },
+    ];
+
+    if (user.role === "user") {
+        items.push(
+            { title: "Products", href: "/products", icon: Package },
+            { title: "Cart", href: "/cart", icon: ShoppingCart },
+            { title: "Orders", href: "/transactions", icon: FileText },
+        );
+    }
+
+    if (user.role === "admin") {
+        items.push(
+            { title: "Products", href: "/admin/products", icon: Package },
+            { title: "Orders", href: "/admin/orders", icon: FileText },
+            { title: "Reports", href: "/admin/reports/sales", icon: BarChart },
+        );
+    }
+
+    return items;
+}
 
 const footerNavItems: NavItem[] = [
     // {
@@ -29,6 +67,8 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const mainNavItems = useMainNavItems();
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

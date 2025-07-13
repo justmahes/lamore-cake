@@ -1,10 +1,20 @@
 import { Head, usePage } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: "Admin Orders",
+        href: "/admin/orders",
+    },
+];
 
 export default function AdminOrderShow() {
     const { order } = usePage().props as any;
     return (
-        <div className="container mx-auto p-4">
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Order ${order.id}`} />
+            <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Order #{order.id}</h1>
             <p>User: {order.user.name}</p>
             <p>Total: Rp {order.total_price}</p>
@@ -26,6 +36,7 @@ export default function AdminOrderShow() {
                     Update Status
                 </button>
             </form>
-        </div>
+            </div>
+        </AppLayout>
     );
 }

@@ -1,13 +1,19 @@
 import { Head, usePage } from '@inertiajs/react';
-import { Navbar } from '@/components/home/Navbar';
-import { Footer } from '@/components/home/Footer';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: "Orders",
+        href: "/transactions",
+    },
+];
 
 export default function OrderHistory() {
     const { orders } = usePage().props as any;
     return (
-        <>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Orders" />
-            <Navbar />
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4">Orders</h1>
                 <table className="w-full">
@@ -29,7 +35,6 @@ export default function OrderHistory() {
                     </tbody>
                 </table>
             </div>
-            <Footer />
-        </>
+        </AppLayout>
     );
 }
