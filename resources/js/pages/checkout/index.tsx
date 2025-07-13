@@ -8,15 +8,11 @@ export default function Checkout() {
             <form method="post" action="/checkout">
                 <div className="mb-2">
                     <label>Shipping Address</label>
-                    <input name="shipping_address" className="border w-full" />
-                </div>
-                <div className="mb-2">
-                    <label>Recipient Name</label>
-                    <input name="recipient_name" className="border w-full" />
+                    <input name="address" className="border w-full" />
                 </div>
                 <div className="mb-4">
-                    <label>Recipient Phone</label>
-                    <input name="recipient_phone" className="border w-full" />
+                    <label>Phone</label>
+                    <input name="phone" className="border w-full" />
                 </div>
                 <button type="submit" className="bg-primary text-white px-4 py-2 rounded">
                     Place Order

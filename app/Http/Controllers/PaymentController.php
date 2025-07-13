@@ -21,16 +21,16 @@ class PaymentController extends Controller
 
     public function uploadProof(Request $request, Order $order): RedirectResponse
     {
-        $data = $request->validate([
+        $request->validate([
             'proof' => 'required|image',
         ]);
 
         $path = $request->file('proof')->store('payments', 'public');
-        $payment = Payment::updateOrCreate(
+        Payment::updateOrCreate(
             ['order_id' => $order->id],
             [
-                'amount' => $order->total_price,
-                'proof_of_payment_url' => Storage::url($path),
+                'transfer_to' => 'BCA 1234567890',
+                'proof_file' => Storage::url($path),
             ]
         );
 

@@ -16,7 +16,7 @@ class ProductFactory extends Factory
             'description' => $this->faker->sentence(8),
             'price' => $this->faker->numberBetween(10000, 50000),
             'stock' => $this->faker->numberBetween(1, 100),
-            'image_url' => $this->faker->imageUrl(640, 480, 'cakes', true),
+            'image' => $this->faker->imageUrl(640, 480, 'cakes', true),
         ];
     }
 }

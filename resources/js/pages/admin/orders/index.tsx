@@ -18,7 +18,9 @@ export default function AdminOrders() {
                 <tbody>
                     {orders.map((o: any) => (
                         <tr key={o.id}>
-                            <td>{o.id}</td>
+                            <td>
+                                <a className="text-primary" href={`/admin/orders/${o.id}`}>{o.id}</a>
+                            </td>
                             <td>{o.user.name}</td>
                             <td>{o.total_price}</td>
                             <td>{o.status}</td>

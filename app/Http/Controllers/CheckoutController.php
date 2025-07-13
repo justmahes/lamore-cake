@@ -29,9 +29,8 @@ class CheckoutController extends Controller
     public function processCheckout(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'shipping_address' => 'required',
-            'recipient_name' => 'required',
-            'recipient_phone' => 'required',
+            'address' => 'required',
+            'phone' => 'required',
         ]);
 
         DB::transaction(function () use ($data) {
@@ -41,10 +40,9 @@ class CheckoutController extends Controller
 
             $order = Order::create([
                 'user_id' => Auth::id(),
-                'shipping_address' => $data['shipping_address'],
-                'recipient_name' => $data['recipient_name'],
-                'recipient_phone' => $data['recipient_phone'],
                 'total_price' => $items->sum(fn($i) => $i->product->price * $i->quantity),
+                'address' => $data['address'],
+                'phone' => $data['phone'],
             ]);
 
             foreach ($items as $item) {

@@ -30,8 +30,8 @@ class AdminOrderController extends Controller
     public function verifyPayment(Request $request, Order $order): RedirectResponse
     {
         $payment = $order->payment;
-        $payment->update(['status' => $request->input('status', 'verified')]);
-        $order->update(['status' => 'processing']);
+        $payment->update(['verified_at' => now()]);
+        $order->update(['status' => $request->input('status', 'processed')]);
         return redirect()->back();
     }
 }

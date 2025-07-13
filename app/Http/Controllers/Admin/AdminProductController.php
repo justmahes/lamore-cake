@@ -31,7 +31,7 @@ class AdminProductController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('products', 'public');
-            $data['image_url'] = Storage::url($path);
+            $data['image'] = Storage::url($path);
         }
 
         Product::create($data);
@@ -50,7 +50,7 @@ class AdminProductController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('products', 'public');
-            $data['image_url'] = Storage::url($path);
+            $data['image'] = Storage::url($path);
         }
 
         $product->update($data);

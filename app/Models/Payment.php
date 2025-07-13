@@ -12,15 +12,13 @@ class Payment extends Model
 
     protected $fillable = [
         'order_id',
-        'bank_account_number',
-        'amount',
-        'proof_of_payment_url',
-        'status',
-        'paid_at',
+        'transfer_to',
+        'proof_file',
+        'verified_at',
     ];
 
     protected $casts = [
-        'paid_at' => 'datetime',
+        'verified_at' => 'datetime',
     ];
 
     public function order(): BelongsTo
