@@ -32,7 +32,7 @@ export const Footer = () => {
                     <div>
                         <a
                             rel="noreferrer noopener"
-                            href="#"
+                            href="https://instagram.com/lamorecake"
                             className="opacity-60 hover:opacity-100"
                         >
                             Instagram
@@ -42,10 +42,10 @@ export const Footer = () => {
                     <div>
                         <a
                             rel="noreferrer noopener"
-                            href="#"
+                            href="https://facebook.com/lamorecakeid"
                             className="opacity-60 hover:opacity-100"
                         >
-                            WhatsApp
+                            Facebook
                         </a>
                     </div>
                 </div>

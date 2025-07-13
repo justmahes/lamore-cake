@@ -29,7 +29,7 @@ const routeList: RouteProps[] = [
         label: "Gallery",
     },
     {
-        href: "#products",
+        href: "/products",
         label: "Products",
     },
     {
@@ -37,7 +37,7 @@ const routeList: RouteProps[] = [
         label: "About Lamore Cake",
     },
     {
-        href: "/login",
+        href: "/cart",
         label: "Cart",
     },
 ];
