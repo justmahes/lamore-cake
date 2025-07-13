@@ -7,9 +7,8 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-    CardFooter,
 } from "@/components/ui/card";
-import { Check } from "lucide-react";
+
 import { LightBulbIcon } from "./Icons";
 
 export const HeroCards = () => {

@@ -1,5 +1,22 @@
 import TiptapEditor from "@/components/tiptap-editor";
 import AppLayout from "@/layouts/app-layout";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
@@ -66,102 +83,118 @@ export default function AdminProducts() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Admin Products" />
-            <div className="container mx-auto p-4">
-                <h1 className="mb-4 text-2xl font-bold">Manage Products</h1>
-                <form onSubmit={handleSubmit} className="mb-6" encType="multipart/form-data">
-                    <div className="mb-2">
-                        <label>Name</label>
-                        <input className="w-full border" value={data.name} onChange={(e) => setData("name", e.target.value)} />
-                    </div>
-                    <div className="mb-2">
-                        <label>Price</label>
-                        <input className="w-full border" type="number" value={data.price} onChange={(e) => setData("price", e.target.value)} />
-                    </div>
-                    <div className="mb-2">
-                        <label>Stock</label>
-                        <input className="w-full border" type="number" value={data.stock} onChange={(e) => setData("stock", e.target.value)} />
-                    </div>
-                    <div className="mb-2">
-                        <label>Description</label>
-                        <TiptapEditor content={data.description} onChange={(html) => setData("description", html)} />
-                    </div>
-                    <div className="mb-2">
-                        <label>Image</label>
-                        <input type="file" onChange={(e) => setData("image", e.target.files ? e.target.files[0] : null)} />
-                    </div>
-                    <button type="submit" className="rounded bg-primary px-4 py-2 text-white">
-                        Add Product
-                    </button>
-                </form>
+            <div className="container mx-auto space-y-6 p-4">
+                <h1 className="text-2xl font-bold">Manage Products</h1>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Add Product</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Name</Label>
+                                <Input id="name" value={data.name} onChange={(e) => setData("name", e.target.value)} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="price">Price</Label>
+                                <Input id="price" type="number" value={data.price} onChange={(e) => setData("price", e.target.value)} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="stock">Stock</Label>
+                                <Input id="stock" type="number" value={data.stock} onChange={(e) => setData("stock", e.target.value)} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>Description</Label>
+                                <TiptapEditor content={data.description} onChange={(html) => setData("description", html)} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="image">Image</Label>
+                                <Input id="image" type="file" onChange={(e) => setData("image", e.target.files ? e.target.files[0] : null)} />
+                            </div>
+                            <Button type="submit">Add Product</Button>
+                        </form>
+                    </CardContent>
+                </Card>
                 {editing && (
-                    <form onSubmit={submitEdit} className="mb-6" encType="multipart/form-data">
-                        <h2 className="mb-2 font-semibold">Edit Product</h2>
-                        <div className="mb-2">
-                            <label>Name</label>
-                            <input className="w-full border" value={editForm.data.name} onChange={(e) => editForm.setData("name", e.target.value)} />
-                        </div>
-                        <div className="mb-2">
-                            <label>Price</label>
-                            <input
-                                className="w-full border"
-                                type="number"
-                                value={editForm.data.price}
-                                onChange={(e) => editForm.setData("price", e.target.value)}
-                            />
-                        </div>
-                        <div className="mb-2">
-                            <label>Stock</label>
-                            <input
-                                className="w-full border"
-                                type="number"
-                                value={editForm.data.stock}
-                                onChange={(e) => editForm.setData("stock", e.target.value)}
-                            />
-                        </div>
-                        <div className="mb-2">
-                            <label>Description</label>
-                            <TiptapEditor content={editForm.data.description} onChange={(html) => editForm.setData("description", html)} />
-                        </div>
-                        <div className="mb-2">
-                            <label>Image</label>
-                            <input type="file" onChange={(e) => editForm.setData("image", e.target.files ? e.target.files[0] : null)} />
-                        </div>
-                        <button type="submit" className="rounded bg-primary px-4 py-2 text-white">
-                            Save
-                        </button>
-                        <button type="button" onClick={() => setEditing(null)} className="ml-2 rounded border px-4 py-2">
-                            Cancel
-                        </button>
-                    </form>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Edit Product</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={submitEdit} className="space-y-4" encType="multipart/form-data">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="ename">Name</Label>
+                                    <Input id="ename" value={editForm.data.name} onChange={(e) => editForm.setData("name", e.target.value)} />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="eprice">Price</Label>
+                                    <Input
+                                        id="eprice"
+                                        type="number"
+                                        value={editForm.data.price}
+                                        onChange={(e) => editForm.setData("price", e.target.value)}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="estock">Stock</Label>
+                                    <Input
+                                        id="estock"
+                                        type="number"
+                                        value={editForm.data.stock}
+                                        onChange={(e) => editForm.setData("stock", e.target.value)}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label>Description</Label>
+                                    <TiptapEditor content={editForm.data.description} onChange={(html) => editForm.setData("description", html)} />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="eimage">Image</Label>
+                                    <Input id="eimage" type="file" onChange={(e) => editForm.setData("image", e.target.files ? e.target.files[0] : null)} />
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button type="submit">Save</Button>
+                                    <Button type="button" variant="outline" onClick={() => setEditing(null)}>
+                                        Cancel
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
                 )}
 
-                <table className="mb-4 w-full">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {products.map((p: any) => (
-                            <tr key={p.id}>
-                                <td>{p.name}</td>
-                                <td>{p.price}</td>
-                                <td>{p.stock}</td>
-                                <td>
-                                    <button className="mr-2 text-primary" onClick={() => startEdit(p)}>
-                                        Edit
-                                    </button>
-                                    <button className="text-red-500" onClick={() => destroy(`/admin/products/${p.id}`)}>
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Product List</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Price</TableHead>
+                                    <TableHead>Stock</TableHead>
+                                    <TableHead className="w-32" />
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {products.map((p: any) => (
+                                    <TableRow key={p.id}>
+                                        <TableCell>{p.name}</TableCell>
+                                        <TableCell>{p.price}</TableCell>
+                                        <TableCell>{p.stock}</TableCell>
+                                        <TableCell>
+                                            <Button variant="link" onClick={() => startEdit(p)} className="px-0 mr-2">Edit</Button>
+                                            <Button variant="link" className="text-red-500 px-0" onClick={() => destroy(`/admin/products/${p.id}`)}>
+                                                Delete
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );
