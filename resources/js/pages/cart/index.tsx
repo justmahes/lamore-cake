@@ -1,13 +1,19 @@
 import { Head, usePage } from '@inertiajs/react';
-import { Navbar } from '@/components/home/Navbar';
-import { Footer } from '@/components/home/Footer';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: "Cart",
+        href: "/cart",
+    },
+];
 
 export default function Cart() {
     const { cartItems, subtotal } = usePage().props as any;
     return (
-        <>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Cart" />
-            <Navbar />
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4">Cart</h1>
                 <table className="w-full mb-4">
@@ -49,7 +55,6 @@ export default function Cart() {
                     Order via WhatsApp
                 </a>
             </div>
-            <Footer />
-        </>
+        </AppLayout>
     );
 }

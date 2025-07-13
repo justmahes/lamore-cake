@@ -1,12 +1,18 @@
 import { Head } from '@inertiajs/react';
-import { Navbar } from '@/components/home/Navbar';
-import { Footer } from '@/components/home/Footer';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: "Checkout",
+        href: "/checkout",
+    },
+];
 
 export default function Checkout() {
     return (
-        <>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Checkout" />
-            <Navbar />
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4">Checkout</h1>
                 <form method="post" action="/checkout">
@@ -23,7 +29,6 @@ export default function Checkout() {
                     </button>
                 </form>
             </div>
-            <Footer />
-        </>
+        </AppLayout>
     );
 }

@@ -1,5 +1,14 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 import TiptapEditor from '@/components/tiptap-editor';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: "Admin Products",
+        href: "/admin/products",
+    },
+];
 
 export default function AdminProducts() {
     const { products } = usePage().props as any;
@@ -19,9 +28,10 @@ export default function AdminProducts() {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Admin Products" />
-            <h1 className="text-2xl font-bold mb-4">Manage Products</h1>
+            <div className="container mx-auto p-4">
+                <h1 className="text-2xl font-bold mb-4">Manage Products</h1>
             <form onSubmit={handleSubmit} className="mb-6" encType="multipart/form-data">
                 <div className="mb-2">
                     <label>Name</label>
@@ -85,6 +95,7 @@ export default function AdminProducts() {
                     ))}
                 </tbody>
             </table>
-        </div>
+            </div>
+        </AppLayout>
     );
 }

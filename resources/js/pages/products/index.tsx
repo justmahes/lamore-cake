@@ -1,13 +1,19 @@
 import { Head, usePage } from '@inertiajs/react';
-import { Navbar } from '@/components/home/Navbar';
-import { Footer } from '@/components/home/Footer';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: "Products",
+        href: "/products",
+    },
+];
 
 export default function Products() {
     const { products } = usePage().props as any;
     return (
-        <>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Products" />
-            <Navbar />
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4">Products</h1>
                 <div className="grid md:grid-cols-3 gap-4">
@@ -26,7 +32,6 @@ export default function Products() {
                     ))}
                 </div>
             </div>
-            <Footer />
-        </>
+        </AppLayout>
     );
 }
