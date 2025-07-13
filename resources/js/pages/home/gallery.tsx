@@ -1,19 +1,40 @@
-import { useState } from "react";
+import { Footer } from "@/components/home/Footer";
 import { Navbar } from "@/components/home/Navbar";
 import { Head } from "@inertiajs/react";
+import { useState } from "react";
 import "../../../css/gallery.css";
-import { Footer } from "@/components/home/Footer";
 
 const images = [
-    { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg", alt: "Mona Lisa", description: "Lukisan potret abad ke-16 yang dilukis dengan cat minyak oleh Leonardo da Vinci." },
-    { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/800px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg", alt: "The Starry Night", description: "Lukisan cat minyak di atas kanvas oleh seniman pasca-impresionis Belanda Vincent van Gogh." },
-    { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/800px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg", alt: "The Starry Night", description: "Lukisan cat minyak di atas kanvas oleh seniman pasca-impresionis Belanda Vincent van Gogh." },
-    { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg", alt: "Mona Lisa", description: "Lukisan potret abad ke-16 yang dilukis dengan cat minyak oleh Leonardo da Vinci." },
-    { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/800px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg", alt: "The Starry Night", description: "Lukisan cat minyak di atas kanvas oleh seniman pasca-impresionis Belanda Vincent van Gogh." },
-    { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/800px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg", alt: "The Starry Night", description: "Lukisan cat minyak di atas kanvas oleh seniman pasca-impresionis Belanda Vincent van Gogh." },
-    { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/800px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg", alt: "The Starry Night", description: "Lukisan cat minyak di atas kanvas oleh seniman pasca-impresionis Belanda Vincent van Gogh." },
-    { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg", alt: "Mona Lisa", description: "Lukisan potret abad ke-16 yang dilukis dengan cat minyak oleh Leonardo da Vinci." },
-    { src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg", alt: "Mona Lisa", description: "Lukisan potret abad ke-16 yang dilukis dengan cat minyak oleh Leonardo da Vinci." },
+    {
+        src: "https://images.unsplash.com/photo-1542831371-d531d36971e6",
+        alt: "Pudding Tape",
+        description: "Pudding Tape lembut dengan aroma tape manis khas Bali.",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1509401999043-27a4eaa781c0",
+        alt: "Kue Bolu Bali",
+        description: "Kue bolu tradisional dengan cita rasa lokal.",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1518733057094-95b53143d373",
+        alt: "Pia Susu",
+        description: "Pia susu dengan kulit tipis dan isian manis legit.",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1597393925966-d3b87c2ad653",
+        alt: "Dadar Gulung",
+        description: "Pancake hijau berisi kelapa parut gula merah.",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1514513386906-d5111d2643da",
+        alt: "Lapis Legit",
+        description: "Kue lapis legit dengan aroma rempah.",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1519681393784-d120267933ba",
+        alt: "Klepon",
+        description: "Bola ketan isi gula merah disajikan dengan kelapa parut.",
+    },
 ];
 
 const Gallery = () => {
@@ -31,20 +52,16 @@ const Gallery = () => {
         <>
             <Head title="Gallery" />
             <Navbar />
-            <div className="container mx-auto font-sans mt-5">
+            <div className="container mx-auto mt-5 font-sans">
                 <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                     {images.map((image, index) => (
                         <div
                             key={index}
-                            className="relative overflow-hidden rounded-lg shadow-md cursor-pointer transition-transform duration-200 hover:scale-[1.01]"
+                            className="relative cursor-pointer overflow-hidden rounded-lg shadow-md transition-transform duration-200 hover:scale-[1.01]"
                             onClick={() => openModal(image)}
                         >
-                            <img
-                                src={image.src}
-                                alt={image.alt}
-                                className="w-full h-auto block rounded-lg"
-                            />
-                            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-2 text-sm text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <img src={image.src} alt={image.alt} className="block h-auto w-full rounded-lg" />
+                            <div className="bg-opacity-60 absolute right-0 bottom-0 left-0 bg-black p-2 text-center text-sm text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                                 {image.alt}
                             </div>
                         </div>
@@ -52,12 +69,20 @@ const Gallery = () => {
                 </div>
 
                 {selectedImage && (
-                    <div className="fixed inset-0 bg-white/50 backdrop-blur-md bg-opacity-70 flex justify-center items-center z-50 p-4" onClick={closeModal}>
-                        <div className="bg-white p-6 rounded-lg max-w-3xl max-h-[90vh] overflow-y-auto relative shadow-xl" onClick={(e) => e.stopPropagation()}>
-                            <span className="absolute top-3 right-4 text-gray-700 text-4xl cursor-pointer hover:text-red-600" onClick={closeModal}>&times;</span>
-                            <img src={selectedImage.src} alt={selectedImage.alt} className="max-w-full h-auto block mx-auto mb-5 rounded-md" />
-                            <h3 className="text-2xl font-semibold text-center mb-3 text-gray-800">{selectedImage.alt}</h3>
-                            <p className="text-gray-700 text-justify leading-relaxed">{selectedImage.description}</p>
+                    <div
+                        className="bg-opacity-70 fixed inset-0 z-50 flex items-center justify-center bg-white/50 p-4 backdrop-blur-md"
+                        onClick={closeModal}
+                    >
+                        <div
+                            className="relative max-h-[90vh] max-w-3xl overflow-y-auto rounded-lg bg-white p-6 shadow-xl"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <span className="absolute top-3 right-4 cursor-pointer text-4xl text-gray-700 hover:text-red-600" onClick={closeModal}>
+                                &times;
+                            </span>
+                            <img src={selectedImage.src} alt={selectedImage.alt} className="mx-auto mb-5 block h-auto max-w-full rounded-md" />
+                            <h3 className="mb-3 text-center text-2xl font-semibold text-gray-800">{selectedImage.alt}</h3>
+                            <p className="text-justify leading-relaxed text-gray-700">{selectedImage.description}</p>
                         </div>
                     </div>
                 )}
