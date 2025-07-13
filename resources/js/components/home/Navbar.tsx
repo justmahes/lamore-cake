@@ -15,17 +15,20 @@ interface RouteProps {
     label: string;
 }
 
-const baseRoutes: RouteProps[] = [
+const commonRoutes: RouteProps[] = [
     { href: "/gallery", label: "Gallery" },
     { href: "/products", label: "Products" },
     { href: "/about", label: "About Lamore Cake" },
-    { href: "/cart", label: "Cart" },
 ];
 
 export const Navbar = () => {
     const { auth } = usePage<SharedData>().props;
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const routeList: RouteProps[] = [...baseRoutes, auth.user ? { href: "/dashboard", label: "Dashboard" } : { href: "/login", label: "Login" }];
+    const routeList: RouteProps[] = [
+        ...commonRoutes,
+        ...(auth.user ? [{ href: "/cart", label: "Cart" }] : []),
+        auth.user ? { href: "/dashboard", label: "Dashboard" } : { href: "/login", label: "Login" },
+    ];
     return (
         <header className="sticky top-0 z-40 w-full border-b-[1px] bg-white dark:border-b-slate-700 dark:bg-background">
             <NavigationMenu className="mx-auto">
