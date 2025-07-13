@@ -12,16 +12,16 @@ class UserSeeder extends Seeder
     {
         User::factory()->create([
             'name' => 'Admin',
-            'email' => 'admin@lamorecake.test',
+            'email' => 'admin@example.com',
             'role' => 'admin',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('qwe'),
         ]);
 
         User::factory()->create([
             'name' => 'User',
-            'email' => 'user@example.com',
+            'email' => 'customer@example.com',
             'role' => 'user',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('qwe'),
         ]);
     }
 }
