@@ -15,7 +15,7 @@ class AdminOrderController extends Controller
     public function index(): Response
     {
         return Inertia::render('admin/orders/index', [
-            'orders' => Order::with('payment')->latest()->get(),
+            'orders' => Order::with(['payment', 'user'])->latest()->get(),
         ]);
     }
 

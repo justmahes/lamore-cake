@@ -1,5 +1,14 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -21,19 +30,26 @@ export default function UploadPayment() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Payment" />
-            <div className="container mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">Upload Payment Proof</h1>
-                <p className="mb-4">Transfer to BCA 1234567890 and upload the receipt below.</p>
-                <form onSubmit={handleSubmit} encType="multipart/form-data">
-                    <input
-                        type="file"
-                        className="mb-4"
-                        onChange={(e) => setData('proof', e.target.files ? e.target.files[0] : null)}
-                    />
-                    <button type="submit" className="bg-primary text-white px-4 py-2 rounded">
-                        Upload
-                    </button>
-                </form>
+            <div className="container mx-auto space-y-6 p-4">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Upload Payment Proof</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="mb-4">Transfer to BCA 1234567890 and upload the receipt below.</p>
+                        <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="proof">Proof</Label>
+                                <Input
+                                    id="proof"
+                                    type="file"
+                                    onChange={(e) => setData('proof', e.target.files ? e.target.files[0] : null)}
+                                />
+                            </div>
+                            <Button type="submit">Upload</Button>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

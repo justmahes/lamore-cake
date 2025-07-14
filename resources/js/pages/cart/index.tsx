@@ -1,5 +1,20 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -15,51 +30,63 @@ export default function Cart() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Cart" />
-            <div className="container mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">Cart</h1>
-                <table className="w-full mb-4">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Qty</th>
-                            <th>Price</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {cartItems.map((item: any) => (
-                            <tr key={item.id}>
-                                <td>{item.product.name}</td>
-                                <td>{item.quantity}</td>
-                                <td>Rp {item.product.price}</td>
-                                <td>
-                                    <form
-                                        onSubmit={(e) => {
-                                            e.preventDefault();
-                                            destroy(`/cart/remove/${item.id}`);
-                                        }}
-                                        className="inline"
-                                    >
-                                        <button type="submit" className="text-red-500">Remove</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <p className="font-bold mb-4">Subtotal: Rp {subtotal}</p>
-                <a href="/checkout" className="bg-primary text-white px-4 py-2 rounded mr-2">
-                    Checkout
-                </a>
-                <a
-                    href={`https://wa.me/628123456789?text=${encodeURIComponent(
-                        cartItems.map((i: any) => `${i.product.name} x${i.quantity}`).join(', ') +
-                            ' - Total: ' + subtotal
-                    )}`}
-                    className="bg-green-500 text-white px-4 py-2 rounded"
-                >
-                    Order via WhatsApp
-                </a>
+            <div className="container mx-auto space-y-6 p-4">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Cart</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Product</TableHead>
+                                    <TableHead>Qty</TableHead>
+                                    <TableHead>Price</TableHead>
+                                    <TableHead className="w-24" />
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {cartItems.map((item: any) => (
+                                    <TableRow key={item.id}>
+                                        <TableCell>{item.product.name}</TableCell>
+                                        <TableCell>{item.quantity}</TableCell>
+                                        <TableCell>Rp {item.product.price}</TableCell>
+                                        <TableCell>
+                                            <form
+                                                onSubmit={(e) => {
+                                                    e.preventDefault();
+                                                    destroy(`/cart/remove/${item.id}`);
+                                                }}
+                                            >
+                                                <Button type="submit" variant="link" className="text-red-500 px-0">
+                                                    Remove
+                                                </Button>
+                                            </form>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                        <p className="mt-4 font-bold">Subtotal: Rp {subtotal}</p>
+                        <div className="mt-4 flex gap-2">
+                            <Button asChild>
+                                <a href="/checkout">Checkout</a>
+                            </Button>
+                            <Button asChild variant="secondary" className="bg-green-500 text-white hover:bg-green-600">
+                                <a
+                                    href={`https://wa.me/628123456789?text=${encodeURIComponent(
+                                        cartItems
+                                            .map((i: any) => `${i.product.name} x${i.quantity}`)
+                                            .join(', ') +
+                                            ' - Total: ' + subtotal
+                                    )}`}
+                                >
+                                    Order via WhatsApp
+                                </a>
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

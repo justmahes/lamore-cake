@@ -1,5 +1,19 @@
 import { Head, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -14,26 +28,32 @@ export default function OrderHistory() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Orders" />
-            <div className="container mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">Orders</h1>
-                <table className="w-full">
-                    <thead>
-                        <tr>
-                            <th>Invoice</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {orders.map((o: any) => (
-                            <tr key={o.id}>
-                                <td>{o.id}</td>
-                                <td>Rp {o.total_price}</td>
-                                <td>{o.status}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <div className="container mx-auto space-y-6 p-4">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Orders</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Invoice</TableHead>
+                                    <TableHead>Total</TableHead>
+                                    <TableHead>Status</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {orders.map((o: any) => (
+                                    <TableRow key={o.id}>
+                                        <TableCell>{o.id}</TableCell>
+                                        <TableCell>Rp {o.total_price}</TableCell>
+                                        <TableCell>{o.status}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );
