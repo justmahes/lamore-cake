@@ -50,6 +50,7 @@ export default function AdminProducts() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post("/admin/products", {
+            forceFormData: true,
             onSuccess: () => reset(),
         });
     };
@@ -70,6 +71,7 @@ export default function AdminProducts() {
         if (editing) {
             editForm.post(`/admin/products/${editing.id}`, {
                 method: "put",
+                forceFormData: true,
                 onSuccess: () => {
                     setEditing(null);
                     editForm.reset();

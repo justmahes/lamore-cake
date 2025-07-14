@@ -11,7 +11,14 @@ class ProductController extends Controller
     public function index(): Response
     {
         $products = Product::all();
-        return Inertia::render('products/index', [
+
+        if (auth()->check()) {
+            return Inertia::render('products/index', [
+                'products' => $products,
+            ]);
+        }
+
+        return Inertia::render('home/products', [
             'products' => $products,
         ]);
     }
