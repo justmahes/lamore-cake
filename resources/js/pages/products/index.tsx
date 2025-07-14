@@ -1,6 +1,6 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import AppLayout from "@/layouts/app-layout";
+import { type BreadcrumbItem } from "@/types";
+import { Head, useForm, usePage } from "@inertiajs/react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -12,15 +12,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Products() {
     const { products } = usePage().props as any;
     const { post } = useForm({});
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Products" />
             <div className="container mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">Products</h1>
-                <div className="grid md:grid-cols-3 gap-4">
+                <h1 className="mb-4 text-2xl font-bold">Products</h1>
+                <div className="grid gap-4 md:grid-cols-3">
                     {products.map((p: any) => (
-                        <div key={p.id} className="border rounded p-4">
-                            <img src={p.image} alt={p.name} className="h-40 w-full object-cover mb-2" />
+                        <div key={p.id} className="rounded border p-4">
+                            <img src={p.image} alt={p.name} className="mb-2 h-40 w-full object-cover" />
                             <h2 className="font-semibold">{p.name}</h2>
                             <div dangerouslySetInnerHTML={{ __html: p.description }} />
                             <p className="font-bold">Rp {p.price}</p>
@@ -31,7 +32,7 @@ export default function Products() {
                                 }}
                                 className="mt-2"
                             >
-                                <button type="submit" className="bg-primary text-white px-3 py-1 rounded">
+                                <button type="submit" className="rounded bg-primary px-3 py-1 text-white">
                                     Add to Cart
                                 </button>
                             </form>
