@@ -1,8 +1,9 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,6 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function AdminOrders() {
     const { orders } = usePage().props as any;
+    const { delete: destroy } = useForm({});
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Admin Orders" />
@@ -30,6 +32,7 @@ export default function AdminOrders() {
                                     <TableHead>User</TableHead>
                                     <TableHead>Total</TableHead>
                                     <TableHead>Status</TableHead>
+                                    <TableHead className="w-32" />
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -43,6 +46,18 @@ export default function AdminOrders() {
                                         <TableCell>{o?.user?.name}</TableCell>
                                         <TableCell>{o?.total_price}</TableCell>
                                         <TableCell>{o?.status}</TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="link"
+                                                onClick={() => (window.location.href = `/admin/orders/${o.id}`)}
+                                                className="mr-2 px-0"
+                                            >
+                                                Detail
+                                            </Button>
+                                            <Button variant="link" className="px-0 text-red-500" onClick={() => destroy(`/admin/orders/${o.id}`)}>
+                                                Delete
+                                            </Button>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

@@ -1,23 +1,11 @@
+import InputError from "@/components/input-error";
 import TiptapEditor from "@/components/tiptap-editor";
-import AppLayout from "@/layouts/app-layout";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import InputError from "@/components/input-error";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
@@ -162,7 +150,11 @@ export default function AdminProducts() {
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="eimage">Image</Label>
-                                    <Input id="eimage" type="file" onChange={(e) => editForm.setData("image", e.target.files ? e.target.files[0] : null)} />
+                                    <Input
+                                        id="eimage"
+                                        type="file"
+                                        onChange={(e) => editForm.setData("image", e.target.files ? e.target.files[0] : null)}
+                                    />
                                     <InputError message={editForm.errors.image} />
                                 </div>
                                 <div className="flex gap-2">
@@ -194,17 +186,15 @@ export default function AdminProducts() {
                             <TableBody>
                                 {products.map((p: any) => (
                                     <TableRow key={p.id}>
-                                        <TableCell>
-                                            {p.image && (
-                                                <img src={p.image} alt={p.name} className="h-10 w-10 object-cover" />
-                                            )}
-                                        </TableCell>
+                                        <TableCell>{p.image && <img src={p.image} alt={p.name} className="h-10 w-10 object-cover" />}</TableCell>
                                         <TableCell>{p.name}</TableCell>
                                         <TableCell>{p.price}</TableCell>
                                         <TableCell>{p.stock}</TableCell>
                                         <TableCell>
-                                            <Button variant="link" onClick={() => startEdit(p)} className="px-0 mr-2">Edit</Button>
-                                            <Button variant="link" className="text-red-500 px-0" onClick={() => destroy(`/admin/products/${p.id}`)}>
+                                            <Button variant="link" onClick={() => startEdit(p)} className="mr-2 px-0">
+                                                Edit
+                                            </Button>
+                                            <Button variant="link" className="px-0 text-red-500" onClick={() => destroy(`/admin/products/${p.id}`)}>
                                                 Delete
                                             </Button>
                                         </TableCell>
