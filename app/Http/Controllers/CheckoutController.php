@@ -19,30 +19,32 @@ class CheckoutController extends Controller
         $items = Cart::with('product')
             ->where('user_id', Auth::id())
             ->get();
-        $subtotal = $items->sum(fn($i) => $i->product->price * $i->quantity);
+        $subtotal = $items->sum(fn ($i) => $i->product->price * $i->quantity);
         return Inertia::render('checkout/index', [
             'cartItems' => $items,
             'subtotal' => $subtotal,
+            'address' => Auth::user()->address,
+            'phone' => Auth::user()->phone,
         ]);
     }
 
     public function processCheckout(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'address' => 'required',
-            'phone' => 'required',
-        ]);
+        $user = Auth::user();
+        if (!$user->address || !$user->phone) {
+            return redirect()->back()->withErrors(['address' => 'Please complete your profile address and phone first.']);
+        }
 
-        DB::transaction(function () use ($data) {
+        $order = DB::transaction(function () use ($user) {
             $items = Cart::with('product')
-                ->where('user_id', Auth::id())
+                ->where('user_id', $user->id)
                 ->get();
 
             $order = Order::create([
-                'user_id' => Auth::id(),
-                'total_price' => $items->sum(fn($i) => $i->product->price * $i->quantity),
-                'address' => $data['address'],
-                'phone' => $data['phone'],
+                'user_id' => $user->id,
+                'total_price' => $items->sum(fn ($i) => $i->product->price * $i->quantity),
+                'address' => $user->address,
+                'phone' => $user->phone,
             ]);
 
             foreach ($items as $item) {
@@ -54,9 +56,11 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            Cart::where('user_id', Auth::id())->delete();
+            Cart::where('user_id', $user->id)->delete();
+
+            return $order;
         });
 
-        return redirect()->route('payment.upload.form', ['order' => Order::latest()->first()->id]);
+        return redirect()->route('payment.upload.form', ['order' => $order->id]);
     }
 }
