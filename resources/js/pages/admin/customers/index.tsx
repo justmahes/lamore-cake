@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import InputError from "@/components/input-error";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
@@ -78,18 +79,22 @@ export default function AdminCustomers() {
                                 <div className="grid gap-2">
                                     <Label htmlFor="name">Name</Label>
                                     <Input id="name" value={editForm.data.name} onChange={(e) => editForm.setData("name", e.target.value)} />
+                                    <InputError message={editForm.errors.name} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="email">Email</Label>
                                     <Input id="email" value={editForm.data.email} onChange={(e) => editForm.setData("email", e.target.value)} />
+                                    <InputError message={editForm.errors.email} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="phone">Phone</Label>
                                     <Input id="phone" value={editForm.data.phone} onChange={(e) => editForm.setData("phone", e.target.value)} />
+                                    <InputError message={editForm.errors.phone} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="address">Address</Label>
                                     <Input id="address" value={editForm.data.address} onChange={(e) => editForm.setData("address", e.target.value)} />
+                                    <InputError message={editForm.errors.address} />
                                 </div>
                                 <div className="flex gap-2">
                                     <Button type="submit">Save</Button>

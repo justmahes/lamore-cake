@@ -20,6 +20,7 @@ function useMainNavItems(): NavItem[] {
 
     if (user.role === "user") {
         items.push(
+            { title: "Dashboard", href: "/dashboard", icon: LayoutGrid },
             { title: "Products", href: "/products", icon: Package },
             { title: "Cart", href: "/cart", icon: ShoppingCart },
             { title: "Orders", href: "/transactions", icon: FileText },

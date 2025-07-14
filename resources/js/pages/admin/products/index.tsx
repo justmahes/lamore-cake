@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import InputError from "@/components/input-error";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
@@ -30,7 +31,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function AdminProducts() {
     const { products } = usePage().props as any;
-    const { data, setData, post, reset } = useForm({
+    const { data, setData, post, reset, errors } = useForm({
         name: "",
         price: "",
         stock: "",
@@ -96,22 +97,27 @@ export default function AdminProducts() {
                             <div className="grid gap-2">
                                 <Label htmlFor="name">Name</Label>
                                 <Input id="name" value={data.name} onChange={(e) => setData("name", e.target.value)} />
+                                <InputError message={errors.name} />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="price">Price</Label>
                                 <Input id="price" type="number" value={data.price} onChange={(e) => setData("price", e.target.value)} />
+                                <InputError message={errors.price} />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="stock">Stock</Label>
                                 <Input id="stock" type="number" value={data.stock} onChange={(e) => setData("stock", e.target.value)} />
+                                <InputError message={errors.stock} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Description</Label>
                                 <TiptapEditor content={data.description} onChange={(html) => setData("description", html)} />
+                                <InputError message={errors.description} />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="image">Image</Label>
                                 <Input id="image" type="file" onChange={(e) => setData("image", e.target.files ? e.target.files[0] : null)} />
+                                <InputError message={errors.image} />
                             </div>
                             <Button type="submit">Add Product</Button>
                         </form>
@@ -127,6 +133,7 @@ export default function AdminProducts() {
                                 <div className="grid gap-2">
                                     <Label htmlFor="ename">Name</Label>
                                     <Input id="ename" value={editForm.data.name} onChange={(e) => editForm.setData("name", e.target.value)} />
+                                    <InputError message={editForm.errors.name} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="eprice">Price</Label>
@@ -136,6 +143,7 @@ export default function AdminProducts() {
                                         value={editForm.data.price}
                                         onChange={(e) => editForm.setData("price", e.target.value)}
                                     />
+                                    <InputError message={editForm.errors.price} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="estock">Stock</Label>
@@ -145,14 +153,17 @@ export default function AdminProducts() {
                                         value={editForm.data.stock}
                                         onChange={(e) => editForm.setData("stock", e.target.value)}
                                     />
+                                    <InputError message={editForm.errors.stock} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label>Description</Label>
                                     <TiptapEditor content={editForm.data.description} onChange={(html) => editForm.setData("description", html)} />
+                                    <InputError message={editForm.errors.description} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="eimage">Image</Label>
                                     <Input id="eimage" type="file" onChange={(e) => editForm.setData("image", e.target.files ? e.target.files[0] : null)} />
+                                    <InputError message={editForm.errors.image} />
                                 </div>
                                 <div className="flex gap-2">
                                     <Button type="submit">Save</Button>

@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import InputError from '@/components/input-error';
 import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -20,7 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function UploadPayment() {
     const { order } = usePage().props as any;
-    const { setData, post } = useForm({ proof: null as File | null });
+    const { setData, post, errors } = useForm({ proof: null as File | null });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -45,6 +46,7 @@ export default function UploadPayment() {
                                     type="file"
                                     onChange={(e) => setData('proof', e.target.files ? e.target.files[0] : null)}
                                 />
+                                <InputError message={errors.proof} />
                             </div>
                             <Button type="submit">Upload</Button>
                         </form>

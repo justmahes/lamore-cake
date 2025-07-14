@@ -21,6 +21,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
         }
 
+        if ($user->role === 'user') {
+            return Inertia::render('dashboard', [
+                'summary' => [
+                    'orders' => \App\Models\Order::where('user_id', $user->id)->count(),
+                ],
+            ]);
+        }
+
         return Inertia::render('dashboard');
     })->name('dashboard');
 });

@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import {
     Card,
@@ -7,8 +7,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import InputError from '@/components/input-error';
 import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -19,10 +19,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Checkout() {
-    const { data, setData, post } = useForm({
-        address: "",
-        phone: "",
-    });
+    const { address, phone } = usePage().props as any;
+    const { post, errors } = useForm({});
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,19 +39,13 @@ export default function Checkout() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid gap-2">
                                 <Label>Shipping Address</Label>
-                                <Input
-                                    name="address"
-                                    value={data.address}
-                                    onChange={(e) => setData('address', e.target.value)}
-                                />
+                                <p>{address}</p>
+                                <InputError message={errors.address} />
                             </div>
                             <div className="grid gap-2">
                                 <Label>Phone</Label>
-                                <Input
-                                    name="phone"
-                                    value={data.phone}
-                                    onChange={(e) => setData('phone', e.target.value)}
-                                />
+                                <p>{phone}</p>
+                                <InputError message={errors.phone} />
                             </div>
                             <Button type="submit">Place Order</Button>
                         </form>
