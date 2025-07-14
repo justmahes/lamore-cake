@@ -45,7 +45,7 @@ class AdminProductController extends Controller
             'description' => 'nullable',
             'price' => 'nullable|numeric',
             'stock' => 'nullable|numeric',
-            'image' => 'image',
+            'images.*' => ['nullable', 'image'],
         ]);
 
         if ($request->hasFile('image')) {

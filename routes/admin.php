@@ -15,7 +15,7 @@ Route::get('/admin', function () {
 Route::middleware(['auth', HandleRole::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
     Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
-    Route::put('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
+    Route::post('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [AdminProductController::class, 'destroy'])->name('products.destroy');
 
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
