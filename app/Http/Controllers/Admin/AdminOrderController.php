@@ -46,4 +46,11 @@ class AdminOrderController extends Controller
 
         return redirect()->back();
     }
+
+    public function destroy(Order $order): RedirectResponse
+    {
+        $order->delete();
+
+        return redirect()->back();
+    }
 }

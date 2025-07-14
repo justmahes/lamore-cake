@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,12 +25,12 @@ class AdminProductController extends Controller
             'description' => 'nullable',
             'price' => 'nullable|numeric',
             'stock' => 'nullable|numeric',
-            'image' => 'image',
+            'image' => 'nullable|image',
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
-            $data['image'] = Storage::url($path);
+            $file = $request->file('image');
+            $data['image'] = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->get());
         }
 
         Product::create($data);
@@ -45,12 +44,12 @@ class AdminProductController extends Controller
             'description' => 'nullable',
             'price' => 'nullable|numeric',
             'stock' => 'nullable|numeric',
-            'images.*' => ['nullable', 'image'],
+            'image' => ['nullable', 'image'],
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
-            $data['image'] = Storage::url($path);
+            $file = $request->file('image');
+            $data['image'] = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->get());
         }
 
         $product->update($data);
