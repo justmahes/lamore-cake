@@ -13,8 +13,10 @@ export default function GuestProducts() {
                 <div className="grid gap-4 md:grid-cols-3">
                     {products.map((p: any) => (
                         <div key={p.id} className="rounded border p-4">
-                            <img src={p.image} alt={p.name} className="mb-2 h-40 w-full object-cover" />
-                            <h2 className="font-semibold">{p.name}</h2>
+                            <a href={`/products/${p.id}`}>
+                                <img src={p.image} alt={p.name} className="mb-2 h-40 w-full object-cover" />
+                                <h2 className="font-semibold">{p.name}</h2>
+                            </a>
                             <div dangerouslySetInnerHTML={{ __html: p.description }} />
                             <p className="font-bold">Rp {p.price}</p>
                         </div>

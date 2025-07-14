@@ -20,7 +20,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Checkout() {
     const { address, phone } = usePage().props as any;
-    const { post, errors } = useForm({});
+    const { post, errors } = useForm<Record<string, string>>({});
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

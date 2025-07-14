@@ -35,11 +35,14 @@ class AdminOrderController extends Controller
         return redirect()->back();
     }
 
-    public function toggleStatus(Order $order): RedirectResponse
+    public function updateStatus(Request $request, Order $order): RedirectResponse
     {
-        $order->update([
-            'status' => $order->status === 'pending' ? 'shipped' : 'pending',
-        ]);
+        $status = $request->input('status');
+        if (! in_array($status, ['pending', 'shipped'], true)) {
+            $status = 'pending';
+        }
+
+        $order->update(['status' => $status]);
 
         return redirect()->back();
     }

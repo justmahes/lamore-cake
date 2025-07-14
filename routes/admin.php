@@ -21,7 +21,7 @@ Route::middleware(['auth', HandleRole::class])->prefix('admin')->name('admin.')-
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/verify-payment', [AdminOrderController::class, 'verifyPayment'])->name('orders.verify_payment');
-    Route::patch('/orders/{order}/toggle-status', [AdminOrderController::class, 'toggleStatus'])->name('orders.toggle_status');
+    Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update_status');
 
     Route::get('/reports/sales', [AdminReportController::class, 'salesReport'])->name('reports.sales');
 
