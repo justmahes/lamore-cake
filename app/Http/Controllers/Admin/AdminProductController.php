@@ -22,10 +22,10 @@ class AdminProductController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => 'required',
-            'description' => 'required',
-            'price' => 'required|numeric',
-            'stock' => 'required|numeric',
+            'name' => 'nullable',
+            'description' => 'nullable',
+            'price' => 'nullable|numeric',
+            'stock' => 'nullable|numeric',
             'image' => 'image',
         ]);
 
@@ -41,10 +41,10 @@ class AdminProductController extends Controller
     public function update(Request $request, Product $product): RedirectResponse
     {
         $data = $request->validate([
-            'name' => 'required',
-            'description' => 'required',
-            'price' => 'required|numeric',
-            'stock' => 'required|numeric',
+            'name' => 'nullable',
+            'description' => 'nullable',
+            'price' => 'nullable|numeric',
+            'stock' => 'nullable|numeric',
             'image' => 'image',
         ]);
 

@@ -31,7 +31,16 @@ class AdminOrderController extends Controller
     {
         $payment = $order->payment;
         $payment->update(['verified_at' => now()]);
-        $order->update(['status' => $request->input('status', 'processed')]);
+        $order->update(['status' => $request->input('status', 'pending')]);
+        return redirect()->back();
+    }
+
+    public function toggleStatus(Order $order): RedirectResponse
+    {
+        $order->update([
+            'status' => $order->status === 'pending' ? 'shipped' : 'pending',
+        ]);
+
         return redirect()->back();
     }
 }

@@ -7,13 +7,6 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { type BreadcrumbItem } from "@/types";
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -25,11 +18,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function AdminOrderShow() {
     const { order } = usePage().props as any;
-    const { data, setData, patch } = useForm({ status: "processed" });
+    const { patch } = useForm({});
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        patch(`/admin/orders/${order.id}/verify-payment`);
+    const toggleStatus = () => {
+        patch(`/admin/orders/${order.id}/toggle-status`, { method: "patch" });
     };
 
     return (
@@ -51,19 +43,7 @@ export default function AdminOrderShow() {
                             <img src={order.payment.proof_file} alt="proof" className="w-48" />
                         </div>
                     )}
-                    <form onSubmit={handleSubmit} className="flex items-center gap-2">
-                        <Select name="status" value={data.status} onValueChange={(v) => setData("status", v)}>
-                            <SelectTrigger className="w-40">
-                                <SelectValue placeholder="Status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="processed">Processed</SelectItem>
-                                <SelectItem value="done">Done</SelectItem>
-                                <SelectItem value="rejected">Rejected</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Button type="submit">Update Status</Button>
-                    </form>
+                    <Button onClick={toggleStatus}>Toggle Status</Button>
                 </CardContent>
             </Card>
             </div>
