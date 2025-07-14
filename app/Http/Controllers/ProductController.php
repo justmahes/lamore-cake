@@ -10,7 +10,10 @@ class ProductController extends Controller
 {
     public function index(): Response
     {
-        $products = Product::all();
+        $products = Product::whereNotNull('name')
+            ->whereNotNull('price')
+            ->whereNotNull('stock')
+            ->get();
 
         if (auth()->check()) {
             return Inertia::render('products/index', [

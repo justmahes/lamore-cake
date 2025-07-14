@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('total_price', 10, 2);
             $table->string('address');
             $table->string('phone');
-            $table->enum('status', ['pending', 'processed', 'done', 'rejected'])->default('pending');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }
