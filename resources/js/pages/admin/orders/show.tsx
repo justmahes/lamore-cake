@@ -18,10 +18,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function AdminOrderShow() {
     const { order } = usePage().props as any;
-    const { patch } = useForm({});
+    const { data, setData, patch } = useForm({ status: order.status });
 
-    const toggleStatus = () => {
-        patch(`/admin/orders/${order.id}/toggle-status`, { method: "patch" });
+    const updateStatus = () => {
+        patch(`/admin/orders/${order.id}/status`, {
+            method: "patch",
+            preserveScroll: true,
+        });
     };
 
     return (
@@ -36,14 +39,24 @@ export default function AdminOrderShow() {
                 <CardContent className="space-y-2">
                     <p>User: {order.user.name}</p>
                     <p>Total: Rp {order.total_price}</p>
-                    <p>Status: {order.status}</p>
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium">Status</label>
+                        <select
+                            value={data.status}
+                            onChange={(e) => setData("status", e.target.value)}
+                            className="rounded border px-2 py-1"
+                        >
+                            <option value="pending">pending</option>
+                            <option value="shipped">shipped</option>
+                        </select>
+                    </div>
                     {order.payment && (
                         <div className="space-y-1">
                             <p>Payment Proof:</p>
                             <img src={order.payment.proof_file} alt="proof" className="w-48" />
                         </div>
                     )}
-                    <Button onClick={toggleStatus}>Toggle Status</Button>
+                    <Button onClick={updateStatus}>Save Status</Button>
                 </CardContent>
             </Card>
             </div>

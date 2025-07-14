@@ -184,6 +184,7 @@ export default function AdminProducts() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
+                                    <TableHead>Image</TableHead>
                                     <TableHead>Name</TableHead>
                                     <TableHead>Price</TableHead>
                                     <TableHead>Stock</TableHead>
@@ -193,6 +194,11 @@ export default function AdminProducts() {
                             <TableBody>
                                 {products.map((p: any) => (
                                     <TableRow key={p.id}>
+                                        <TableCell>
+                                            {p.image && (
+                                                <img src={p.image} alt={p.name} className="h-10 w-10 object-cover" />
+                                            )}
+                                        </TableCell>
                                         <TableCell>{p.name}</TableCell>
                                         <TableCell>{p.price}</TableCell>
                                         <TableCell>{p.stock}</TableCell>
