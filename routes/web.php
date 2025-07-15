@@ -22,6 +22,7 @@ Route::get('/about', function () {
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/guest/products/{product}', [ProductController::class, 'guestShow'])->name('guest.products.show');
 
 require __DIR__ . '/user.php';
 require __DIR__ . '/admin.php';
