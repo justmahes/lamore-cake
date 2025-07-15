@@ -1,8 +1,8 @@
+import Image from "@tiptap/extension-image";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import { useEffect } from "react";
 import type React from "react";
+import { useEffect } from "react";
 
 interface Props {
     content: string;
@@ -11,7 +11,12 @@ interface Props {
 
 export default function TiptapEditor({ content, onChange }: Props) {
     const editor = useEditor({
-        extensions: [StarterKit, Image],
+        extensions: [
+            StarterKit,
+            Image.configure({
+                allowBase64: true,
+            }),
+        ],
         content,
         onUpdate({ editor }) {
             onChange(editor.getHTML());
@@ -39,7 +44,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
     return (
         <div>
             <input type="file" accept="image/*" onChange={insertImage} className="mb-2" />
-            <div className="border rounded p-2">
+            <div className="rounded border p-2">
                 <EditorContent editor={editor} />
             </div>
         </div>

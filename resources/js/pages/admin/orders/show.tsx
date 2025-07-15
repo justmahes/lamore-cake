@@ -1,6 +1,6 @@
+import ImagePreview from "@/components/image-preview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ImagePreview from "@/components/image-preview";
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
@@ -18,7 +18,7 @@ export default function AdminOrderShow() {
 
     const updateStatus = () => {
         post(`/admin/orders/${order.id}/status`, {
-            method: "patch",
+            method: "post",
             preserveScroll: true,
         });
     };

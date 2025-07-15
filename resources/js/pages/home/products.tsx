@@ -8,7 +8,7 @@ export default function GuestProducts() {
         <>
             <Head title="Products" />
             <Navbar />
-            <div className="container mx-auto p-4 space-y-4">
+            <div className="container mx-auto space-y-4 p-4">
                 <h1 className="text-2xl font-bold">Products</h1>
                 <div className="grid gap-4 md:grid-cols-3">
                     {products.map((p: any) => (
@@ -17,7 +17,7 @@ export default function GuestProducts() {
                                 <img src={p.image} alt={p.name} className="mb-2 h-40 w-full object-cover" />
                                 <h2 className="font-semibold">{p.name}</h2>
                             </a>
-                            <div dangerouslySetInnerHTML={{ __html: p.description }} />
+                            {/* <div dangerouslySetInnerHTML={{ __html: p.description }} /> */}
                             <p className="font-bold">Rp {p.price}</p>
                         </div>
                     ))}

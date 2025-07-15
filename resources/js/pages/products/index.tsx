@@ -25,7 +25,7 @@ export default function Products() {
                                 <img src={p.image} alt={p.name} className="mb-2 h-40 w-full object-cover" />
                                 <h2 className="font-semibold">{p.name}</h2>
                             </a>
-                            <div dangerouslySetInnerHTML={{ __html: p.description }} />
+                            {/* <div dangerouslySetInnerHTML={{ __html: p.description }} /> */}
                             <p className="font-bold">Rp {p.price}</p>
                             <form
                                 onSubmit={(e) => {
