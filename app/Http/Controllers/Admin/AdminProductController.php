@@ -50,6 +50,8 @@ class AdminProductController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $data['image'] = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->get());
+        } else {
+            unset($data['image']);
         }
 
         $product->update($data);
