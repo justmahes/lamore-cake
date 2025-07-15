@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import ImagePreview from "@/components/image-preview";
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
@@ -186,7 +187,11 @@ export default function AdminProducts() {
                             <TableBody>
                                 {products.map((p: any) => (
                                     <TableRow key={p.id}>
-                                        <TableCell>{p.image && <img src={p.image} alt={p.name} className="h-10 w-10 object-cover" />}</TableCell>
+                                        <TableCell>
+                                            {p.image && (
+                                                <ImagePreview src={p.image} alt={p.name} className="h-10 w-10 object-cover" />
+                                            )}
+                                        </TableCell>
                                         <TableCell>{p.name}</TableCell>
                                         <TableCell>{p.price}</TableCell>
                                         <TableCell>{p.stock}</TableCell>

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ImagePreview from "@/components/image-preview";
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
@@ -13,10 +14,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function AdminOrderShow() {
     const { order } = usePage().props as any;
-    const { data, setData, patch, delete: destroy } = useForm({ status: order.status });
+    const { data, setData, post, delete: destroy } = useForm({ status: order.status });
 
     const updateStatus = () => {
-        patch(`/admin/orders/${order.id}/status`, {
+        post(`/admin/orders/${order.id}/status`, {
             method: "patch",
             preserveScroll: true,
         });
@@ -44,7 +45,7 @@ export default function AdminOrderShow() {
                         {order.payment && (
                             <div className="space-y-1">
                                 <p>Payment Proof:</p>
-                                <img src={order.payment.proof_file} alt="proof" className="w-48" />
+                                <ImagePreview src={order.payment.proof_file} alt="proof" className="w-48" />
                             </div>
                         )}
                         <div className="flex gap-2">
