@@ -1,7 +1,9 @@
 import AppLayout from "@/layouts/app-layout";
 import ImagePreview from "@/components/image-preview";
+import mediumZoom from "medium-zoom";
 import { type BreadcrumbItem, type SharedData } from "@/types";
 import { Head, usePage, useForm } from "@inertiajs/react";
+import { useEffect } from "react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,6 +15,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function ProductShow() {
     const { product, auth } = usePage<SharedData>().props as any;
     const { post } = useForm({});
+    useEffect(() => {
+        mediumZoom(".tiptap-content img", { background: "rgba(0,0,0,0.8)" });
+    }, []);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={product.name} />
@@ -21,7 +26,7 @@ export default function ProductShow() {
                 {product.image && (
                     <ImagePreview src={product.image} alt={product.name} className="h-80 w-full object-cover" />
                 )}
-                <div dangerouslySetInnerHTML={{ __html: product.description }} />
+                <div className="tiptap-content" dangerouslySetInnerHTML={{ __html: product.description }} />
                 <p className="font-bold">Rp {product.price}</p>
                 {auth.user ? (
                     <form

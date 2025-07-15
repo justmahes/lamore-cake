@@ -32,4 +32,11 @@ class ProductController extends Controller
             'product' => $product,
         ]);
     }
+
+    public function guestShow(Product $product): Response
+    {
+        return Inertia::render('home/product', [
+            'product' => $product,
+        ]);
+    }
 }
