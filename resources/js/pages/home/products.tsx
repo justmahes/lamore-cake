@@ -3,7 +3,7 @@ import { Navbar } from "@/components/home/Navbar";
 import { Head, usePage } from "@inertiajs/react";
 
 export default function GuestProducts() {
-    const { products } = usePage().props as any;
+    const { products, auth } = usePage().props as any;
     return (
         <>
             <Head title="Products" />
@@ -13,7 +13,7 @@ export default function GuestProducts() {
                 <div className="grid gap-4 md:grid-cols-3">
                     {products.map((p: any) => (
                         <div key={p.id} className="rounded border p-4">
-                            <a href={`/products/${p.id}`}>
+                            <a href={auth.user ? `/products/${p.id}` : `/guest/products/${p.id}`}>
                                 <img src={p.image} alt={p.name} className="mb-2 h-40 w-full object-cover" />
                                 <h2 className="font-semibold">{p.name}</h2>
                             </a>

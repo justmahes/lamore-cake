@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,7 +16,7 @@ class ProductController extends Controller
             ->whereNotNull('stock')
             ->get();
 
-        if (auth()->check()) {
+        if (Auth::check()) {
             return Inertia::render('products/index', [
                 'products' => $products,
             ]);
