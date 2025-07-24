@@ -78,7 +78,7 @@ export const Navbar = () => {
                                 href={route.href}
                                 key={i}
                                 className={`text-[17px] ${buttonVariants({
-                                    variant: "ghost",
+                                    variant: "default",
                                 })}`}
                             >
                                 {route.label}
