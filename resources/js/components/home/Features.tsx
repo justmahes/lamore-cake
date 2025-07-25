@@ -34,7 +34,7 @@ const featureList: string[] = ["Menggoda Selera", "Jajanan Fresh", "Lembut dan N
 
 export const Features = () => {
     return (
-        <section id="features" className="container space-y-8 py-24 sm:py-32">
+        <section id="features" className="container mx-auto space-y-8 py-24 sm:py-32">
             <h2 className="text-3xl font-bold md:text-center lg:text-4xl">
                 <span className="bg-gradient-to-b from-primary/60 to-primary bg-clip-text text-transparent">Apa Yang Kami Tawarkan?</span>
             </h2>

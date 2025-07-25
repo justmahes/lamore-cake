@@ -56,7 +56,7 @@ export function AppSidebar() {
     const mainNavItems = useMainNavItems();
 
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>

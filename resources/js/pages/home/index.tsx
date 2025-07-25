@@ -14,14 +14,12 @@ function App() {
         <>
             <Head title="Welcome" />
             <Navbar />
-            <div className="container mx-auto px-4">
-                <Hero />
-                <Features />
-                <Testimonials />
-                <FAQ />
-                <Footer />
-                <ScrollToTop />
-            </div>
+            <Hero />
+            <Features />
+            <Testimonials />
+            <FAQ />
+            <Footer />
+            <ScrollToTop />
         </>
     );
 }

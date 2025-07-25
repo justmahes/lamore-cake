@@ -1,11 +1,5 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
 
 interface TestimonialProps {
     image: string;
@@ -46,49 +40,38 @@ const testimonials: TestimonialProps[] = [
         image: "https://github.com/shadcn.png",
         name: "John Doe React",
         userName: "@john_Doe4",
-        comment:
-            "Lorem ipsum dolor sit amet, tempor incididunt  aliqua. Ut enim ad minim veniam, quis nostrud.",
+        comment: "Lorem ipsum dolor sit amet, tempor incididunt  aliqua. Ut enim ad minim veniam, quis nostrud.",
     },
     {
         image: "https://github.com/shadcn.png",
         name: "John Doe React",
         userName: "@john_Doe5",
-        comment:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
 ];
 
 export const Testimonials = () => {
     return (
-        <section
-            id="testimonials"
-            className="container py-24 sm:py-32"
-        >
-            <h2 className="text-3xl md:text-4xl font-bold">
-                Mengapa
-                <span className="bg-gradient-to-b from-primary/60 to-primary text-transparent bg-clip-text">
-                    {" "}Lamore Cake{" "}
-                </span>
-                Jadi Pilihan Utama?
-            </h2>
+        <section id="testimonials" className="relative overflow-hidden">
+            <img src="assets/inter-section.svg" alt="Background" className="absolute inset-0 z-0 h-full w-full object-cover" />
 
-            <p className="text-xl text-muted-foreground pt-4 pb-8">
-                Temukan kelezatan otentik dan kehangatan komunitas yang membuat pelanggan kami jatuh cinta.
-            </p>
+            <div className="relative container mx-auto py-24 sm:py-32">
+                <h2 className="text-3xl font-bold md:text-4xl">
+                    Mengapa
+                    <span className="bg-gradient-to-b from-primary/60 to-primary bg-clip-text text-transparent"> Lamore Cake </span>
+                    Jadi Pilihan Utama?
+                </h2>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 sm:block columns-2  lg:columns-3 lg:gap-6 mx-auto space-y-4 lg:space-y-6">
-                {testimonials.map(
-                    ({ image, name, userName, comment }: TestimonialProps) => (
-                        <Card
-                            key={userName}
-                            className="max-w-md md:break-inside-avoid overflow-hidden"
-                        >
+                <p className="pt-4 pb-8 text-xl text-muted-foreground">
+                    Temukan kelezatan otentik dan kehangatan komunitas yang membuat pelanggan kami jatuh cinta.
+                </p>
+
+                <div className="z-10 mx-auto grid columns-2 space-y-4 sm:block md:grid-cols-2 lg:columns-3 lg:grid-cols-4 lg:gap-6 lg:space-y-6">
+                    {testimonials.map(({ image, name, userName, comment }: TestimonialProps) => (
+                        <Card key={userName} className="max-w-md overflow-hidden md:break-inside-avoid">
                             <CardHeader className="flex flex-row items-center gap-4 pb-2">
                                 <Avatar>
-                                    <AvatarImage
-                                        alt=""
-                                        src={image}
-                                    />
+                                    <AvatarImage alt="" src={image} />
                                     <AvatarFallback>OM</AvatarFallback>
                                 </Avatar>
 
@@ -100,8 +83,8 @@ export const Testimonials = () => {
 
                             <CardContent>{comment}</CardContent>
                         </Card>
-                    )
-                )}
+                    ))}
+                </div>
             </div>
         </section>
     );
