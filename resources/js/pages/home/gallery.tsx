@@ -6,32 +6,32 @@ import "../../../css/gallery.css";
 
 const images = [
     {
-        src: "https://images.unsplash.com/photo-1542831371-d531d36971e6",
+        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
         alt: "Pudding Tape",
         description: "Pudding Tape lembut dengan aroma tape manis khas Bali.",
     },
     {
-        src: "https://images.unsplash.com/photo-1509401999043-27a4eaa781c0",
+        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
         alt: "Kue Bolu Bali",
         description: "Kue bolu tradisional dengan cita rasa lokal.",
     },
     {
-        src: "https://images.unsplash.com/photo-1518733057094-95b53143d373",
+        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
         alt: "Pia Susu",
         description: "Pia susu dengan kulit tipis dan isian manis legit.",
     },
     {
-        src: "https://images.unsplash.com/photo-1597393925966-d3b87c2ad653",
+        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
         alt: "Dadar Gulung",
         description: "Pancake hijau berisi kelapa parut gula merah.",
     },
     {
-        src: "https://images.unsplash.com/photo-1514513386906-d5111d2643da",
+        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
         alt: "Lapis Legit",
         description: "Kue lapis legit dengan aroma rempah.",
     },
     {
-        src: "https://images.unsplash.com/photo-1519681393784-d120267933ba",
+        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
         alt: "Klepon",
         description: "Bola ketan isi gula merah disajikan dengan kelapa parut.",
     },
@@ -52,7 +52,7 @@ const Gallery = () => {
         <>
             <Head title="Gallery" />
             <Navbar />
-            <div className="container mx-auto mt-5 font-sans">
+            <div className="container mx-auto p-5 font-sans">
                 <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                     {images.map((image, index) => (
                         <div

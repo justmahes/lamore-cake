@@ -8,7 +8,7 @@ export default function About() {
             <Head title="About Lamore Cake" />
             <Navbar />
             <div className="min-h-screen bg-white font-sans text-gray-800">
-                <section className="relative bg-[url('https://images.unsplash.com/photo-1542831371-d531d36971e6')] bg-cover bg-center py-24 text-white">
+                <section className="relative bg-[url('https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg')] bg-cover bg-center py-24 text-white">
                     <div className="absolute inset-0 bg-black/50" />
                     <div className="relative z-10 mx-auto max-w-2xl px-4 text-center">
                         <h1 className="mb-4 text-4xl font-extrabold sm:text-5xl">Lamore Cake</h1>
