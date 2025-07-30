@@ -33,7 +33,7 @@ class AdminCustomerController extends Controller
         $data['password'] = Hash::make($data['password']);
         User::create($data);
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Customer created');
     }
 
     public function update(Request $request, User $user): RedirectResponse
@@ -46,12 +46,12 @@ class AdminCustomerController extends Controller
         ]);
 
         $user->update($data);
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Customer updated');
     }
 
     public function destroy(User $user): RedirectResponse
     {
         $user->delete();
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Customer deleted');
     }
 }

@@ -32,7 +32,7 @@ class AdminOrderController extends Controller
         $payment = $order->payment;
         $payment->update(['verified_at' => now()]);
         $order->update(['status' => $request->input('status', 'pending')]);
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Payment verified');
     }
 
     public function updateStatus(Request $request, Order $order): RedirectResponse
@@ -44,13 +44,13 @@ class AdminOrderController extends Controller
 
         $order->update(['status' => $status]);
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Status updated');
     }
 
     public function destroy(Order $order): RedirectResponse
     {
         $order->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Order deleted');
     }
 }

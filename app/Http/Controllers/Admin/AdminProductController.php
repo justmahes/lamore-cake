@@ -34,7 +34,7 @@ class AdminProductController extends Controller
         }
 
         Product::create($data);
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Product created');
     }
 
     public function update(Request $request, Product $product): RedirectResponse
@@ -55,12 +55,12 @@ class AdminProductController extends Controller
         }
 
         $product->update($data);
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Product updated');
     }
 
     public function destroy(Product $product): RedirectResponse
     {
         $product->delete();
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Product deleted');
     }
 }

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import Image from "@tiptap/extension-image";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -43,7 +44,41 @@ export default function TiptapEditor({ content, onChange }: Props) {
 
     return (
         <div>
-            <input type="file" accept="image/*" onChange={insertImage} className="mb-2" />
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+                <Button
+                    type="button"
+                    size="sm"
+                    variant={editor?.isActive("bold") ? "default" : "outline"}
+                    onClick={() => editor?.chain().focus().toggleBold().run()}
+                >
+                    Bold
+                </Button>
+                <Button
+                    type="button"
+                    size="sm"
+                    variant={editor?.isActive("italic") ? "default" : "outline"}
+                    onClick={() => editor?.chain().focus().toggleItalic().run()}
+                >
+                    Italic
+                </Button>
+                <Button
+                    type="button"
+                    size="sm"
+                    variant={editor?.isActive("heading", { level: 1 }) ? "default" : "outline"}
+                    onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
+                >
+                    H1
+                </Button>
+                <Button
+                    type="button"
+                    size="sm"
+                    variant={editor?.isActive("paragraph") ? "default" : "outline"}
+                    onClick={() => editor?.chain().focus().setParagraph().run()}
+                >
+                    P
+                </Button>
+                <input type="file" accept="image/*" onChange={insertImage} />
+            </div>
             <div className="rounded border p-2">
                 <EditorContent editor={editor} />
             </div>
