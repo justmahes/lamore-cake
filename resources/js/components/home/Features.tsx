@@ -1,35 +1,6 @@
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
-import image from "./assets/growth.png";
-import image4 from "./assets/looking-ahead.png";
-import image3 from "./assets/reflecting.png";
 import { Badge } from "./ui/badge";
 
-interface FeatureProps {
-    title: string;
-    description: string;
-    image: string;
-}
-
-const features: FeatureProps[] = [
-    {
-        title: "Pudding Tape Manis",
-        description:
-            "Nikmati kesegaran dan manisnya pudding tape homemade kami, dibuat dari tape pilihan dengan tekstur lembut yang lumer di mulut. Camilan sempurna untuk segala suasana.",
-        image: image,
-    },
-    {
-        title: "Kue Bolu Bali Otentik",
-        description:
-            "Rasakan kelembutan dan aroma khas Kue Bolu Bali Lamore Cake. Resep tradisional yang diwariskan turun-temurun, menghadirkan cita rasa Bali yang sesungguhnya di setiap gigitan.",
-        image: image3,
-    },
-    {
-        title: "Hampers Jajanan Tradisional",
-        description:
-            "Berikan hadiah spesial dengan hampers eksklusif dari Lamore Cake. Berisi aneka jajanan tradisional Bali pilihan yang dibuat segar, cocok untuk buah tangan atau bingkisan istimewa.",
-        image: image4,
-    },
-];
 const featureList: string[] = ["Menggoda Selera", "Jajanan Fresh", "Lembut dan Nikmat", "Kue Penuh Cinta", "Promo & Penawaran Spesial"];
 
 export const Features = () => {
