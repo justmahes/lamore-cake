@@ -42,8 +42,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
 
-    Route::get('/payment/upload/{order}', [PaymentController::class, 'showUploadForm'])->name('payment.upload.form');
-    Route::post('/payment/upload/{order}', [PaymentController::class, 'uploadProof'])->name('payment.upload');
+    // Midtrans Payment Routes (Only 2 routes needed)
+    Route::get('/payment/redirect', [PaymentController::class, 'redirect'])->name('payment.redirect');
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{order}', [TransactionController::class, 'show'])->name('transactions.show');

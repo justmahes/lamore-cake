@@ -12,13 +12,23 @@ class Payment extends Model
 
     protected $fillable = [
         'order_id',
-        'transfer_to',
-        'proof_file',
+        'payment_type',
+        'transaction_id',
+        'order_id_midtrans',
+        'payment_method',
+        'gross_amount',
+        'transaction_status',
+        'fraud_status',
+        'transaction_time',
+        'midtrans_response',
         'verified_at',
     ];
 
     protected $casts = [
         'verified_at' => 'datetime',
+        'transaction_time' => 'datetime',
+        'midtrans_response' => 'array',
+        'gross_amount' => 'decimal:2',
     ];
 
     public function order(): BelongsTo

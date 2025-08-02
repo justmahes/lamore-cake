@@ -20,47 +20,72 @@ class AdminProductController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'nullable',
-            'description' => 'nullable',
-            'price' => 'nullable|numeric',
-            'stock' => 'nullable|numeric',
-            'image' => 'nullable|image',
-        ]);
+        try {
+            $data = $request->validate([
+                'name' => 'required|string|max:255',
+                'category' => 'nullable|string|max:100',
+                'description' => 'nullable|string',
+                'price' => 'required|numeric|min:0',
+                'stock' => 'required|integer|min:0',
+                'image' => 'nullable|image|max:2048',
+            ]);
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $data['image'] = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->get());
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $data['image'] = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->get());
+            }
+
+            $product = Product::create($data);
+            return redirect()->back()->with('success', "Product '{$product->name}' created successfully!");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->with('error', 'Validation failed. Please check all required fields.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to create product. Please try again.');
         }
-
-        Product::create($data);
-        return redirect()->back()->with('success', 'Product created');
     }
 
     public function update(Request $request, Product $product): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'nullable',
-            'description' => 'nullable',
-            'price' => 'nullable|numeric',
-            'stock' => 'nullable|numeric',
-            'image' => ['nullable', 'image'],
-        ]);
+        try {
+            $data = $request->validate([
+                'name' => 'required|string|max:255',
+                'category' => 'nullable|string|max:100',
+                'description' => 'nullable|string',
+                'price' => 'required|numeric|min:0',
+                'stock' => 'required|integer|min:0',
+                'image' => 'nullable|image|max:2048',
+            ]);
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $data['image'] = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->get());
-        } else {
-            unset($data['image']);
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $data['image'] = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->get());
+            } else {
+                unset($data['image']);
+            }
+
+            $product->update($data);
+            return redirect()->back()->with('success', "Product '{$product->name}' updated successfully!");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->with('error', 'Validation failed. Please check all required fields.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update product. Please try again.');
         }
-
-        $product->update($data);
-        return redirect()->back()->with('success', 'Product updated');
     }
 
     public function destroy(Product $product): RedirectResponse
     {
-        $product->delete();
-        return redirect()->back()->with('success', 'Product deleted');
+        try {
+            $productName = $product->name;
+            
+            // Check if product is in any cart or order
+            if ($product->carts()->exists() || $product->orderItems()->exists()) {
+                return redirect()->back()->with('warning', "Cannot delete '{$productName}' as it's referenced in orders or carts. Consider marking it as out of stock instead.");
+            }
+            
+            $product->delete();
+            return redirect()->back()->with('success', "Product '{$productName}' deleted successfully!");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete product. Please try again.');
+        }
     }
 }

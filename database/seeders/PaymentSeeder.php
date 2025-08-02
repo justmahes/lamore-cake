@@ -11,15 +11,15 @@ class PaymentSeeder extends Seeder
 {
     public function run(): void
     {
-        $order = Order::first();
+        // $order = Order::first();
 
-        if ($order) {
-            Payment::create([
-                'order_id' => $order->id,
-                'transfer_to' => 'BCA 1234567890',
-                'proof_file' => null,
-                'verified_at' => now(),
-            ]);
-        }
+        // if ($order) {
+        //     Payment::create([
+        //         'order_id' => $order->id,
+        //         'transfer_to' => 'BCA 1234567890',
+        //         'proof_file' => null,
+        //         'verified_at' => now(),
+        //     ]);
+        // }
     }
 }

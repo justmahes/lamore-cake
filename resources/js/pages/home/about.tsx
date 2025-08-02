@@ -7,7 +7,7 @@ export default function About() {
         <>
             <Head title="About Lamore Cake" />
             <Navbar />
-            <div className="min-h-screen bg-white font-sans text-gray-800">
+            <div className="min-h-screen bg-white pb-10 font-sans text-gray-800">
                 <section className="relative bg-[url('https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg')] bg-cover bg-center py-24 text-white">
                     <div className="absolute inset-0 bg-black/50" />
                     <div className="relative z-10 mx-auto max-w-2xl px-4 text-center">
@@ -33,6 +33,16 @@ export default function About() {
                         <li>Memberdayakan ekonomi lokal.</li>
                     </ul>
                 </section>
+                <div className="container mx-auto mb-10 h-[50vh] max-w-4xl px-4">
+                    <h2 className="mb-2 text-xl font-bold">Lokasi</h2>
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4858.174333588356!2d115.1948643!3d-8.6861332!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd241c11d6c254d%3A0xb52725e3528d65b5!2sLa.Morecake!5e1!3m2!1sid!2sid!4v1754136686084!5m2!1sid!2sid"
+                        width="100%"
+                        height="100%"
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                </div>
             </div>
             <Footer />
         </>
