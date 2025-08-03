@@ -25,7 +25,7 @@ Route::get('/products/{product}', [ProductController::class, 'show'])->name('pro
 Route::get('/guest/products/{product}', [ProductController::class, 'guestShow'])->name('guest.products.show');
 
 // Midtrans webhook (public access required)
-Route::post('/payment/notification', [App\Http\Controllers\PaymentController::class, 'notification'])->name('payment.notification');
+Route::post('/payment/notification', [App\Http\Controllers\CheckoutController::class, 'paymentNotification'])->name('payment.notification');
 
 require __DIR__ . '/user.php';
 require __DIR__ . '/admin.php';

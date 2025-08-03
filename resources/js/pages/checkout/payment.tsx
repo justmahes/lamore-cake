@@ -1,13 +1,8 @@
-import { Head, usePage } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import AppLayout from "@/layouts/app-layout";
+import { Head, usePage } from "@inertiajs/react";
+import { useEffect, useState } from "react";
 
 declare global {
     interface Window {
@@ -43,22 +38,21 @@ export default function CheckoutPayment() {
 
     useEffect(() => {
         // Load Midtrans Snap script
-        const script = document.createElement('script');
-        script.src = isProduction 
-            ? 'https://app.midtrans.com/snap/snap.js' 
-            : 'https://app.stg.midtrans.com/snap/snap.js';
-        script.setAttribute('data-client-key', clientKey);
-        
+        const script = document.createElement("script");
+        script.src = isProduction ? "https://app.midtrans.com/snap/snap.js" : "https://app.stg.midtrans.com/snap/snap.js";
+        script.setAttribute("data-client-key", clientKey);
+        console.log(snapToken);
+
         script.onload = () => {
             setSnapLoaded(true);
             // Auto-trigger payment popup when script is loaded
             handlePayment();
         };
-        
+
         script.onerror = () => {
-            console.error('Failed to load Midtrans Snap script');
+            console.error("Failed to load Midtrans Snap script");
         };
-        
+
         document.head.appendChild(script);
 
         return () => {
@@ -68,7 +62,7 @@ export default function CheckoutPayment() {
 
     const handlePayment = () => {
         if (!snapLoaded || !window.snap) {
-            console.log('Snap not ready yet, retrying...');
+            console.log("Snap not ready yet, retrying...");
             setTimeout(handlePayment, 500);
             return;
         }
@@ -76,24 +70,24 @@ export default function CheckoutPayment() {
         setIsLoading(true);
 
         window.snap.pay(snapToken, {
-            onSuccess: function(result: any) {
-                console.log('Payment success:', result);
+            onSuccess: function (result: any) {
+                console.log("Payment success:", result);
                 // Redirect will be handled by the callback URL
             },
-            onPending: function(result: any) {
-                console.log('Payment pending:', result);
+            onPending: function (result: any) {
+                console.log("Payment pending:", result);
                 // Redirect will be handled by the callback URL
             },
-            onError: function(result: any) {
-                console.log('Payment error:', result);
+            onError: function (result: any) {
+                console.log("Payment error:", result);
                 // Redirect will be handled by the callback URL
             },
-            onClose: function() {
-                console.log('Payment popup closed');
+            onClose: function () {
+                console.log("Payment popup closed");
                 setIsLoading(false);
                 // User closed the popup, redirect back to transactions
-                window.location.href = '/transactions';
-            }
+                window.location.href = "/transactions";
+            },
         });
     };
 
@@ -106,9 +100,9 @@ export default function CheckoutPayment() {
     return (
         <AppLayout>
             <Head title={`Payment Processing`} />
-            <div className="container mx-auto p-4 max-w-4xl">
-                <h1 className="text-2xl font-bold mb-6">Complete Your Payment</h1>
-                
+            <div className="container mx-auto max-w-4xl p-4">
+                <h1 className="mb-6 text-2xl font-bold">Complete Your Payment</h1>
+
                 <div className="grid gap-6 md:grid-cols-2">
                     {/* Cart Summary */}
                     <Card>
@@ -121,7 +115,7 @@ export default function CheckoutPayment() {
                                     <p className="text-sm text-gray-600">Payment ID</p>
                                     <p className="font-semibold">{tempOrderId}</p>
                                 </div>
-                                
+
                                 <div>
                                     <p className="text-sm text-gray-600">Items</p>
                                     <div className="space-y-2">
@@ -133,14 +127,12 @@ export default function CheckoutPayment() {
                                                         {item.quantity} x Rp {item.product.price.toLocaleString()}
                                                     </p>
                                                 </div>
-                                                <p className="font-semibold">
-                                                    Rp {(item.quantity * item.product.price).toLocaleString()}
-                                                </p>
+                                                <p className="font-semibold">Rp {(item.quantity * item.product.price).toLocaleString()}</p>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
-                                
+
                                 <div className="border-t pt-4">
                                     <div className="flex justify-between text-lg font-bold">
                                         <span>Total</span>
@@ -157,38 +149,36 @@ export default function CheckoutPayment() {
                             <CardTitle>Payment Status</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-center space-y-4">
+                            <div className="space-y-4 text-center">
                                 {!snapLoaded ? (
                                     <div>
-                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                                        <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
                                         <p className="text-gray-600">Loading payment gateway...</p>
                                     </div>
                                 ) : (
                                     <div>
-                                        <p className="text-gray-600 mb-4">
+                                        <p className="mb-4 text-gray-600">
                                             Payment window should open automatically. Complete payment to create your order.
                                         </p>
-                                        <Button 
-                                            onClick={retryPayment}
-                                            disabled={isLoading}
-                                            size="lg"
-                                            className="w-full"
-                                        >
-                                            {isLoading ? 'Processing...' : 'Open Payment Window'}
+                                        <Button onClick={retryPayment} disabled={isLoading} size="lg" className="w-full">
+                                            {isLoading ? "Processing..." : "Open Payment Window"}
                                         </Button>
-                                        
-                                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+
+                                        <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
                                             <p className="text-sm text-blue-800">
-                                                <strong>Note:</strong> Your order will only be created after successful payment. 
-                                                Your cart items will be reserved during payment processing.
+                                                <strong>Note:</strong> Your order will only be created after successful payment. Your cart items will
+                                                be reserved during payment processing.
                                             </p>
                                         </div>
                                     </div>
                                 )}
-                                
-                                <div className="mt-6 pt-4 border-t">
+
+                                <div className="mt-6 border-t pt-4">
                                     <p className="text-sm text-gray-500">
-                                        Having trouble? <a href="/cart" className="text-blue-600 hover:underline">Go back to cart</a>
+                                        Having trouble?{" "}
+                                        <a href="/cart" className="text-blue-600 hover:underline">
+                                            Go back to cart
+                                        </a>
                                     </p>
                                 </div>
                             </div>

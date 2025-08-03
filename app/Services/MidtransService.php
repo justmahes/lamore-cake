@@ -13,25 +13,22 @@ class MidtransService
 {
     public function __construct()
     {
-        // Set Midtrans configuration
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
+        // Configuration is now handled externally in the controller
+        // This ensures proper validation and explicit setup
     }
 
     /**
-     * Create Snap Token for cart items before order creation
+     * Create redirect payment URL for cart items before order creation
      */
-    public function createSnapTokenFromCart(array $cartItems, $user): array
+    public function createRedirectPaymentFromCart(array $cartItems, $user): array
     {
         try {
             $totalAmount = collect($cartItems)->sum(fn($item) => $item['price'] * $item['quantity']);
-            $tempOrderId = 'TEMP-' . $user['id'] . '-' . time();
+            $orderId = 'ORDER-' . $user['id'] . '-' . time();
             
             $params = [
                 'transaction_details' => [
-                    'order_id' => $tempOrderId,
+                    'order_id' => $orderId,
                     'gross_amount' => (int) $totalAmount,
                 ],
                 'customer_details' => [
@@ -39,27 +36,34 @@ class MidtransService
                     'email' => $user['email'],
                     'phone' => $user['phone'],
                     'billing_address' => [
+                        'first_name' => $user['name'],
                         'address' => $user['address'],
+                        'phone' => $user['phone'],
                     ],
                     'shipping_address' => [
+                        'first_name' => $user['name'],
                         'address' => $user['address'],
+                        'phone' => $user['phone'],
                     ],
                 ],
                 'item_details' => $this->getCartItemDetails($cartItems),
                 'callbacks' => [
                     'finish' => route('payment.redirect') . '?status=success',
-                    'unfinish' => route('payment.redirect') . '?status=pending',
+                    'unfinish' => route('payment.redirect') . '?status=pending', 
                     'error' => route('payment.redirect') . '?status=failed',
                 ],
                 'custom_field1' => json_encode($cartItems), // Store cart data for later order creation
                 'custom_field2' => $user['id'], // Store user ID
             ];
 
+            // Get the snap redirect URL instead of token
             $snapToken = Snap::getSnapToken($params);
+            $snapUrl = Snap::createTransaction($params)->redirect_url;
 
             return [
+                'redirect_url' => $snapUrl,
                 'snap_token' => $snapToken,
-                'temp_order_id' => $tempOrderId,
+                'order_id' => $orderId,
                 'total_amount' => $totalAmount,
             ];
         } catch (Exception $e) {
@@ -98,8 +102,15 @@ class MidtransService
             $transactionId = $notification['transaction_id'];
             $orderId = $notification['order_id'];
 
-            // Check if this is a successful payment for a temp order
-            if (str_starts_with($orderId, 'TEMP-') && $this->shouldMarkAsVerified($transactionStatus, $fraudStatus)) {
+            // Check if this is a successful payment for an order
+            if (str_starts_with($orderId, 'ORDER-') && $this->shouldMarkAsVerified($transactionStatus, $fraudStatus)) {
+                // Check if order already exists to prevent duplicates
+                $existingPayment = Payment::where('order_id_midtrans', $orderId)->first();
+                if ($existingPayment) {
+                    \Log::info('Order already exists for transaction: ' . $orderId);
+                    return true;
+                }
+                
                 // Create the actual order from payment success
                 $order = $this->createOrderFromPayment($notification);
                 

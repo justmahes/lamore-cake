@@ -32,7 +32,7 @@ const images = [
     },
     {
         src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
-        alt: "Klepon",
+        alt: "Lamore Cake",
         description: "Bola ketan isi gula merah disajikan dengan kelapa parut.",
     },
 ];

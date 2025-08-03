@@ -42,8 +42,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
 
-    // Midtrans Payment Routes (Only 2 routes needed)
-    Route::get('/payment/redirect', [PaymentController::class, 'redirect'])->name('payment.redirect');
+    // Payment redirect routes
+    Route::get('/payment/redirect', [CheckoutController::class, 'paymentRedirect'])->name('payment.redirect');
+    Route::get('/payment/success', [CheckoutController::class, 'paymentSuccess'])->name('payment.success');
+    Route::get('/payment/pending', [CheckoutController::class, 'paymentPending'])->name('payment.pending');
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{order}', [TransactionController::class, 'show'])->name('transactions.show');

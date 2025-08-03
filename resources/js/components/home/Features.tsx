@@ -36,7 +36,7 @@ export const Features = () => {
                                     <CarouselItem>
                                         <img
                                             src="https://cdn.pixabay.com/photo/2017/02/27/17/35/cake-2103761_640.jpg"
-                                            alt="Klepon"
+                                            alt="Lamore Cake"
                                             className="h-full w-full object-cover"
                                         />
                                     </CarouselItem>
@@ -47,17 +47,17 @@ export const Features = () => {
                         </div>
                     </div>
                     <div>
-                        <h4 className="mb-2 font-semibold text-accent">Tentang Klepon Kami</h4>
+                        <h4 className="mb-2 font-semibold text-accent">Tentang Lamore Cake Kami</h4>
                         <h2 className="mb-4 text-3xl leading-tight font-bold text-secondary-foreground md:text-4xl">
-                            Kelezatan Klepon Tradisional <br /> Penuh Dengan Cinta
+                            Kelezatan Lamore Cake Tradisional <br /> Penuh Dengan Cinta
                         </h2>
                         <p className="mb-6 text-gray-600">
-                            Setiap butir klepon dibuat dengan sepenuh hati dan ketelitian, sehingga menghasilkan kelezatan yang sempurna di setiap
-                            gigitan. Kami menjaga kualitas dan kebersihan agar Anda dapat menikmati klepon dengan aman dan nyaman.
+                            Setiap butir Lamore Cake dibuat dengan sepenuh hati dan ketelitian, sehingga menghasilkan kelezatan yang sempurna di
+                            setiap gigitan. Kami menjaga kualitas dan kebersihan agar Anda dapat menikmati Lamore Cake dengan aman dan nyaman.
                         </p>
                         <div className="inline-block rounded-xl bg-primary-foreground p-6 shadow-md">
                             <p className="text-3xl leading-tight font-bold text-primary">2+</p>
-                            <p className="text-sm font-semibold text-gray-700 uppercase">Tahun Usaha Klepon</p>
+                            <p className="text-sm font-semibold text-gray-700 uppercase">Tahun Usaha Lamore Cake</p>
                         </div>
                     </div>
                 </div>
