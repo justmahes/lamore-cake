@@ -23,6 +23,7 @@ class AdminProductController extends Controller
         try {
             $data = $request->validate([
                 'name' => 'required|string|max:255',
+                'kategori' => 'nullable|string|max:100',
                 'category' => 'nullable|string|max:100',
                 'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0',
@@ -49,6 +50,7 @@ class AdminProductController extends Controller
         try {
             $data = $request->validate([
                 'name' => 'required|string|max:255',
+                'kategori' => 'nullable|string|max:100',
                 'category' => 'nullable|string|max:100',
                 'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0',

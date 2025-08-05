@@ -46,6 +46,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // New users are typically regular users, so redirect to user dashboard
+        // Admins are usually created manually, not through registration
+        $dashboardRoute = $user->role === 'admin' ? 'admin.dashboard' : 'dashboard';
+        return redirect()->intended(route($dashboardRoute, absolute: false));
     }
 }

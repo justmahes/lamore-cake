@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Auth;
@@ -9,28 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        $user = Auth::user();
-        if ($user->role === 'admin') {
-            return Inertia::render('dashboard', [
-                'summary' => [
-                    'products' => \App\Models\Product::count(),
-                    'orders' => \App\Models\Order::count(),
-                    'customers' => \App\Models\User::where('role', 'user')->count(),
-                ],
-            ]);
-        }
-
-        if ($user->role === 'user') {
-            return Inertia::render('dashboard', [
-                'summary' => [
-                    'orders' => \App\Models\Order::where('user_id', $user->id)->count(),
-                ],
-            ]);
-        }
-
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 Route::middleware(['auth'])->group(function () {

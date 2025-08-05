@@ -1,6 +1,7 @@
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage, router } from "@inertiajs/react";
+import { useState } from "react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -10,11 +11,17 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Products() {
-    const { products, categories, selectedCategory } = usePage().props as any;
-    const { post } = useForm({});
+    const { products, categories, selectedCategory, auth } = usePage().props as any;
+    const [quantities, setQuantities] = useState<Record<number, number>>({});
 
     const handleCategoryFilter = (category: string) => {
         router.get('/products', { category }, { preserveState: true });
+    };
+
+    const getQuantity = (productId: number) => quantities[productId] || 1;
+    
+    const setQuantity = (productId: number, quantity: number) => {
+        setQuantities(prev => ({ ...prev, [productId]: quantity }));
     };
 
     return (
@@ -65,17 +72,56 @@ export default function Products() {
                                 )}
                             </a>
                             <p className="font-bold">Rp {p.price}</p>
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    post(`/cart/add/${p.id}`);
-                                }}
-                                className="mt-2"
-                            >
-                                <button type="submit" className="rounded bg-primary px-3 py-1 text-white">
-                                    Add to Cart
-                                </button>
-                            </form>
+                            <p className="text-sm text-gray-600">Stock: {p.stock}</p>
+                            {auth?.user ? (
+                                <div className="mt-2 space-y-2">
+                                    <div className="flex items-center space-x-2">
+                                        <label className="text-sm font-medium">Qty:</label>
+                                        <div className="flex items-center border rounded">
+                                            <button 
+                                                type="button"
+                                                onClick={() => setQuantity(p.id, Math.max(1, getQuantity(p.id) - 1))}
+                                                className="px-2 py-1 text-sm border-r hover:bg-gray-100"
+                                            >
+                                                -
+                                            </button>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                max={p.stock}
+                                                value={getQuantity(p.id)}
+                                                onChange={(e) => setQuantity(p.id, Math.max(1, Math.min(p.stock, parseInt(e.target.value) || 1)))}
+                                                className="w-12 px-1 py-1 text-sm text-center border-0 focus:ring-0"
+                                            />
+                                            <button 
+                                                type="button"
+                                                onClick={() => setQuantity(p.id, Math.min(p.stock, getQuantity(p.id) + 1))}
+                                                className="px-2 py-1 text-sm border-l hover:bg-gray-100"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            router.post(`/cart/add/${p.id}`, {
+                                                quantity: getQuantity(p.id)
+                                            });
+                                        }}
+                                    >
+                                        <button type="submit" className="w-full rounded bg-primary px-3 py-1 text-white hover:bg-primary/90">
+                                            Add {getQuantity(p.id)} to Cart
+                                        </button>
+                                    </form>
+                                </div>
+                            ) : (
+                                <div className="mt-2">
+                                    <a href="/login" className="inline-block w-full text-center rounded bg-primary px-3 py-1 text-white">
+                                        Login to order
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>

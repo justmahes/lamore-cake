@@ -4,15 +4,16 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminCustomerController;
 use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Middleware\HandleRole;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/admin', function () {
-    return Inertia::render('home/about');
-})->middleware(HandleRole::class);
+Route::get('/admin', [AdminDashboardController::class, 'index'])->middleware(HandleRole::class);
 
 Route::middleware(['auth', HandleRole::class])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/invoice', [AdminDashboardController::class, 'invoice'])->name('invoice');
     Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
     Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
     Route::post('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
@@ -24,7 +25,6 @@ Route::middleware(['auth', HandleRole::class])->prefix('admin')->name('admin.')-
     Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update_status');
     Route::delete('/orders/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
 
-    Route::get('/reports/sales', [AdminReportController::class, 'salesReport'])->name('reports.sales');
 
     Route::get('/customers', [AdminCustomerController::class, 'index'])->name('customers.index');
     Route::post('/customers', [AdminCustomerController::class, 'store'])->name('customers.store');

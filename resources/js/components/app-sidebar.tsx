@@ -4,7 +4,7 @@ import { NavUser } from "@/components/nav-user";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { type NavItem, type SharedData } from "@/types";
 import { Link, usePage } from "@inertiajs/react";
-import { BarChart, FileText, LayoutGrid, Package, ShoppingCart, Users } from "lucide-react";
+import { FileText, LayoutGrid, Package, ShoppingCart, Users } from "lucide-react";
 import AppLogo from "./app-logo";
 
 function useMainNavItems(): NavItem[] {
@@ -15,7 +15,7 @@ function useMainNavItems(): NavItem[] {
     const items: NavItem[] = [];
 
     if (user.role === "admin") {
-        items.push({ title: "Dashboard", href: "/dashboard", icon: LayoutGrid });
+        items.push({ title: "Dashboard", href: "/admin/dashboard", icon: LayoutGrid });
     }
 
     if (user.role === "user") {
@@ -23,7 +23,6 @@ function useMainNavItems(): NavItem[] {
             { title: "Dashboard", href: "/dashboard", icon: LayoutGrid },
             { title: "Products", href: "/products", icon: Package },
             { title: "Cart", href: "/cart", icon: ShoppingCart },
-            { title: "Orders", href: "/transactions", icon: FileText },
         );
     }
 
@@ -32,7 +31,6 @@ function useMainNavItems(): NavItem[] {
             { title: "Products", href: "/admin/products", icon: Package },
             { title: "Customers", href: "/admin/customers", icon: Users },
             { title: "Orders", href: "/admin/orders", icon: FileText },
-            { title: "Reports", href: "/admin/reports/sales", icon: BarChart },
         );
     }
 
