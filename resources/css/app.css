@@ -326,3 +326,145 @@
 .dark .ProseMirror hr {
     border-top-color: #4b5563;
 }
+
+/* TipTap Content Display Styles for User Side */
+.tiptap-content {
+    line-height: 1.6;
+}
+
+.tiptap-content h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 1rem 0 0.5rem 0;
+    line-height: 1.2;
+}
+
+.tiptap-content h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 1rem 0 0.5rem 0;
+    line-height: 1.3;
+}
+
+.tiptap-content h3 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 1rem 0 0.5rem 0;
+    line-height: 1.4;
+}
+
+.tiptap-content p {
+    margin: 0.5rem 0;
+}
+
+.tiptap-content ul, .tiptap-content ol {
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.tiptap-content li {
+    margin: 0.25rem 0;
+}
+
+.tiptap-content blockquote {
+    border-left: 3px solid #e5e7eb;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    font-style: italic;
+    color: #6b7280;
+}
+
+.tiptap-content code {
+    background-color: #f3f4f6;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+}
+
+.tiptap-content pre {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.tiptap-content pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+}
+
+.tiptap-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+.tiptap-content hr {
+    border: none;
+    border-top: 2px solid #e5e7eb;
+    margin: 2rem 0;
+}
+
+.tiptap-content a {
+    color: #3b82f6;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.tiptap-content a:hover {
+    color: #1d4ed8;
+}
+
+.tiptap-content strong {
+    font-weight: bold;
+}
+
+.tiptap-content em {
+    font-style: italic;
+}
+
+.tiptap-content u {
+    text-decoration: underline;
+}
+
+.tiptap-content s {
+    text-decoration: line-through;
+}
+
+/* Text alignment for tiptap content */
+.tiptap-content [style*="text-align: left"] {
+    text-align: left !important;
+}
+
+.tiptap-content [style*="text-align: center"] {
+    text-align: center !important;
+}
+
+.tiptap-content [style*="text-align: right"] {
+    text-align: right !important;
+}
+
+/* Dark mode support for tiptap content */
+.dark .tiptap-content {
+    color: #f9fafb;
+}
+
+.dark .tiptap-content blockquote {
+    border-left-color: #4b5563;
+    color: #9ca3af;
+}
+
+.dark .tiptap-content code {
+    background-color: #374151;
+    color: #f9fafb;
+}
+
+.dark .tiptap-content hr {
+    border-top-color: #4b5563;
+}
