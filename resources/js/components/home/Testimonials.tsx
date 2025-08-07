@@ -11,42 +11,42 @@ interface TestimonialProps {
 const testimonials: TestimonialProps[] = [
     {
         image: "https://github.com/shadcn.png",
-        name: "John Doe React",
-        userName: "@john_Doe",
-        comment: "Lorem ipsum dolor sit amet,empor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.",
+        name: "Sari Wijayanti",
+        userName: "@sari_wiji",
+        comment: "Kue-kue di Lamore Cake selalu segar dan enak! Favorit saya adalah brownies cokelat yang lembut dan tidak terlalu manis. Selalu jadi andalan untuk acara keluarga.",
     },
     {
-        image: "https://github.com/shadcn.png",
-        name: "John Doe React",
-        userName: "@john_Doe1",
-        comment: "Lorem ipsum dolor sit amet,empor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.",
+        image: "https://github.com/shadcn.png", 
+        name: "Budi Santoso",
+        userName: "@budi_santoso",
+        comment: "Sudah berlangganan 2 tahun di Lamore Cake. Kualitas selalu konsisten dan pelayanannya ramah. Harga juga bersaing dengan kualitas premium.",
     },
 
     {
         image: "https://github.com/shadcn.png",
-        name: "John Doe React",
-        userName: "@john_Doe2",
+        name: "Maya Indira",
+        userName: "@maya_indira",
         comment:
-            "Lorem ipsum dolor sit amet,exercitation. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
+            "Yang paling saya suka dari Lamore Cake adalah variasi rasanya yang unik! Cake pandan gula merah mereka benar-benar otentik dan mengingatkan masa kecil. Packaging juga rapi dan cantik.",
     },
     {
         image: "https://github.com/shadcn.png",
-        name: "John Doe React",
-        userName: "@john_Doe3",
+        name: "Ahmad Rifky",
+        userName: "@ahmad_rifky", 
         comment:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
+            "Pesen kue ulang tahun di Lamore Cake untuk anak saya. Hasilnya melebihi ekspektasi! Dekorasinya cantik dan rasanya lezat. Anak-anak pada suka semua.",
     },
     {
         image: "https://github.com/shadcn.png",
-        name: "John Doe React",
-        userName: "@john_Doe4",
-        comment: "Lorem ipsum dolor sit amet, tempor incididunt  aliqua. Ut enim ad minim veniam, quis nostrud.",
+        name: "Fitri Rahayu",
+        userName: "@fitri_rahayu",
+        comment: "Croissant dan danish pastry-nya juara! Tekstur renyah di luar, lembut di dalam. Perfect untuk sarapan atau teman minum teh sore.",
     },
     {
         image: "https://github.com/shadcn.png",
-        name: "John Doe React",
-        userName: "@john_Doe5",
-        comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        name: "Dimas Prakoso",
+        userName: "@dimas_prakoso",
+        comment: "Lamore Cake jadi toko kue langganan kantor untuk acara meeting. Kue tar buah segar mereka selalu jadi favorit tim. Delivery juga selalu on time!",
     },
 ];
 

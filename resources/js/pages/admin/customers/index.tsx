@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import InputError from "@/components/input-error";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,6 +31,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function AdminCustomers() {
     const { customers } = usePage().props as any;
     const [editing, setEditing] = useState<any>(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     const editForm = useForm({
         name: "",
@@ -38,6 +41,22 @@ export default function AdminCustomers() {
         phone: "",
         address: "",
     });
+
+    // Filter and paginate customers
+    const filteredCustomers = useMemo(() => {
+        return customers.filter((customer: any) =>
+            customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (customer.phone && customer.phone.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+    }, [customers, searchTerm]);
+
+    const paginatedCustomers = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        return filteredCustomers.slice(startIndex, startIndex + itemsPerPage);
+    }, [filteredCustomers, currentPage]);
+
+    const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
 
     const startEdit = (customer: any) => {
         setEditing(customer);
@@ -110,31 +129,114 @@ export default function AdminCustomers() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Customer List</CardTitle>
+                        <div className="flex items-center space-x-2 mt-4">
+                            <Input
+                                placeholder="Search by name, email or phone..."
+                                value={searchTerm}
+                                onChange={(e) => {
+                                    setSearchTerm(e.target.value);
+                                    setCurrentPage(1);
+                                }}
+                                className="max-w-sm"
+                            />
+                            <span className="text-sm text-muted-foreground">
+                                {filteredCustomers.length} customers found
+                            </span>
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Name</TableHead>
-                                    <TableHead>Email</TableHead>
-                                    <TableHead className="w-32" />
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {customers.map((c: any) => (
-                                    <TableRow key={c.id}>
-                                        <TableCell>{c.name}</TableCell>
-                                        <TableCell>{c.email}</TableCell>
-                                        <TableCell>
-                                            <Button variant="link" onClick={() => startEdit(c)} className="px-0 mr-2">Edit</Button>
-                                            <Button variant="link" className="text-red-500 px-0" onClick={() => destroy(`/admin/customers/${c.id}`)}>
-                                                Delete
-                                            </Button>
-                                        </TableCell>
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Name</TableHead>
+                                        <TableHead>Email</TableHead>
+                                        <TableHead>Phone</TableHead>
+                                        <TableHead>Address</TableHead>
+                                        <TableHead className="w-32">Actions</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {paginatedCustomers.map((c: any) => (
+                                        <TableRow key={c.id}>
+                                            <TableCell className="font-medium">{c.name}</TableCell>
+                                            <TableCell>{c.email}</TableCell>
+                                            <TableCell>{c.phone || '-'}</TableCell>
+                                            <TableCell>{c.address || '-'}</TableCell>
+                                            <TableCell>
+                                                <div className="flex space-x-2">
+                                                    <Button 
+                                                        variant="outline" 
+                                                        size="sm"
+                                                        onClick={() => startEdit(c)}
+                                                    >
+                                                        Edit
+                                                    </Button>
+                                                    <Button 
+                                                        variant="outline" 
+                                                        size="sm"
+                                                        onClick={() => destroy(`/admin/customers/${c.id}`)}
+                                                        className="text-red-600 hover:text-red-700"
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                        
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="flex items-center justify-between space-x-2 py-4">
+                                <div className="text-sm text-muted-foreground">
+                                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredCustomers.length)} of {filteredCustomers.length} entries
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setCurrentPage(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                    >
+                                        Previous
+                                    </Button>
+                                    <div className="flex items-center space-x-1">
+                                        {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                            .filter(page => 
+                                                page === 1 || 
+                                                page === totalPages || 
+                                                Math.abs(page - currentPage) <= 1
+                                            )
+                                            .map((page, index, array) => (
+                                                <div key={page} className="flex items-center">
+                                                    {index > 0 && array[index - 1] !== page - 1 && (
+                                                        <span className="px-2 text-muted-foreground">...</span>
+                                                    )}
+                                                    <Button
+                                                        variant={currentPage === page ? "default" : "outline"}
+                                                        size="sm"
+                                                        onClick={() => setCurrentPage(page)}
+                                                    >
+                                                        {page}
+                                                    </Button>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setCurrentPage(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                    >
+                                        Next
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>

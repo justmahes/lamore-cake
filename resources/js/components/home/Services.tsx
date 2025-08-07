@@ -11,21 +11,21 @@ interface ServiceProps {
 
 const serviceList: ServiceProps[] = [
     {
-        title: "Code Collaboration",
+        title: "Kualitas Premium",
         description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.",
+            "Menggunakan bahan-bahan berkualitas tinggi dan resep tradisional yang telah teruji untuk menghasilkan cita rasa yang istimewa.",
         icon: <ChartIcon />,
     },
     {
-        title: "Project Management",
+        title: "Custom Order", 
         description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.",
+            "Melayani pemesanan kue custom untuk berbagai acara spesial seperti ulang tahun, pernikahan, dan perayaan lainnya.",
         icon: <WalletIcon />,
     },
     {
-        title: "Task Automation",
+        title: "Fresh Daily",
         description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi nesciunt est nostrum omnis ab sapiente.",
+            "Semua produk kami diproduksi segar setiap hari untuk menjamin kesegaran dan kelezatan yang optimal bagi pelanggan.",
         icon: <MagnifierIcon />,
     },
 ];
@@ -37,14 +37,13 @@ export const Services = () => {
                 <div>
                     <h2 className="text-3xl md:text-4xl font-bold">
                         <span className="bg-gradient-to-b from-primary/60 to-primary text-transparent bg-clip-text">
-                            Client-Centric{" "}
+                            Keunggulan{" "}
                         </span>
-                        Services
+                        Lamore Cake
                     </h2>
 
                     <p className="text-muted-foreground text-xl mt-4 mb-8 ">
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Veritatis
-                        dolor.
+                        Kami berkomitmen memberikan yang terbaik dengan layanan berkualitas tinggi dan produk yang selalu segar.
                     </p>
 
                     <div className="flex flex-col gap-8">

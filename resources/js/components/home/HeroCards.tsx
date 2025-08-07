@@ -42,7 +42,7 @@ export const HeroCards = () => {
                         <span className="text-xl font-bold">Cake Manis Asam Jawa</span>
                     </div>
 
-                    <CardDescription>Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.</CardDescription>
+                    <CardDescription>Nikmati kelezatan kue tradisional dengan cita rasa asam jawa yang menyegarkan dan tekstur yang lembut.</CardDescription>
                 </CardHeader>
 
                 <CardContent>
