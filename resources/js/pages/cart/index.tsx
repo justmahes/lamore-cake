@@ -19,7 +19,7 @@ import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: "Cart",
+        title: "Keranjang",
         href: "/cart",
     },
 ];
@@ -29,19 +29,19 @@ export default function Cart() {
     const { delete: destroy } = useForm({});
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Cart" />
+            <Head title="Keranjang" />
             <div className="container mx-auto space-y-6 p-4">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Cart</CardTitle>
+                        <CardTitle>Keranjang</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Product</TableHead>
-                                    <TableHead>Qty</TableHead>
-                                    <TableHead>Price</TableHead>
+                                    <TableHead>Produk</TableHead>
+                                    <TableHead>Jml</TableHead>
+                                    <TableHead>Harga</TableHead>
                                     <TableHead className="w-24" />
                                 </TableRow>
                             </TableHeader>
@@ -59,7 +59,7 @@ export default function Cart() {
                                                 }}
                                             >
                                                 <Button type="submit" variant="link" className="text-red-500 px-0">
-                                                    Remove
+                                                    Hapus
                                                 </Button>
                                             </form>
                                         </TableCell>
@@ -81,7 +81,7 @@ export default function Cart() {
                                             ' - Total: ' + subtotal
                                     )}`}
                                 >
-                                    Order via WhatsApp
+                                    Pesan via WhatsApp
                                 </a>
                             </Button>
                         </div>

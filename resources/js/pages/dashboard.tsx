@@ -40,7 +40,7 @@ ChartJS.register(
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: "Dashboard",
+        title: "Dasbor",
         href: "/dashboard",
     },
 ];
@@ -54,28 +54,28 @@ export default function Dashboard() {
     // For admin dashboard (existing functionality)
     const adminCards = [] as { title: string; value: any }[];
     if (summary?.products !== undefined) {
-        adminCards.push({ title: "Total Products", value: summary.products });
+        adminCards.push({ title: "Total Produk", value: summary.products });
     }
     if (summary?.customers !== undefined) {
-        adminCards.push({ title: "Total Customers", value: summary.customers });
+        adminCards.push({ title: "Total Pelanggan", value: summary.customers });
     }
     if (summary?.orders !== undefined) {
-        adminCards.push({ title: "Total Orders", value: summary.orders });
+        adminCards.push({ title: "Total Pesanan", value: summary.orders });
     }
 
     // For user dashboard
     const userCards = [] as { title: string; value: any }[];
     if (summary?.total_orders !== undefined) {
-        userCards.push({ title: "Total Orders", value: summary.total_orders });
+        userCards.push({ title: "Total Pesanan", value: summary.total_orders });
     }
     if (summary?.completed_orders !== undefined) {
-        userCards.push({ title: "Completed Orders", value: summary.completed_orders });
+        userCards.push({ title: "Pesanan Selesai", value: summary.completed_orders });
     }
     if (summary?.pending_orders !== undefined) {
-        userCards.push({ title: "Pending Orders", value: summary.pending_orders });
+        userCards.push({ title: "Pesanan Tertunda", value: summary.pending_orders });
     }
     if (summary?.total_spent !== undefined) {
-        userCards.push({ title: "Total Spent", value: `Rp${(summary.total_spent || 0).toLocaleString()}` });
+        userCards.push({ title: "Total Pengeluaran", value: `Rp${(summary.total_spent || 0).toLocaleString()}` });
     }
 
     const isUserDashboard = userCards.length > 0;
@@ -101,7 +101,7 @@ export default function Dashboard() {
         labels: orderData.map((item: any) => item.date),
         datasets: [
             {
-                label: 'Orders Count',
+                label: 'Jumlah Pesanan',
                 data: orderData.map((item: any) => item.count),
                 borderColor: 'rgb(59, 130, 246)',
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -114,7 +114,7 @@ export default function Dashboard() {
         labels: favoriteProducts.map((item: any) => item.name),
         datasets: [
             {
-                label: 'Quantity Ordered',
+                label: 'Jumlah Dipesan',
                 data: favoriteProducts.map((item: any) => item.qty),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.8)',
@@ -168,13 +168,13 @@ export default function Dashboard() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title="Dasbor" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {isUserDashboard ? (
                     <Tabs defaultValue="overview" className="w-full space-y-4">
                         <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="overview">Overview & Charts</TabsTrigger>
-                            <TabsTrigger value="orders">Order History</TabsTrigger>
+                            <TabsTrigger value="overview">Ikhtisar & Grafik</TabsTrigger>
+                            <TabsTrigger value="orders">Riwayat Pesanan</TabsTrigger>
                         </TabsList>
                         
                         <TabsContent value="overview" className="space-y-4">
@@ -197,7 +197,7 @@ export default function Dashboard() {
                                 {orderChartData && (
                                     <Card>
                                         <CardHeader>
-                                            <CardTitle>Order Trend (Last 30 Days)</CardTitle>
+                                            <CardTitle>Tren Pesanan (30 Hari Terakhir)</CardTitle>
                                         </CardHeader>
                                         <CardContent>
                                             <div className="h-[300px]">
@@ -210,7 +210,7 @@ export default function Dashboard() {
                                 {favoriteProductsChartData && (
                                     <Card>
                                         <CardHeader>
-                                            <CardTitle>Your Favorite Products</CardTitle>
+                                            <CardTitle>Produk Favorit Anda</CardTitle>
                                         </CardHeader>
                                         <CardContent>
                                             <div className="h-[300px]">
@@ -225,7 +225,7 @@ export default function Dashboard() {
                             {favoriteProductsChartData && (
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Product Order Comparison</CardTitle>
+                                        <CardTitle>Perbandingan Pesanan Produk</CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="h-[400px]">
@@ -239,10 +239,10 @@ export default function Dashboard() {
                         <TabsContent value="orders" className="space-y-4">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Your Order History</CardTitle>
+                                    <CardTitle>Riwayat Pesanan Anda</CardTitle>
                                     <div className="flex items-center space-x-2 mt-4">
                                         <Input
-                                            placeholder="Search by product..."
+                                            placeholder="Cari berdasarkan produk..."
                                             value={searchTerm}
                                             onChange={(e) => {
                                                 setSearchTerm(e.target.value);
@@ -251,7 +251,7 @@ export default function Dashboard() {
                                             className="max-w-sm"
                                         />
                                         <span className="text-sm text-muted-foreground">
-                                            {filteredHistory.length} records found
+                                            {filteredHistory.length} data ditemukan
                                         </span>
                                     </div>
                                 </CardHeader>
@@ -260,13 +260,13 @@ export default function Dashboard() {
                                         <Table>
                                             <TableHeader>
                                                 <TableRow>
-                                                    <TableHead>Order ID</TableHead>
-                                                    <TableHead>Product</TableHead>
-                                                    <TableHead className="text-right">Quantity</TableHead>
-                                                    <TableHead className="text-right">Price</TableHead>
+                                                    <TableHead>ID Pesanan</TableHead>
+                                                    <TableHead>Produk</TableHead>
+                                                    <TableHead className="text-right">Jumlah</TableHead>
+                                                    <TableHead className="text-right">Harga</TableHead>
                                                     <TableHead className="text-right">Total</TableHead>
                                                     <TableHead>Status</TableHead>
-                                                    <TableHead className="text-right">Date</TableHead>
+                                                    <TableHead className="text-right">Tanggal</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>

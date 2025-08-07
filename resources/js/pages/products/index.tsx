@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: "Products",
+        title: "Produk",
         href: "/products",
     },
 ];
@@ -26,9 +26,9 @@ export default function Products() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Products" />
+            <Head title="Produk" />
             <div className="container mx-auto p-4">
-                <h1 className="mb-4 text-2xl font-bold">Products</h1>
+                <h1 className="mb-4 text-2xl font-bold">Produk</h1>
                 
                 {/* Category Filter Tabs */}
                 {categories && categories.length > 0 && (
@@ -41,7 +41,7 @@ export default function Products() {
                                     : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                         >
-                            All
+                            Semua
                         </button>
                         {categories.map((category: string) => (
                             <button
@@ -72,11 +72,11 @@ export default function Products() {
                                 )}
                             </a>
                             <p className="font-bold">Rp {p.price}</p>
-                            <p className="text-sm text-gray-600">Stock: {p.stock}</p>
+                            <p className="text-sm text-gray-600">Stok: {p.stock}</p>
                             {auth?.user ? (
                                 <div className="mt-2 space-y-2">
                                     <div className="flex items-center space-x-2">
-                                        <label className="text-sm font-medium">Qty:</label>
+                                        <label className="text-sm font-medium">Jml:</label>
                                         <div className="flex items-center border rounded">
                                             <button 
                                                 type="button"
@@ -111,14 +111,14 @@ export default function Products() {
                                         }}
                                     >
                                         <button type="submit" className="w-full rounded bg-primary px-3 py-1 text-white hover:bg-primary/90">
-                                            Add {getQuantity(p.id)} to Cart
+                                            Tambah {getQuantity(p.id)} ke Keranjang
                                         </button>
                                     </form>
                                 </div>
                             ) : (
                                 <div className="mt-2">
                                     <a href="/login" className="inline-block w-full text-center rounded bg-primary px-3 py-1 text-white">
-                                        Login to order
+                                        Masuk untuk memesan
                                     </a>
                                 </div>
                             )}

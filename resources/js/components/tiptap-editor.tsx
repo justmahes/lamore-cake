@@ -87,7 +87,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive("bold") ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().toggleBold().run()}
-                            title="Bold"
+                            title="Tebal"
                         >
                             <strong>B</strong>
                         </Button>
@@ -96,7 +96,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive("italic") ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().toggleItalic().run()}
-                            title="Italic"
+                            title="Miring"
                         >
                             <em>I</em>
                         </Button>
@@ -105,7 +105,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive("underline") ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().toggleUnderline().run()}
-                            title="Underline"
+                            title="Garis Bawah"
                         >
                             <u>U</u>
                         </Button>
@@ -114,7 +114,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive("strike") ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().toggleStrike().run()}
-                            title="Strikethrough"
+                            title="Coret"
                         >
                             <s>S</s>
                         </Button>
@@ -127,7 +127,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive("heading", { level: 1 }) ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
-                            title="Heading 1"
+                            title="Judul 1"
                         >
                             H1
                         </Button>
@@ -136,7 +136,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive("heading", { level: 2 }) ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
-                            title="Heading 2"
+                            title="Judul 2"
                         >
                             H2
                         </Button>
@@ -145,7 +145,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive("heading", { level: 3 }) ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
-                            title="Heading 3"
+                            title="Judul 3"
                         >
                             H3
                         </Button>
@@ -154,7 +154,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive("paragraph") ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().setParagraph().run()}
-                            title="Paragraph"
+                            title="Paragraf"
                         >
                             P
                         </Button>
@@ -167,7 +167,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive("bulletList") ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().toggleBulletList().run()}
-                            title="Bullet List"
+                            title="Daftar Bullet"
                         >
                             • List
                         </Button>
@@ -176,7 +176,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive("orderedList") ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-                            title="Numbered List"
+                            title="Daftar Bernomor"
                         >
                             1. List
                         </Button>
@@ -189,7 +189,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive({ textAlign: "left" }) ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().setTextAlign("left").run()}
-                            title="Align Left"
+                            title="Rata Kiri"
                         >
                             ⬅
                         </Button>
@@ -198,7 +198,7 @@ export default function TiptapEditor({ content, onChange }: Props) {
                             size="sm"
                             variant={editor?.isActive({ textAlign: "center" }) ? "default" : "outline"}
                             onClick={() => editor?.chain().focus().setTextAlign("center").run()}
-                            title="Align Center"
+                            title="Rata Tengah"
                         >
                             ↔
                         </Button>

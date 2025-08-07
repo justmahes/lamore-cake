@@ -38,7 +38,7 @@ export const FAQ = () => {
     return (
         <section id="faq" className="relative container mx-auto py-24 sm:py-32">
             <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-                Frequently Asked <span className="bg-gradient-to-b from-primary/60 to-primary bg-clip-text text-transparent">Questions</span>
+                Pertanyaan Yang Sering <span className="bg-gradient-to-b from-primary/60 to-primary bg-clip-text text-transparent">Ditanyakan</span>
             </h2>
 
             <Accordion type="single" collapsible className="AccordionRoot w-full">
@@ -52,9 +52,9 @@ export const FAQ = () => {
             </Accordion>
 
             <h3 className="mt-4 font-medium">
-                Still have questions?{" "}
+                Masih ada pertanyaan?{" "}
                 <a rel="noreferrer noopener" href="#" className="border-primary text-primary transition-all hover:border-b-2">
-                    Contact us
+                    Hubungi kami
                 </a>
             </h3>
         </section>

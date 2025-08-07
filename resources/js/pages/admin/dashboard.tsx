@@ -14,7 +14,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointEleme
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: "Admin Dashboard",
+        title: "Dasbor Admin",
         href: "/admin/dashboard",
     },
 ];
@@ -41,10 +41,10 @@ export default function AdminDashboard() {
     const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
 
     const summaryCards = [
-        { title: "Total Products", value: summary?.products || 0 },
-        { title: "Total Customers", value: summary?.customers || 0 },
-        { title: "Total Orders", value: summary?.orders || 0 },
-        { title: "Total Sales", value: `Rp${(summary?.total_sales || 0).toLocaleString()}` },
+        { title: "Total Produk", value: summary?.products || 0 },
+        { title: "Total Pelanggan", value: summary?.customers || 0 },
+        { title: "Total Pesanan", value: summary?.orders || 0 },
+        { title: "Total Penjualan", value: `Rp${(summary?.total_sales || 0).toLocaleString()}` },
     ];
 
     // Prepare chart data
@@ -52,7 +52,7 @@ export default function AdminDashboard() {
         labels: salesData.map((item: any) => item.date),
         datasets: [
             {
-                label: "Daily Sales (Rp)",
+                label: "Penjualan Harian (Rp)",
                 data: salesData.map((item: any) => item.total),
                 borderColor: "rgb(59, 130, 246)",
                 backgroundColor: "rgba(59, 130, 246, 0.1)",
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
         labels: productSalesData.map((item: any) => item.name),
         datasets: [
             {
-                label: "Units Sold",
+                label: "Unit Terjual",
                 data: productSalesData.map((item: any) => item.qty),
                 backgroundColor: [
                     "rgba(255, 99, 132, 0.8)",
@@ -119,22 +119,22 @@ export default function AdminDashboard() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Admin Dashboard" />
+            <Head title="Dasbor Admin" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {/* Header with Invoice Button */}
                 <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+                    <h1 className="text-3xl font-bold">Dasbor Admin</h1>
                     <Link href="/admin/invoice">
                         <Button className="bg-green-600 hover:bg-green-700">
-                            📄 Generate Sales Invoice
+                            📄 Buat Faktur Penjualan
                         </Button>
                     </Link>
                 </div>
                 
                 <Tabs defaultValue="overview" className="w-full space-y-4">
                     <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="overview">Overview & Charts</TabsTrigger>
-                        <TabsTrigger value="sales">Sales Details</TabsTrigger>
+                        <TabsTrigger value="overview">Ikhtisar & Grafik</TabsTrigger>
+                        <TabsTrigger value="sales">Detail Penjualan</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="overview" className="space-y-4">
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
                         <div className="grid gap-4 md:grid-cols-2">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Sales Trend (Last 30 Days)</CardTitle>
+                                    <CardTitle>Tren Penjualan (30 Hari Terakhir)</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="h-[300px]">
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
 
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Top Products by Sales</CardTitle>
+                                    <CardTitle>Produk Terlaris</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="h-[300px]">
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
                         {/* Bar Chart */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Product Sales Comparison</CardTitle>
+                                <CardTitle>Perbandingan Penjualan Produk</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="h-[400px]">
@@ -193,10 +193,10 @@ export default function AdminDashboard() {
                     <TabsContent value="sales" className="space-y-4">
                         <Card>
                             <CardHeader>
-                                <CardTitle>All Sales Data</CardTitle>
+                                <CardTitle>Semua Data Penjualan</CardTitle>
                                 <div className="mt-4 flex items-center space-x-2">
                                     <Input
-                                        placeholder="Search by product or customer..."
+                                        placeholder="Cari berdasarkan produk atau pelanggan..."
                                         value={searchTerm}
                                         onChange={(e) => {
                                             setSearchTerm(e.target.value);
@@ -204,7 +204,7 @@ export default function AdminDashboard() {
                                         }}
                                         className="max-w-sm"
                                     />
-                                    <span className="text-sm text-muted-foreground">{filteredSales.length} records found</span>
+                                    <span className="text-sm text-muted-foreground">{filteredSales.length} data ditemukan</span>
                                 </div>
                             </CardHeader>
                             <CardContent>
@@ -213,12 +213,12 @@ export default function AdminDashboard() {
                                         <TableHeader>
                                             <TableRow>
                                                 <TableHead>ID</TableHead>
-                                                <TableHead>Product</TableHead>
-                                                <TableHead>Customer</TableHead>
-                                                <TableHead className="text-right">Quantity</TableHead>
-                                                <TableHead className="text-right">Price</TableHead>
+                                                <TableHead>Produk</TableHead>
+                                                <TableHead>Pelanggan</TableHead>
+                                                <TableHead className="text-right">Jumlah</TableHead>
+                                                <TableHead className="text-right">Harga</TableHead>
                                                 <TableHead className="text-right">Total</TableHead>
-                                                <TableHead className="text-right">Date</TableHead>
+                                                <TableHead className="text-right">Tanggal</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>

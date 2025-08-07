@@ -16,9 +16,9 @@ interface RouteProps {
 }
 
 const commonRoutes: RouteProps[] = [
-    { href: "/gallery", label: "Gallery" },
-    { href: "/products", label: "Products" },
-    { href: "/about", label: "About Lamore Cake" },
+    { href: "/gallery", label: "Galeri" },
+    { href: "/products", label: "Produk" },
+    { href: "/about", label: "Tentang Lamore Cake" },
 ];
 
 export const Navbar = () => {
@@ -26,8 +26,8 @@ export const Navbar = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const routeList: RouteProps[] = [
         ...commonRoutes,
-        ...(auth.user ? [{ href: "/cart", label: "Cart" }] : []),
-        auth.user ? { href: "/dashboard", label: "Dashboard" } : { href: "/login", label: "Login" },
+        ...(auth.user ? [{ href: "/cart", label: "Keranjang" }] : []),
+        auth.user ? { href: "/dashboard", label: "Dasbor" } : { href: "/login", label: "Masuk" },
     ];
     return (
         // <header className="sticky top-0 z-40 w-full border-b-[1px] bg-white dark:border-b-slate-700 dark:bg-background">
