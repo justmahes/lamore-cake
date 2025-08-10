@@ -35,7 +35,7 @@ export default function ProductShow() {
                     <div className="space-y-3">
                         <div className="flex items-center space-x-3">
                             <label htmlFor="quantity" className="font-medium">
-                                Quantity:
+                                Jumlah:
                             </label>
                             <div className="flex items-center rounded border">
                                 <button

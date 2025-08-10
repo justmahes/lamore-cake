@@ -14,7 +14,7 @@ export const Footer = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <h3 className="text-lg font-bold">Follow US</h3>
+                    <h3 className="text-lg font-bold">Ikuti Kami</h3>
                     <div>
                         <a rel="noreferrer noopener" href="#" className="opacity-60 hover:opacity-100">
                             Twitter
@@ -35,16 +35,16 @@ export const Footer = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <h3 className="text-lg font-bold">About</h3>
+                    <h3 className="text-lg font-bold">Tentang Kami</h3>
                     <div>
-                        <a rel="noreferrer noopener" href="#" className="opacity-60 hover:opacity-100">
-                            Gallery
+                        <a rel="noreferrer noopener" href="/gallery" className="opacity-60 hover:opacity-100">
+                            Galeri
                         </a>
                     </div>
 
                     <div>
-                        <a rel="noreferrer noopener" href="#" className="opacity-60 hover:opacity-100">
-                            Products
+                        <a rel="noreferrer noopener" href="/products" className="opacity-60 hover:opacity-100">
+                            Produk
                         </a>
                     </div>
                 </div>

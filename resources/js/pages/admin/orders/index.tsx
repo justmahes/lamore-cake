@@ -23,10 +23,11 @@ export default function AdminOrders() {
 
     // Filter and paginate orders
     const filteredOrders = useMemo(() => {
-        return orders.filter((order: any) =>
-            order.id.toString().includes(searchTerm.toLowerCase()) ||
-            (order.user?.name && order.user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (order.status && order.status.toLowerCase().includes(searchTerm.toLowerCase()))
+        return orders.filter(
+            (order: any) =>
+                order.id.toString().includes(searchTerm.toLowerCase()) ||
+                (order.user?.name && order.user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (order.status && order.status.toLowerCase().includes(searchTerm.toLowerCase())),
         );
     }, [orders, searchTerm]);
 
@@ -44,10 +45,10 @@ export default function AdminOrders() {
                 <h1 className="text-2xl font-bold">Orders</h1>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Order List</CardTitle>
-                        <div className="flex items-center space-x-2 mt-4">
+                        <CardTitle>Daftar Order</CardTitle>
+                        <div className="mt-4 flex items-center space-x-2">
                             <Input
-                                placeholder="Search by ID, customer name or status..."
+                                placeholder="Cari berdasarkan ID, kustomer atau status"
                                 value={searchTerm}
                                 onChange={(e) => {
                                     setSearchTerm(e.target.value);
@@ -55,9 +56,7 @@ export default function AdminOrders() {
                                 }}
                                 className="max-w-sm"
                             />
-                            <span className="text-sm text-muted-foreground">
-                                {filteredOrders.length} orders found
-                            </span>
+                            <span className="text-sm text-muted-foreground">{filteredOrders.length} order ditemukan</span>
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -66,34 +65,39 @@ export default function AdminOrders() {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Invoice ID</TableHead>
-                                        <TableHead>Customer</TableHead>
-                                        <TableHead className="text-right">Total Price</TableHead>
+                                        <TableHead>Kustomer</TableHead>
+                                        <TableHead className="text-right">Total Harga</TableHead>
                                         <TableHead>Status</TableHead>
-                                        <TableHead>Created Date</TableHead>
-                                        <TableHead className="w-32">Actions</TableHead>
+                                        <TableHead>Tanggal Dibuat</TableHead>
+                                        <TableHead className="w-32">Aksi</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {paginatedOrders.map((o: any) => (
                                         <TableRow key={o.id}>
                                             <TableCell>
-                                                <a className="text-primary font-medium" href={`/admin/orders/${o.id}`}>
+                                                <a className="font-medium text-primary" href={`/admin/orders/${o.id}`}>
                                                     #{o.id}
                                                 </a>
                                             </TableCell>
-                                            <TableCell className="font-medium">{o?.user?.name || 'N/A'}</TableCell>
+                                            <TableCell className="font-medium">{o?.user?.name || "N/A"}</TableCell>
                                             <TableCell className="text-right">Rp{(o?.total_price || 0).toLocaleString()}</TableCell>
                                             <TableCell>
-                                                <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                                    o?.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                    o?.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                    o?.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                                                    'bg-gray-100 text-gray-800'
-                                                }`}>
-                                                    {o?.status || 'Unknown'}
+                                                <span
+                                                    className={`rounded px-2 py-1 text-xs font-medium ${
+                                                        o?.status === "completed"
+                                                            ? "bg-green-100 text-green-800"
+                                                            : o?.status === "pending"
+                                                              ? "bg-yellow-100 text-yellow-800"
+                                                              : o?.status === "cancelled"
+                                                                ? "bg-red-100 text-red-800"
+                                                                : "bg-gray-100 text-gray-800"
+                                                    }`}
+                                                >
+                                                    {o?.status || "Unknown"}
                                                 </span>
                                             </TableCell>
-                                            <TableCell>{o?.created_at ? new Date(o.created_at).toLocaleDateString('id-ID') : 'N/A'}</TableCell>
+                                            <TableCell>{o?.created_at ? new Date(o.created_at).toLocaleDateString("id-ID") : "N/A"}</TableCell>
                                             <TableCell>
                                                 <div className="flex space-x-2">
                                                     <Button
@@ -103,13 +107,13 @@ export default function AdminOrders() {
                                                     >
                                                         Detail
                                                     </Button>
-                                                    <Button 
-                                                        variant="outline" 
+                                                    <Button
+                                                        variant="outline"
                                                         size="sm"
                                                         onClick={() => destroy(`/admin/orders/${o.id}`)}
                                                         className="text-red-600 hover:text-red-700"
                                                     >
-                                                        Delete
+                                                        Hapus
                                                     </Button>
                                                 </div>
                                             </TableCell>
@@ -118,29 +122,21 @@ export default function AdminOrders() {
                                 </TableBody>
                             </Table>
                         </div>
-                        
+
                         {/* Pagination */}
                         {totalPages > 1 && (
                             <div className="flex items-center justify-between space-x-2 py-4">
                                 <div className="text-sm text-muted-foreground">
-                                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of {filteredOrders.length} entries
+                                    Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of{" "}
+                                    {filteredOrders.length} entries
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => setCurrentPage(currentPage - 1)}
-                                        disabled={currentPage === 1}
-                                    >
+                                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
                                         Previous
                                     </Button>
                                     <div className="flex items-center space-x-1">
                                         {Array.from({ length: totalPages }, (_, i) => i + 1)
-                                            .filter(page => 
-                                                page === 1 || 
-                                                page === totalPages || 
-                                                Math.abs(page - currentPage) <= 1
-                                            )
+                                            .filter((page) => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1)
                                             .map((page, index, array) => (
                                                 <div key={page} className="flex items-center">
                                                     {index > 0 && array[index - 1] !== page - 1 && (
@@ -154,8 +150,7 @@ export default function AdminOrders() {
                                                         {page}
                                                     </Button>
                                                 </div>
-                                            ))
-                                        }
+                                            ))}
                                     </div>
                                     <Button
                                         variant="outline"

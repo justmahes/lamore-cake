@@ -1,29 +1,17 @@
-import AppLayout from "@/layouts/app-layout";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
+import InputError from "@/components/input-error";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import InputError from "@/components/input-error";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: "Admin Customers",
+        title: "Admin Kustomer",
         href: "/admin/customers",
     },
 ];
@@ -44,10 +32,11 @@ export default function AdminCustomers() {
 
     // Filter and paginate customers
     const filteredCustomers = useMemo(() => {
-        return customers.filter((customer: any) =>
-            customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (customer.phone && customer.phone.toLowerCase().includes(searchTerm.toLowerCase()))
+        return customers.filter(
+            (customer: any) =>
+                customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (customer.phone && customer.phone.toLowerCase().includes(searchTerm.toLowerCase())),
         );
     }, [customers, searchTerm]);
 
@@ -86,17 +75,17 @@ export default function AdminCustomers() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Admin Customers" />
             <div className="container mx-auto space-y-6 p-4">
-                <h1 className="text-2xl font-bold">Customers</h1>
+                <h1 className="text-2xl font-bold">Kustomer</h1>
 
                 {editing && (
                     <Card>
                         <CardHeader>
-                            <CardTitle>Edit Customer</CardTitle>
+                            <CardTitle>Ubah Kustomer</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={submitEdit} className="space-y-4">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="name">Nama</Label>
                                     <Input id="name" value={editForm.data.name} onChange={(e) => editForm.setData("name", e.target.value)} />
                                     <InputError message={editForm.errors.name} />
                                 </div>
@@ -106,12 +95,12 @@ export default function AdminCustomers() {
                                     <InputError message={editForm.errors.email} />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="phone">Phone</Label>
+                                    <Label htmlFor="phone">Nomor HP</Label>
                                     <Input id="phone" value={editForm.data.phone} onChange={(e) => editForm.setData("phone", e.target.value)} />
                                     <InputError message={editForm.errors.phone} />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="address">Address</Label>
+                                    <Label htmlFor="address">Alamat</Label>
                                     <Input id="address" value={editForm.data.address} onChange={(e) => editForm.setData("address", e.target.value)} />
                                     <InputError message={editForm.errors.address} />
                                 </div>
@@ -128,10 +117,10 @@ export default function AdminCustomers() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Customer List</CardTitle>
-                        <div className="flex items-center space-x-2 mt-4">
+                        <CardTitle>Daftar Kustomer</CardTitle>
+                        <div className="mt-4 flex items-center space-x-2">
                             <Input
-                                placeholder="Search by name, email or phone..."
+                                placeholder="Cari berdasarkan nama, email atau nomor HP..."
                                 value={searchTerm}
                                 onChange={(e) => {
                                     setSearchTerm(e.target.value);
@@ -139,9 +128,7 @@ export default function AdminCustomers() {
                                 }}
                                 className="max-w-sm"
                             />
-                            <span className="text-sm text-muted-foreground">
-                                {filteredCustomers.length} customers found
-                            </span>
+                            <span className="text-sm text-muted-foreground">{filteredCustomers.length} kustomer ditemukan</span>
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -149,11 +136,11 @@ export default function AdminCustomers() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Name</TableHead>
+                                        <TableHead>Nama</TableHead>
                                         <TableHead>Email</TableHead>
-                                        <TableHead>Phone</TableHead>
-                                        <TableHead>Address</TableHead>
-                                        <TableHead className="w-32">Actions</TableHead>
+                                        <TableHead>Nomor HP</TableHead>
+                                        <TableHead>Alamat</TableHead>
+                                        <TableHead className="w-32">Aksi</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -161,24 +148,20 @@ export default function AdminCustomers() {
                                         <TableRow key={c.id}>
                                             <TableCell className="font-medium">{c.name}</TableCell>
                                             <TableCell>{c.email}</TableCell>
-                                            <TableCell>{c.phone || '-'}</TableCell>
-                                            <TableCell>{c.address || '-'}</TableCell>
+                                            <TableCell>{c.phone || "-"}</TableCell>
+                                            <TableCell>{c.address || "-"}</TableCell>
                                             <TableCell>
                                                 <div className="flex space-x-2">
-                                                    <Button 
-                                                        variant="outline" 
-                                                        size="sm"
-                                                        onClick={() => startEdit(c)}
-                                                    >
+                                                    <Button variant="outline" size="sm" onClick={() => startEdit(c)}>
                                                         Edit
                                                     </Button>
-                                                    <Button 
-                                                        variant="outline" 
+                                                    <Button
+                                                        variant="outline"
                                                         size="sm"
                                                         onClick={() => destroy(`/admin/customers/${c.id}`)}
                                                         className="text-red-600 hover:text-red-700"
                                                     >
-                                                        Delete
+                                                        Hapus
                                                     </Button>
                                                 </div>
                                             </TableCell>
@@ -187,29 +170,21 @@ export default function AdminCustomers() {
                                 </TableBody>
                             </Table>
                         </div>
-                        
+
                         {/* Pagination */}
                         {totalPages > 1 && (
                             <div className="flex items-center justify-between space-x-2 py-4">
                                 <div className="text-sm text-muted-foreground">
-                                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredCustomers.length)} of {filteredCustomers.length} entries
+                                    Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredCustomers.length)}{" "}
+                                    of {filteredCustomers.length} entries
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => setCurrentPage(currentPage - 1)}
-                                        disabled={currentPage === 1}
-                                    >
+                                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
                                         Previous
                                     </Button>
                                     <div className="flex items-center space-x-1">
                                         {Array.from({ length: totalPages }, (_, i) => i + 1)
-                                            .filter(page => 
-                                                page === 1 || 
-                                                page === totalPages || 
-                                                Math.abs(page - currentPage) <= 1
-                                            )
+                                            .filter((page) => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1)
                                             .map((page, index, array) => (
                                                 <div key={page} className="flex items-center">
                                                     {index > 0 && array[index - 1] !== page - 1 && (
@@ -223,8 +198,7 @@ export default function AdminCustomers() {
                                                         {page}
                                                     </Button>
                                                 </div>
-                                            ))
-                                        }
+                                            ))}
                                     </div>
                                     <Button
                                         variant="outline"

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
@@ -22,7 +21,7 @@ export const HeroCards = () => {
                     </div>
                 </CardHeader>
 
-                <CardContent>So Delicious</CardContent>
+                <CardContent>Sangat Nikmat!</CardContent>
             </Card>
 
             {/* Team */}
@@ -42,12 +41,14 @@ export const HeroCards = () => {
                         <span className="text-xl font-bold">Cake Manis Asam Jawa</span>
                     </div>
 
-                    <CardDescription>Nikmati kelezatan kue tradisional dengan cita rasa asam jawa yang menyegarkan dan tekstur yang lembut.</CardDescription>
+                    <CardDescription>
+                        Nikmati kelezatan kue tradisional dengan cita rasa asam jawa yang menyegarkan dan tekstur yang lembut.
+                    </CardDescription>
                 </CardHeader>
 
-                <CardContent>
+                {/* <CardContent>
                     <Button className="w-full">Detail</Button>
-                </CardContent>
+                </CardContent> */}
             </Card>
 
             {/* Service */}

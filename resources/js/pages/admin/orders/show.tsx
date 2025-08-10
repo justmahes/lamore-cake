@@ -49,9 +49,9 @@ export default function AdminOrderShow() {
                             </div>
                         )}
                         <div className="flex gap-2">
-                            <Button onClick={updateStatus}>Save Status</Button>
+                            <Button onClick={updateStatus}>Simpan Status</Button>
                             <Button variant="destructive" onClick={() => destroy(`/admin/orders/${order.id}`)}>
-                                Delete Order
+                                Hapus Order
                             </Button>
                         </div>
                     </CardContent>
