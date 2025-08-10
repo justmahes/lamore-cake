@@ -113,7 +113,7 @@ export default function AdminProducts() {
     const { delete: deleteProduct } = useForm({});
 
     const destroy = (url: string) => {
-        if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+        if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
             deleteProduct(url);
         }
     };
@@ -169,7 +169,7 @@ export default function AdminProducts() {
                                                         )}
                                                     </TableCell>
                                                     <TableCell className="font-medium">{p.name}</TableCell>
-                                                    <TableCell>{p.category ? p.category.nama : (p.kategori || "-")}</TableCell>
+                                                    <TableCell>{p.category ? p.category.nama : p.kategori || "-"}</TableCell>
                                                     <TableCell className="text-right">Rp{(p.price || 0).toLocaleString()}</TableCell>
                                                     <TableCell className="text-right">{p.stock}</TableCell>
                                                     <TableCell>
@@ -257,13 +257,16 @@ export default function AdminProducts() {
                                                 id="name"
                                                 value={data.name}
                                                 onChange={(e) => setData("name", e.target.value)}
-                                                placeholder="Enter product name"
+                                                placeholder="Masukkan nama produk"
                                             />
                                             <InputError message={errors.name} />
                                         </div>
                                         <div className="grid gap-2">
                                             <Label htmlFor="kategori">Kategori</Label>
-                                            <Select value={data.kategori_id || "none"} onValueChange={(value) => setData("kategori_id", value === "none" ? "" : value)}>
+                                            <Select
+                                                value={data.kategori_id || "none"}
+                                                onValueChange={(value) => setData("kategori_id", value === "none" ? "" : value)}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih kategori" />
                                                 </SelectTrigger>
@@ -344,7 +347,10 @@ export default function AdminProducts() {
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="ekategori">Kategori</Label>
-                                    <Select value={editForm.data.kategori_id || "none"} onValueChange={(value) => editForm.setData("kategori_id", value === "none" ? "" : value)}>
+                                    <Select
+                                        value={editForm.data.kategori_id || "none"}
+                                        onValueChange={(value) => editForm.setData("kategori_id", value === "none" ? "" : value)}
+                                    >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih kategori" />
                                         </SelectTrigger>
@@ -405,7 +411,7 @@ export default function AdminProducts() {
                             </div>
                             <div className="flex gap-2 pt-4">
                                 <Button type="submit" disabled={editForm.processing}>
-                                    {editForm.processing ? "Saving..." : "Save Changes"}
+                                    {editForm.processing ? "Menyimpan..." : "Simpan perubahan"}
                                 </Button>
                                 <Button type="button" variant="outline" onClick={cancelEdit}>
                                     Cancel
