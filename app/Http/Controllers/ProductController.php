@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -12,20 +13,21 @@ class ProductController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = Product::whereNotNull('name')
+        $query = Product::with('category')
+            ->whereNotNull('name')
             ->whereNotNull('price')
             ->whereNotNull('stock');
 
         if ($request->has('category') && $request->category !== 'all') {
-            $query->where('category', $request->category);
+            if ($request->category) {
+                $query->whereHas('category', function($q) use ($request) {
+                    $q->where('nama', $request->category);
+                });
+            }
         }
 
         $products = $query->get();
-        $categories = Product::whereNotNull('category')
-            ->distinct()
-            ->pluck('category')
-            ->filter()
-            ->values();
+        $categories = Category::all()->pluck('nama');
 
         if (Auth::check()) {
             return Inertia::render('products/index', [

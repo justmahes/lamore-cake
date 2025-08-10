@@ -16,7 +16,7 @@ export default function GuestProducts() {
             <Navbar />
             <FlashMessage />
             <div className="container mx-auto space-y-4 p-4">
-                <h1 className="text-2xl font-bold">Products</h1>
+                <h1 className="text-2xl font-bold">Produk</h1>
                 
                 {/* Category Filter Tabs */}
                 {categories && categories.length > 0 && (
@@ -29,7 +29,7 @@ export default function GuestProducts() {
                                     : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                         >
-                            All
+                            Semua
                         </button>
                         {categories.map((category: string) => (
                             <button
@@ -47,22 +47,42 @@ export default function GuestProducts() {
                     </div>
                 )}
 
-                <div className="grid gap-4 md:grid-cols-3">
-                    {products.map((p: any) => (
-                        <div key={p.id} className="rounded border p-4">
-                            <a href={auth.user ? `/products/${p.id}` : `/guest/products/${p.id}`}>
-                                <img src={p.image} alt={p.name} className="mb-2 h-40 w-full object-cover" />
-                                <h2 className="font-semibold">{p.name}</h2>
-                                {p.category && (
-                                    <span className="text-sm text-gray-500 capitalize">
-                                        {p.category}
-                                    </span>
-                                )}
-                            </a>
-                            <p className="font-bold">Rp {p.price}</p>
+                {products.length === 0 ? (
+                    <div className="text-center py-12">
+                        <div className="max-w-sm mx-auto">
+                            <div className="mb-4">
+                                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
+                            </div>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                {selectedCategory === 'all' ? 'Tidak ada produk' : `Tidak ada produk di kategori "${selectedCategory}"`}
+                            </h3>
+                            <p className="text-gray-500">
+                                {selectedCategory === 'all' 
+                                    ? 'Belum ada produk yang tersedia saat ini.' 
+                                    : 'Belum ada produk yang tersedia di kategori ini.'}
+                            </p>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                ) : (
+                    <div className="grid gap-4 md:grid-cols-3">
+                        {products.map((p: any) => (
+                            <div key={p.id} className="rounded border p-4">
+                                <a href={auth.user ? `/products/${p.id}` : `/guest/products/${p.id}`}>
+                                    <img src={p.image} alt={p.name} className="mb-2 h-40 w-full object-cover" />
+                                    <h2 className="font-semibold">{p.name}</h2>
+                                    {(p.category?.nama || p.kategori) && (
+                                        <span className="text-sm text-gray-500 capitalize">
+                                            {p.category?.nama || p.kategori}
+                                        </span>
+                                    )}
+                                </a>
+                                <p className="font-bold">Rp {p.price}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
             <Footer />
         </>

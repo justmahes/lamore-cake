@@ -4,7 +4,7 @@ import { NavUser } from "@/components/nav-user";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { type NavItem, type SharedData } from "@/types";
 import { Link, usePage } from "@inertiajs/react";
-import { FileText, LayoutGrid, Package, ShoppingCart, Users } from "lucide-react";
+import { FileText, LayoutGrid, Package, ShoppingCart, Users, Tags } from "lucide-react";
 import AppLogo from "./app-logo";
 
 function useMainNavItems(): NavItem[] {
@@ -29,6 +29,7 @@ function useMainNavItems(): NavItem[] {
     if (user.role === "admin") {
         items.push(
             { title: "Produk", href: "/admin/products", icon: Package },
+            { title: "Kategori", href: "/admin/categories", icon: Tags },
             { title: "Pelanggan", href: "/admin/customers", icon: Users },
             { title: "Pesanan", href: "/admin/orders", icon: FileText },
         );

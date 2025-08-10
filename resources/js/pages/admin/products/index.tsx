@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppLayout from "@/layouts/app-layout";
@@ -21,7 +22,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function AdminProducts() {
-    const { products } = usePage().props as any;
+    const { products, categories } = usePage().props as any;
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -29,6 +30,7 @@ export default function AdminProducts() {
     const { data, setData, post, reset, errors } = useForm({
         name: "",
         kategori: "",
+        kategori_id: "none",
         price: "",
         stock: "",
         description: "",
@@ -39,6 +41,7 @@ export default function AdminProducts() {
     const editForm = useForm({
         name: "",
         kategori: "",
+        kategori_id: "none",
         price: "",
         stock: "",
         description: "",
@@ -63,6 +66,10 @@ export default function AdminProducts() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // Transform "none" to empty string before submission
+        if (data.kategori_id === "none") {
+            setData("kategori_id", "");
+        }
         post("/admin/products", {
             forceFormData: true,
             onSuccess: () => reset(),
@@ -74,6 +81,7 @@ export default function AdminProducts() {
         editForm.setData({
             name: product.name,
             kategori: product.kategori || "",
+            kategori_id: product.kategori_id ? product.kategori_id.toString() : "none",
             price: product.price,
             stock: product.stock,
             description: product.description,
@@ -89,8 +97,11 @@ export default function AdminProducts() {
     const submitEdit = (e: React.FormEvent) => {
         e.preventDefault();
         if (editing) {
+            // Transform "none" to empty string before submission
+            if (editForm.data.kategori_id === "none") {
+                editForm.setData("kategori_id", "");
+            }
             editForm.post(`/admin/products/${editing.id}`, {
-                method: "put",
                 forceFormData: true,
                 onSuccess: () => {
                     cancelEdit();
@@ -99,7 +110,13 @@ export default function AdminProducts() {
         }
     };
 
-    const { delete: destroy } = useForm({});
+    const { delete: deleteProduct } = useForm({});
+
+    const destroy = (url: string) => {
+        if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+            deleteProduct(url);
+        }
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -152,7 +169,7 @@ export default function AdminProducts() {
                                                         )}
                                                     </TableCell>
                                                     <TableCell className="font-medium">{p.name}</TableCell>
-                                                    <TableCell>{p.kategori || "-"}</TableCell>
+                                                    <TableCell>{p.category ? p.category.nama : (p.kategori || "-")}</TableCell>
                                                     <TableCell className="text-right">Rp{(p.price || 0).toLocaleString()}</TableCell>
                                                     <TableCell className="text-right">{p.stock}</TableCell>
                                                     <TableCell>
@@ -246,13 +263,20 @@ export default function AdminProducts() {
                                         </div>
                                         <div className="grid gap-2">
                                             <Label htmlFor="kategori">Kategori</Label>
-                                            <Input
-                                                id="kategori"
-                                                value={data.kategori}
-                                                onChange={(e) => setData("kategori", e.target.value)}
-                                                placeholder="Enter product category"
-                                            />
-                                            <InputError message={errors.kategori} />
+                                            <Select value={data.kategori_id || "none"} onValueChange={(value) => setData("kategori_id", value === "none" ? "" : value)}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Pilih kategori" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">Tidak ada kategori</SelectItem>
+                                                    {categories.map((category: any) => (
+                                                        <SelectItem key={category.id} value={category.id.toString()}>
+                                                            {category.nama}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <InputError message={errors.kategori_id} />
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -320,12 +344,20 @@ export default function AdminProducts() {
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="ekategori">Kategori</Label>
-                                    <Input
-                                        id="ekategori"
-                                        value={editForm.data.kategori}
-                                        onChange={(e) => editForm.setData("kategori", e.target.value)}
-                                    />
-                                    <InputError message={editForm.errors.kategori} />
+                                    <Select value={editForm.data.kategori_id || "none"} onValueChange={(value) => editForm.setData("kategori_id", value === "none" ? "" : value)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Pilih kategori" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">Tidak ada kategori</SelectItem>
+                                            {categories.map((category: any) => (
+                                                <SelectItem key={category.id} value={category.id.toString()}>
+                                                    {category.nama}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <InputError message={editForm.errors.kategori_id} />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

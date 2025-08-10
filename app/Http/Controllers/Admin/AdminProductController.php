@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,7 +15,8 @@ class AdminProductController extends Controller
     public function index(): Response
     {
         return Inertia::render('admin/products/index', [
-            'products' => Product::all(),
+            'products' => Product::with('category')->get(),
+            'categories' => Category::all(),
         ]);
     }
 
@@ -24,6 +26,7 @@ class AdminProductController extends Controller
             $data = $request->validate([
                 'name' => 'required|string|max:255',
                 'kategori' => 'nullable|string|max:100',
+                'kategori_id' => 'nullable|exists:categories,id',
                 'category' => 'nullable|string|max:100',
                 'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0',
@@ -51,6 +54,7 @@ class AdminProductController extends Controller
             $data = $request->validate([
                 'name' => 'required|string|max:255',
                 'kategori' => 'nullable|string|max:100',
+                'kategori_id' => 'nullable|exists:categories,id',
                 'category' => 'nullable|string|max:100',
                 'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0',
