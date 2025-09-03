@@ -154,6 +154,7 @@ class CheckoutController extends Controller
             if ($status) {
                 switch ($status) {
                     case 'success':
+                        $this->handleSuccessfulPayment();
                         return redirect()->route('payment.success')
                             ->with('success', 'Payment completed successfully! Your order is being processed.');
                     case 'pending':
@@ -168,6 +169,7 @@ class CheckoutController extends Controller
             // Fallback: Check transaction status from Midtrans
             if ($transactionStatus) {
                 if (in_array($transactionStatus, ['settlement', 'capture'])) {
+                    $this->handleSuccessfulPayment();
                     return redirect()->route('payment.success')
                         ->with('success', 'Payment completed successfully! Your order is being processed.');
                 } elseif ($transactionStatus === 'pending') {
@@ -186,6 +188,7 @@ class CheckoutController extends Controller
                 $transactionDetails = $midtransService->checkTransactionStatus($orderId);
 
                 if (in_array($transactionDetails['transaction_status'], ['settlement', 'capture'])) {
+                    $this->handleSuccessfulPayment();
                     return redirect()->route('payment.success')
                         ->with('success', 'Payment completed successfully! Your order is being processed.');
                 } else {
@@ -201,6 +204,72 @@ class CheckoutController extends Controller
             Log::error('Payment redirect error: ' . $e->getMessage());
             return redirect()->route('cart.index')
                 ->with('error', 'An error occurred while processing your payment redirect.');
+        }
+    }
+
+    /**
+     * Handle successful payment - create order and clear cart as fallback
+     */
+    private function handleSuccessfulPayment()
+    {
+        try {
+            $pendingPayment = session('pending_payment');
+            
+            if (!$pendingPayment || !Auth::check()) {
+                return;
+            }
+
+            $user = Auth::user();
+            
+            // Check if order already exists to prevent duplicates
+            $existingOrder = Order::where('user_id', $user->id)
+                ->where('total_price', $pendingPayment['total_amount'])
+                ->where('created_at', '>=', now()->subHours(1))
+                ->first();
+                
+            if ($existingOrder) {
+                // Order already exists, just clear cart and session
+                Cart::where('user_id', $user->id)->delete();
+                session()->forget('pending_payment');
+                return;
+            }
+
+            DB::transaction(function () use ($pendingPayment, $user) {
+                // Create the order
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'total_price' => $pendingPayment['total_amount'],
+                    'address' => $user->address,
+                    'phone' => $user->phone,
+                    'status' => 'pending', // pending = not shipped yet (payment is confirmed)
+                ]);
+                
+                // Create order items and update stock
+                foreach ($pendingPayment['cart_items'] as $cartItem) {
+                    $product = \App\Models\Product::find($cartItem['product_id']);
+                    if ($product && $product->stock >= $cartItem['quantity']) {
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'product_id' => $cartItem['product_id'],
+                            'quantity' => $cartItem['quantity'],
+                            'price' => $cartItem['price'],
+                        ]);
+                        
+                        // Decrease stock
+                        $product->decrement('stock', $cartItem['quantity']);
+                    }
+                }
+                
+                // Clear the user's cart
+                Cart::where('user_id', $user->id)->delete();
+                
+                // Clear session data
+                session()->forget('pending_payment');
+                
+                Log::info('Order created successfully via payment redirect fallback', ['order_id' => $order->id, 'user_id' => $user->id]);
+            });
+        } catch (\Exception $e) {
+            Log::error('Failed to handle successful payment: ' . $e->getMessage());
         }
     }
 

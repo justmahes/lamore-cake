@@ -10,7 +10,6 @@ use App\Http\Middleware\HandleRole;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/admin', [AdminDashboardController::class, 'index'])->middleware(HandleRole::class);
 
 Route::middleware(['auth', HandleRole::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
