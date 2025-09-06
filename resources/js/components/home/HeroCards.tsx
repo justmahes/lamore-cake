@@ -11,7 +11,7 @@ export const HeroCards = () => {
             <Card className="absolute -top-[15px] w-[340px] shadow-black/10 drop-shadow-xl dark:shadow-white/10">
                 <CardHeader className="flex flex-row items-center gap-4 pb-2">
                     <Avatar>
-                        <AvatarImage alt="" src="https://github.com/shadcn.png" />
+                        <AvatarImage alt="" src="https://cdn.pixabay.com/photo/2015/07/14/06/09/man-844212_640.jpg" />
                         <AvatarFallback>Profile</AvatarFallback>
                     </Avatar>
 

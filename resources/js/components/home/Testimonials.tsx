@@ -10,43 +10,46 @@ interface TestimonialProps {
 
 const testimonials: TestimonialProps[] = [
     {
-        image: "https://github.com/shadcn.png",
+        image: "https://cdn.pixabay.com/photo/2018/07/28/09/23/woman-3567600_960_720.jpg",
         name: "Sari Wijayanti",
         userName: "@sari_wiji",
-        comment: "Kue-kue di Lamore Cake selalu segar dan enak! Favorit saya adalah brownies cokelat yang lembut dan tidak terlalu manis. Selalu jadi andalan untuk acara keluarga.",
+        comment:
+            "Kue-kue di Lamore Cake selalu segar dan enak! Favorit saya adalah brownies cokelat yang lembut dan tidak terlalu manis. Selalu jadi andalan untuk acara keluarga.",
     },
     {
-        image: "https://github.com/shadcn.png", 
+        image: "https://cdn.pixabay.com/photo/2019/09/01/10/13/portrait-4444764_640.jpg",
         name: "Budi Santoso",
         userName: "@budi_santoso",
-        comment: "Sudah berlangganan 2 tahun di Lamore Cake. Kualitas selalu konsisten dan pelayanannya ramah. Harga juga bersaing dengan kualitas premium.",
+        comment:
+            "Sudah berlangganan 2 tahun di Lamore Cake. Kualitas selalu konsisten dan pelayanannya ramah. Harga juga bersaing dengan kualitas premium.",
     },
 
     {
-        image: "https://github.com/shadcn.png",
+        image: "https://cdn.pixabay.com/photo/2022/07/06/12/58/woman-7305088_640.jpg",
         name: "Maya Indira",
         userName: "@maya_indira",
         comment:
             "Yang paling saya suka dari Lamore Cake adalah variasi rasanya yang unik! Cake pandan gula merah mereka benar-benar otentik dan mengingatkan masa kecil. Packaging juga rapi dan cantik.",
     },
     {
-        image: "https://github.com/shadcn.png",
+        image: "https://cdn.pixabay.com/photo/2016/06/20/04/30/asian-man-1468032_640.jpg",
         name: "Ahmad Rifky",
-        userName: "@ahmad_rifky", 
+        userName: "@ahmad_rifky",
         comment:
             "Pesen kue ulang tahun di Lamore Cake untuk anak saya. Hasilnya melebihi ekspektasi! Dekorasinya cantik dan rasanya lezat. Anak-anak pada suka semua.",
     },
     {
-        image: "https://github.com/shadcn.png",
+        image: "https://cdn.pixabay.com/photo/2017/11/19/07/30/girl-2961959_640.jpg",
         name: "Fitri Rahayu",
         userName: "@fitri_rahayu",
         comment: "Croissant dan danish pastry-nya juara! Tekstur renyah di luar, lembut di dalam. Perfect untuk sarapan atau teman minum teh sore.",
     },
     {
-        image: "https://github.com/shadcn.png",
+        image: "https://cdn.pixabay.com/photo/2017/06/26/02/47/man-2442565_640.jpg",
         name: "Dimas Prakoso",
         userName: "@dimas_prakoso",
-        comment: "Lamore Cake jadi toko kue langganan kantor untuk acara meeting. Kue tar buah segar mereka selalu jadi favorit tim. Delivery juga selalu on time!",
+        comment:
+            "Lamore Cake jadi toko kue langganan kantor untuk acara meeting. Kue tar buah segar mereka selalu jadi favorit tim. Delivery juga selalu on time!",
     },
 ];
 

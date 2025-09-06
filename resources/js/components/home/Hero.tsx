@@ -17,7 +17,9 @@ export const Hero = () => {
                     </p>
 
                     <div className="space-y-4 md:space-y-0 md:space-x-4">
-                        <Button className="w-full cursor-pointer border border-primary md:w-1/3">Menu Kami</Button>
+                        <a href="/products">
+                            <Button className="w-full cursor-pointer border border-primary md:w-1/3">Produk Kami</Button>
+                        </a>
                     </div>
                 </div>
 

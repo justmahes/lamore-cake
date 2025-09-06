@@ -16,12 +16,6 @@ export const Footer = () => {
                 <div className="flex flex-col gap-2">
                     <h3 className="text-lg font-bold">Ikuti Kami</h3>
                     <div>
-                        <a rel="noreferrer noopener" href="#" className="opacity-60 hover:opacity-100">
-                            Twitter
-                        </a>
-                    </div>
-
-                    <div>
                         <a rel="noreferrer noopener" href="https://instagram.com/lamorecake" className="opacity-60 hover:opacity-100">
                             Instagram
                         </a>
@@ -47,9 +41,15 @@ export const Footer = () => {
                             Produk
                         </a>
                     </div>
+
+                    <div>
+                        <a rel="noreferrer noopener" href="#" className="opacity-60 hover:opacity-100">
+                            WhatsApp
+                        </a>
+                    </div>
                 </div>
 
-                <div className="flex flex-col gap-2">
+                {/* <div className="flex flex-col gap-2">
                     <h3 className="text-lg font-bold">Platform</h3>
                     <div>
                         <a rel="noreferrer noopener" href="#" className="opacity-60 hover:opacity-100">
@@ -68,7 +68,7 @@ export const Footer = () => {
                             Twitch
                         </a>
                     </div>
-                </div>
+                </div> */}
             </section>
 
             <section className="container pb-14 text-center">
