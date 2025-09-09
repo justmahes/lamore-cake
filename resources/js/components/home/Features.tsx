@@ -27,18 +27,10 @@ export const Features = () => {
                             <Carousel>
                                 <CarouselContent>
                                     <CarouselItem>
-                                        <img
-                                            src="https://cdn.pixabay.com/photo/2019/07/10/03/58/taro-cake-4327814_640.jpg"
-                                            alt="Owner"
-                                            className="h-full w-full object-cover"
-                                        />
+                                        <img src="/assets/home/2.jpg" alt="Owner" className="h-full w-full object-cover" />
                                     </CarouselItem>
                                     <CarouselItem>
-                                        <img
-                                            src="https://cdn.pixabay.com/photo/2017/02/27/17/35/cake-2103761_640.jpg"
-                                            alt="Lamore Cake"
-                                            className="h-full w-full object-cover"
-                                        />
+                                        <img src="/assets/home/3.jpg" alt="Lamore Cake" className="h-full w-full object-cover" />
                                     </CarouselItem>
                                 </CarouselContent>
                                 <CarouselPrevious />

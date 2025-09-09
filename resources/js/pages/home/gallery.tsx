@@ -6,32 +6,32 @@ import "../../../css/gallery.css";
 
 const images = [
     {
-        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
+        src: "/assets/gallery/1.jpg",
         alt: "Pudding Tape",
         description: "Pudding Tape lembut dengan aroma tape manis khas Bali.",
     },
     {
-        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
+        src: "/assets/gallery/2.jpg",
         alt: "Kue Bolu Bali",
         description: "Kue bolu tradisional dengan cita rasa lokal.",
     },
     {
-        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
+        src: "/assets/gallery/3.jpg",
         alt: "Pia Susu",
         description: "Pia susu dengan kulit tipis dan isian manis legit.",
     },
     {
-        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
+        src: "/assets/gallery/4.jpg",
         alt: "Dadar Gulung",
         description: "Pancake hijau berisi kelapa parut gula merah.",
     },
     {
-        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
+        src: "/assets/gallery/5.jpg",
         alt: "Lapis Legit",
         description: "Kue lapis legit dengan aroma rempah.",
     },
     {
-        src: "https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg",
+        src: "/assets/gallery/6.jpg",
         alt: "Lamore Cake",
         description: "Bola ketan isi gula merah disajikan dengan kelapa parut.",
     },
@@ -60,7 +60,7 @@ const Gallery = () => {
                             className="relative cursor-pointer overflow-hidden rounded-lg shadow-md transition-transform duration-200 hover:scale-[1.01]"
                             onClick={() => openModal(image)}
                         >
-                            <img src={image.src} alt={image.alt} className="block h-auto w-full rounded-lg" />
+                            <img src={image.src} alt={image.alt} className="block h-full w-full rounded-lg object-cover" />
                             <div className="bg-opacity-60 absolute right-0 bottom-0 left-0 bg-black p-2 text-center text-sm text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                                 {image.alt}
                             </div>

@@ -25,8 +25,8 @@ export const HeroCards = () => {
             </Card>
 
             {/* Team */}
-            <Card className="absolute top-4 right-[20px] flex w-80 flex-col items-center justify-center overflow-hidden p-0 shadow-black/10 drop-shadow-xl dark:shadow-white/10">
-                <img src="https://cdn.pixabay.com/photo/2015/01/06/20/58/cake-590815_960_720.jpg" alt="Cake Image" />
+            <Card className="absolute top-4 right-[20px] flex h-[50%] w-80 flex-col items-center justify-center overflow-hidden p-0 shadow-black/10 drop-shadow-xl dark:shadow-white/10">
+                <img src="/assets/home/1.jpg" alt="Cake Image" />
             </Card>
 
             {/* Pricing */}
