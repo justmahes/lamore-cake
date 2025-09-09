@@ -30,6 +30,7 @@ class ProfileUpdateRequest extends FormRequest
 
             "phone" => ["required", "string"],
             "address" => ["required", "string"],
+            "postal_code" => ["nullable", "string", "max:10"],
         ];
     }
 }

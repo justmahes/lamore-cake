@@ -64,6 +64,7 @@ class AdminDashboardController extends Controller
                     'id' => $item->id,
                     'product_name' => $item->product->name,
                     'customer_name' => $item->order->user->name,
+                    'customer_postal_code' => $item->order->user->postal_code,
                     'quantity' => $item->quantity,
                     'price' => $item->price,
                     'total' => $item->price * $item->quantity,

@@ -215,6 +215,7 @@ export default function AdminDashboard() {
                                                 <TableHead>ID</TableHead>
                                                 <TableHead>Produk</TableHead>
                                                 <TableHead>Pelanggan</TableHead>
+                                                <TableHead>Kode Pos</TableHead>
                                                 <TableHead className="text-right">Jumlah</TableHead>
                                                 <TableHead className="text-right">Harga</TableHead>
                                                 <TableHead className="text-right">Total</TableHead>
@@ -227,6 +228,7 @@ export default function AdminDashboard() {
                                                     <TableCell>{sale.id}</TableCell>
                                                     <TableCell className="font-medium">{sale.product_name}</TableCell>
                                                     <TableCell>{sale.customer_name}</TableCell>
+                                                    <TableCell>{sale.customer_postal_code || "-"}</TableCell>
                                                     <TableCell className="text-right">{sale.quantity}</TableCell>
                                                     <TableCell className="text-right">Rp{sale.price}</TableCell>
                                                     <TableCell className="text-right font-medium">Rp{sale.total}</TableCell>

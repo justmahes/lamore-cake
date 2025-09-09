@@ -66,6 +66,7 @@ export default function AdminOrders() {
                                     <TableRow>
                                         <TableHead>Invoice ID</TableHead>
                                         <TableHead>Kustomer</TableHead>
+                                        <TableHead>Kode Pos</TableHead>
                                         <TableHead className="text-right">Total Harga</TableHead>
                                         <TableHead>Status</TableHead>
                                         <TableHead>Tanggal Dibuat</TableHead>
@@ -81,6 +82,7 @@ export default function AdminOrders() {
                                                 </a>
                                             </TableCell>
                                             <TableCell className="font-medium">{o?.user?.name || "N/A"}</TableCell>
+                                            <TableCell>{o?.user?.postal_code || "-"}</TableCell>
                                             <TableCell className="text-right">Rp{(o?.total_price || 0).toLocaleString()}</TableCell>
                                             <TableCell>
                                                 <span

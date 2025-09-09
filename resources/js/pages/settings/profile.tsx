@@ -1,7 +1,7 @@
 import { type BreadcrumbItem, type SharedData } from "@/types";
 import { Transition } from "@headlessui/react";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { FormEventHandler } from "react";
+import { FormEventHandler, useEffect, useState, useCallback } from "react";
 
 import DeleteUser from "@/components/delete-user";
 import HeadingSmall from "@/components/heading-small";
@@ -24,6 +24,7 @@ type ProfileForm = {
     email: string;
     phone: any;
     address: any;
+    postal_code: any;
 };
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string; }) {
@@ -34,7 +35,42 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
         email: auth.user.email,
         phone: auth.user.phone,
         address: auth.user.address,
+        postal_code: auth.user.postal_code || "",
     });
+
+    const [isAutoFetching, setIsAutoFetching] = useState(false);
+
+    const fetchPostalCode = useCallback(async (cityName: string) => {
+        if (!cityName || cityName.length < 3) return;
+        
+        try {
+            setIsAutoFetching(true);
+            const response = await fetch(`https://kodepos.vercel.app/search/?q=${encodeURIComponent(cityName)}`);
+            const result = await response.json();
+            
+            if (result.statusCode === 200 && result.data && result.data.length > 0) {
+                const firstResult = result.data[0];
+                setData("postal_code", firstResult.code.toString());
+            }
+        } catch (error) {
+            console.error("Failed to fetch postal code:", error);
+        } finally {
+            setIsAutoFetching(false);
+        }
+    }, [setData]);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (data.address) {
+                const cityMatch = data.address.match(/([a-zA-Z\s]+)/);
+                if (cityMatch) {
+                    fetchPostalCode(cityMatch[1].trim());
+                }
+            }
+        }, 1000);
+
+        return () => clearTimeout(timeoutId);
+    }, [data.address, fetchPostalCode]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -117,7 +153,26 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 placeholder="Alamat"
                             />
 
-                            <InputError className="mt-2" message={errors.phone} />
+                            <InputError className="mt-2" message={errors.address} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="postal_code">
+                                Kode Pos 
+                                {isAutoFetching && <span className="text-sm text-muted-foreground ml-2">(mencari...)</span>}
+                            </Label>
+
+                            <Input
+                                name="postal_code"
+                                id="postal_code"
+                                type="text"
+                                className="mt-1 block w-full"
+                                value={data.postal_code}
+                                onChange={(e) => setData("postal_code", e.target.value)}
+                                placeholder="Kode pos akan terisi otomatis"
+                            />
+
+                            <InputError className="mt-2" message={errors.postal_code} />
                         </div>
 
                         {mustVerifyEmail && auth.user.email_verified_at === null && (
