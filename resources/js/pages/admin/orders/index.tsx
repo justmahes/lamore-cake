@@ -38,6 +38,30 @@ export default function AdminOrders() {
 
     const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
 
+    const statusLabel = (s?: string) => {
+        switch (s) {
+            case 'pending': return 'Pending';
+            case 'paid': return 'Konfirmasi';
+            case 'processing': return 'Di Proses';
+            case 'shipped': return 'Dikirim';
+            case 'delivered': return 'Selesai';
+            case 'cancelled': return 'Dibatalkan';
+            default: return s || 'Unknown';
+        }
+    };
+
+    const statusClass = (s?: string) => {
+        switch (s) {
+            case 'pending': return 'bg-yellow-100 text-yellow-800';
+            case 'paid': return 'bg-blue-100 text-blue-800';
+            case 'processing': return 'bg-amber-100 text-amber-800';
+            case 'shipped': return 'bg-purple-100 text-purple-800';
+            case 'delivered': return 'bg-green-100 text-green-800';
+            case 'cancelled': return 'bg-red-100 text-red-800';
+            default: return 'bg-gray-100 text-gray-800';
+        }
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Admin Orders" />
@@ -85,18 +109,8 @@ export default function AdminOrders() {
                                             <TableCell>{o?.user?.postal_code || "-"}</TableCell>
                                             <TableCell className="text-right">Rp{(o?.total_price || 0).toLocaleString()}</TableCell>
                                             <TableCell>
-                                                <span
-                                                    className={`rounded px-2 py-1 text-xs font-medium ${
-                                                        o?.status === "completed"
-                                                            ? "bg-green-100 text-green-800"
-                                                            : o?.status === "pending"
-                                                              ? "bg-yellow-100 text-yellow-800"
-                                                              : o?.status === "cancelled"
-                                                                ? "bg-red-100 text-red-800"
-                                                                : "bg-gray-100 text-gray-800"
-                                                    }`}
-                                                >
-                                                    {o?.status || "Unknown"}
+                                                <span className={`rounded px-2 py-1 text-xs font-medium ${statusClass(o?.status)}`}>
+                                                    {statusLabel(o?.status)}
                                                 </span>
                                             </TableCell>
                                             <TableCell>{o?.created_at ? new Date(o.created_at).toLocaleDateString("id-ID") : "N/A"}</TableCell>

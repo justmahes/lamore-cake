@@ -34,22 +34,26 @@ const mediaQuery = () => {
 };
 
 const handleSystemThemeChange = () => {
-    const currentAppearance = localStorage.getItem("appearance") as Appearance;
-    applyTheme(currentAppearance || "system");
+    const currentAppearance = localStorage.getItem("appearance") as Appearance | null;
+    if (currentAppearance !== "system") {
+        return; // Only react to system changes when user selected 'system'
+    }
+    applyTheme("system");
 };
 
 export function initializeTheme() {
-    // const savedAppearance = (localStorage.getItem("appearance") as Appearance) || "system";
-    const savedAppearance = "light";
-
+    const savedAppearance = (localStorage.getItem("appearance") as Appearance) || "light";
+    // persist default if missing
+    if (!localStorage.getItem("appearance")) {
+        localStorage.setItem("appearance", savedAppearance);
+        setCookie("appearance", savedAppearance);
+    }
     applyTheme(savedAppearance);
-
-    // Add the event listener for system theme changes...
     mediaQuery()?.addEventListener("change", handleSystemThemeChange);
 }
 
 export function useAppearance() {
-    const [appearance, setAppearance] = useState<Appearance>("system");
+    const [appearance, setAppearance] = useState<Appearance>("light");
 
     const updateAppearance = useCallback((mode: Appearance) => {
         setAppearance(mode);
@@ -65,7 +69,7 @@ export function useAppearance() {
 
     useEffect(() => {
         const savedAppearance = localStorage.getItem("appearance") as Appearance | null;
-        updateAppearance(savedAppearance || "system");
+        updateAppearance(savedAppearance || "light");
 
         return () => mediaQuery()?.removeEventListener("change", handleSystemThemeChange);
     }, [updateAppearance]);

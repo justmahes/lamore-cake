@@ -1,4 +1,9 @@
-import AppLayout from "@/layouts/app-layout";
+import { Navbar } from "@/components/home/Navbar";
+import { Footer } from "@/components/home/Footer";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Card } from "@/components/ui/card";
+import FlashMessage from "@/components/flash-message";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage, router } from "@inertiajs/react";
 import { useState } from "react";
@@ -24,9 +29,16 @@ export default function Products() {
         setQuantities(prev => ({ ...prev, [productId]: quantity }));
     };
 
+    const [quickOpen, setQuickOpen] = useState(false);
+    const [selected, setSelected] = useState<any | null>(null);
+
+    const quickView = (p: any) => { setSelected(p); setQuickOpen(true); };
+
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
+            <Navbar />
             <Head title="Produk" />
+            <FlashMessage />
             <div className="container mx-auto p-4">
                 <h1 className="mb-4 text-2xl font-bold">Produk</h1>
                 
@@ -78,74 +90,71 @@ export default function Products() {
                         </div>
                     </div>
                 ) : (
-                    <div className="grid gap-4 md:grid-cols-3">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {products.map((p: any) => (
-                        <div key={p.id} className="rounded border p-4">
-                            <a href={`/products/${p.id}`}>
-                                <img src={p.image} alt={p.name} className="mb-2 h-40 w-full object-cover" />
-                                <h2 className="font-semibold">{p.name}</h2>
-                                {(p.category?.nama || p.kategori) && (
-                                    <span className="text-sm text-gray-500 capitalize">
-                                        {p.category?.nama || p.kategori}
-                                    </span>
-                                )}
-                            </a>
-                            <p className="font-bold">Rp {p.price}</p>
-                            <p className="text-sm text-gray-600">Stok: {p.stock}</p>
-                            {auth?.user ? (
-                                <div className="mt-2 space-y-2">
-                                    <div className="flex items-center space-x-2">
-                                        <label className="text-sm font-medium">Jml:</label>
-                                        <div className="flex items-center border rounded">
-                                            <button 
-                                                type="button"
-                                                onClick={() => setQuantity(p.id, Math.max(1, getQuantity(p.id) - 1))}
-                                                className="px-2 py-1 text-sm border-r hover:bg-gray-100"
-                                            >
-                                                -
-                                            </button>
-                                            <input
-                                                type="number"
-                                                min="1"
-                                                max={p.stock}
-                                                value={getQuantity(p.id)}
-                                                onChange={(e) => setQuantity(p.id, Math.max(1, Math.min(p.stock, parseInt(e.target.value) || 1)))}
-                                                className="w-12 px-1 py-1 text-sm text-center border-0 focus:ring-0"
-                                            />
-                                            <button 
-                                                type="button"
-                                                onClick={() => setQuantity(p.id, Math.min(p.stock, getQuantity(p.id) + 1))}
-                                                className="px-2 py-1 text-sm border-l hover:bg-gray-100"
-                                            >
-                                                +
-                                            </button>
-                                        </div>
+                        <Card key={p.id} className="overflow-hidden border bg-card p-3 shadow hover:shadow-md">
+                            <button onClick={() => quickView(p)} className="block w-full text-left">
+                                <div className="aspect-[4/3] w-full overflow-hidden rounded-md">
+                                    <img src={p.image} alt={p.name} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
+                                </div>
+                                <div className="mt-3 flex items-start justify-between gap-3">
+                                    <div>
+                                        <h2 className="font-semibold leading-tight">{p.name}</h2>
+                                        {(p.category?.nama || p.kategori) && (
+                                            <span className="text-sm text-gray-500 capitalize">
+                                                {p.category?.nama || p.kategori}
+                                            </span>
+                                        )}
                                     </div>
-                                    <form
-                                        onSubmit={(e) => {
-                                            e.preventDefault();
-                                            router.post(`/cart/add/${p.id}`, {
-                                                quantity: getQuantity(p.id)
-                                            });
-                                        }}
-                                    >
-                                        <button type="submit" className="w-full rounded bg-primary px-3 py-1 text-white hover:bg-primary/90">
-                                            Tambah {getQuantity(p.id)} ke Keranjang
-                                        </button>
-                                    </form>
+                                    <div className="text-right">
+                                        <div className="text-sm text-gray-500">Stok</div>
+                                        <div className="text-sm font-medium">{p.stock ?? '-'}</div>
+                                    </div>
                                 </div>
-                            ) : (
-                                <div className="mt-2">
-                                    <a href="/login" className="inline-block w-full text-center rounded bg-primary px-3 py-1 text-white">
-                                        Masuk untuk memesan
-                                    </a>
+                                <p className="mt-1 font-bold">Rp {p.price}</p>
+                            </button>
+                            <div className="mt-3 space-y-2">
+                                <div className="flex items-center space-x-2">
+                                    <label className="text-sm font-medium">Jml:</label>
+                                    <div className="flex items-center rounded border">
+                                        <button type="button" onClick={() => setQuantity(p.id, Math.max(1, getQuantity(p.id) - 1))} className="border-r px-2 py-1 text-sm hover:bg-gray-100">-</button>
+                                        <input type="number" min="1" max={p.stock} value={getQuantity(p.id)} onChange={(e) => setQuantity(p.id, Math.max(1, Math.min(p.stock, parseInt(e.target.value) || 1)))} className="w-12 border-0 px-1 py-1 text-center text-sm focus:ring-0" />
+                                        <button type="button" onClick={() => setQuantity(p.id, Math.min(p.stock, getQuantity(p.id) + 1))} className="border-l px-2 py-1 text-sm hover:bg-gray-100">+</button>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
+                                <form onSubmit={(e) => { e.preventDefault(); router.post(`/cart/add/${p.id}`, { quantity: getQuantity(p.id) }); }}>
+                                    <Button type="submit" className="w-full">Tambah {getQuantity(p.id)} ke Keranjang</Button>
+                                </form>
+                            </div>
+                        </Card>
                         ))}
                     </div>
                 )}
             </div>
-        </AppLayout>
+            {/* Quick view dialog */}
+            <Dialog open={quickOpen} onOpenChange={setQuickOpen}>
+                <DialogContent className="max-w-3xl">
+                    <DialogHeader>
+                        <DialogTitle>{selected?.name ?? 'Produk'}</DialogTitle>
+                    </DialogHeader>
+                    {selected && (
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <div className="overflow-hidden rounded-md">
+                                <img src={selected.image} alt={selected.name} className="w-full object-cover" />
+                            </div>
+                            <div>
+                                <div className="mb-2 text-lg font-semibold">Rp {selected.price}</div>
+                                <div className="mb-1 text-sm text-gray-600">Stok: <span className="font-medium">{selected.stock ?? '-'}</span></div>
+                                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: selected.description || '' }} />
+                                <div className="mt-4">
+                                    <Button onClick={() => setQuickOpen(false)}>Tutup</Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
+            <Footer />
+        </>
     );
 }

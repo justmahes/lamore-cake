@@ -18,7 +18,7 @@ export const Statistics = () => {
             description: "Varian Jajanan",
         },
         {
-            quantity: "2024",
+            quantity: "2021",
             description: "Berdiri Sejak",
         },
     ];

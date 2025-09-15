@@ -34,11 +34,11 @@ class AdminCustomerController extends Controller
             $data['password'] = Hash::make($data['password']);
             $customer = User::create($data);
 
-            return redirect()->back()->with('success', "Customer '{$customer->name}' created successfully!");
+            return redirect()->back()->with('success', "Pelanggan '{$customer->name}' berhasil dibuat.");
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->with('error', 'Validation failed. Please check all fields.');
+            return redirect()->back()->with('error', 'Validasi gagal. Mohon periksa semua kolom.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create customer. Please try again.');
+            return redirect()->back()->with('error', 'Gagal membuat pelanggan. Silakan coba lagi.');
         }
     }
 
@@ -53,11 +53,11 @@ class AdminCustomerController extends Controller
             ]);
 
             $user->update($data);
-            return redirect()->back()->with('success', "Customer '{$user->name}' updated successfully!");
+            return redirect()->back()->with('success', "Pelanggan '{$user->name}' berhasil diperbarui.");
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->with('error', 'Validation failed. Please check all fields.');
+            return redirect()->back()->with('error', 'Validasi gagal. Mohon periksa semua kolom.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update customer. Please try again.');
+            return redirect()->back()->with('error', 'Gagal memperbarui pelanggan. Silakan coba lagi.');
         }
     }
 
@@ -67,14 +67,20 @@ class AdminCustomerController extends Controller
             $customerName = $user->name;
             
             // Check if customer has orders
-            if ($user->orders()->exists()) {
-                return redirect()->back()->with('warning', "Cannot delete customer '{$customerName}' as they have existing orders.");
+            if (method_exists($user, 'orders') && $user->orders()->exists()) {
+                return redirect()->back()->with('warning', "Tidak dapat menghapus pelanggan '{$customerName}' karena memiliki pesanan yang masih ada.");
             }
             
+            // Cleanup related records that may block deletion
+            if (method_exists($user, 'carts')) {
+                $user->carts()->delete();
+            }
+
             $user->delete();
-            return redirect()->back()->with('success', "Customer '{$customerName}' deleted successfully!");
+            return redirect()->back()->with('success', "Pelanggan '{$customerName}' berhasil dihapus.");
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to delete customer. Please try again.');
+            \Log::error('Admin delete customer failed: '.$e->getMessage(), ['user_id' => $user->id ?? null]);
+            return redirect()->back()->with('error', 'Gagal menghapus pelanggan. Silakan coba lagi.');
         }
     }
 }

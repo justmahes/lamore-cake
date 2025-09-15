@@ -8,6 +8,8 @@ import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { useMemo, useState } from "react";
+import { Search, Edit3, Trash2, Users } from "lucide-react";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -77,6 +79,19 @@ export default function AdminCustomers() {
             <div className="container mx-auto space-y-6 p-4">
                 <h1 className="text-2xl font-bold">Kustomer</h1>
 
+                {/* Summary */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <Card>
+                        <CardContent className="flex items-center gap-3 p-4">
+                            <Users className="text-muted-foreground" />
+                            <div>
+                                <div className="text-sm text-muted-foreground">Total Kustomer</div>
+                                <div className="text-2xl font-semibold">{customers.length || 0}</div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
                 {editing && (
                     <Card>
                         <CardHeader>
@@ -118,17 +133,20 @@ export default function AdminCustomers() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Daftar Kustomer</CardTitle>
-                        <div className="mt-4 flex items-center space-x-2">
-                            <Input
-                                placeholder="Cari berdasarkan nama, email atau nomor HP..."
-                                value={searchTerm}
-                                onChange={(e) => {
-                                    setSearchTerm(e.target.value);
-                                    setCurrentPage(1);
-                                }}
-                                className="max-w-sm"
-                            />
-                            <span className="text-sm text-muted-foreground">{filteredCustomers.length} kustomer ditemukan</span>
+                        <div className="mt-4 flex items-center gap-3">
+                            <div className="relative w-full max-w-sm">
+                                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                <Input
+                                    placeholder="Cari berdasarkan nama, email atau nomor HP..."
+                                    value={searchTerm}
+                                    onChange={(e) => {
+                                        setSearchTerm(e.target.value);
+                                        setCurrentPage(1);
+                                    }}
+                                    className="pl-9"
+                                />
+                            </div>
+                            <span className="hidden text-sm text-muted-foreground sm:inline">{filteredCustomers.length} kustomer ditemukan</span>
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -145,24 +163,39 @@ export default function AdminCustomers() {
                                 </TableHeader>
                                 <TableBody>
                                     {paginatedCustomers.map((c: any) => (
-                                        <TableRow key={c.id}>
+                                        <TableRow key={c.id} className="hover:bg-muted/50">
                                             <TableCell className="font-medium">{c.name}</TableCell>
                                             <TableCell>{c.email}</TableCell>
                                             <TableCell>{c.phone || "-"}</TableCell>
                                             <TableCell>{c.address || "-"}</TableCell>
                                             <TableCell>
-                                                <div className="flex space-x-2">
-                                                    <Button variant="outline" size="sm" onClick={() => startEdit(c)}>
-                                                        Edit
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => destroy(`/admin/customers/${c.id}`)}
-                                                        className="text-red-600 hover:text-red-700"
-                                                    >
-                                                        Hapus
-                                                    </Button>
+                                                <div className="flex items-center gap-2">
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Button variant="outline" size="sm" onClick={() => startEdit(c)} aria-label="Edit">
+                                                                    <Edit3 className="size-4" />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>Edit</TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    onClick={() => destroy(`/admin/customers/${c.id}`)}
+                                                                    className="text-red-600 hover:text-red-700"
+                                                                    aria-label="Hapus"
+                                                                >
+                                                                    <Trash2 className="size-4" />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>Hapus</TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
                                                 </div>
                                             </TableCell>
                                         </TableRow>

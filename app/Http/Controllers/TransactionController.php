@@ -11,7 +11,7 @@ class TransactionController extends Controller
 {
     public function index(): Response
     {
-        $orders = Order::where('user_id', Auth::id())->with('payment')->latest()->get();
+        $orders = Order::where('user_id', Auth::id())->with('payment', 'items.product')->latest()->get();
         return Inertia::render('orders/history', [
             'orders' => $orders,
         ]);

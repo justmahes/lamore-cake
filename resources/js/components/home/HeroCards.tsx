@@ -16,8 +16,8 @@ export const HeroCards = () => {
                     </Avatar>
 
                     <div className="flex flex-col">
-                        <CardTitle className="text-lg">Anjayani</CardTitle>
-                        <CardDescription>@anjayani</CardDescription>
+                        <CardTitle className="text-lg">Sukmawati</CardTitle>
+                        <CardDescription>@Sukmawati</CardDescription>
                     </div>
                 </CardHeader>
 
@@ -38,11 +38,11 @@ export const HeroCards = () => {
                         </Badge>
                     </CardTitle>
                     <div>
-                        <span className="text-xl font-bold">Cake Manis Asam Jawa</span>
+                        <span className="text-xl font-bold">Kue Manis Khas Lokal</span>
                     </div>
 
                     <CardDescription>
-                        Nikmati kelezatan kue tradisional dengan cita rasa asam jawa yang menyegarkan dan tekstur yang lembut.
+                        Nikmati kelezatan kue tradisional dengan cita rasa  yang menyegarkan dan tekstur yang lembut.
                     </CardDescription>
                 </CardHeader>
 

@@ -51,9 +51,15 @@ class CheckoutController extends Controller
             $this->setupMidtransConfig();
             $user = Auth::user();
 
-            if (!$user->address || !$user->phone) {
-                return redirect()->back()->with('error', 'Please complete your profile address and phone first.');
-            }
+            // Validate shipping/contact data from form
+            $validated = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['nullable', 'email'],
+                'phone' => ['required', 'string', 'max:30'],
+                'area' => ['required', 'string', 'in:Utara,Timur,Barat,Selatan'],
+                'postal_code' => ['nullable', 'string', 'max:10'],
+                'address_line' => ['required', 'string', 'max:500'],
+            ]);
 
             $cartItems = Cart::with('product')
                 ->where('user_id', $user->id)
@@ -61,14 +67,14 @@ class CheckoutController extends Controller
 
             if ($cartItems->isEmpty()) {
                 return redirect()->route('cart.index')
-                    ->with('warning', 'Your cart is empty. Please add items before checkout.');
+                    ->with('warning', 'Keranjang Anda kosong. Tambahkan item sebelum checkout.');
             }
 
             // Check stock availability
             foreach ($cartItems as $item) {
                 if ($item->product->stock < $item->quantity) {
                     return redirect()->route('cart.index')
-                        ->with('error', "Insufficient stock for {$item->product->name}. Only {$item->product->stock} items available.");
+                        ->with('error', "Stok untuk {$item->product->name} tidak mencukupi. Hanya tersedia {$item->product->stock} item.");
                 }
             }
 
@@ -83,12 +89,39 @@ class CheckoutController extends Controller
                 ];
             })->toArray();
 
+            // Normalisasi address_line: hilangkan prefix "Denpasar Area, " dan kode pos di akhir jika terduplikasi
+            $addressLine = $validated['address_line'];
+            $addressLine = preg_replace('/^\s*Denpasar\s+(Utara|Timur|Barat|Selatan)\s*,\s*/i', '', $addressLine);
+            if (!empty($validated['postal_code'])) {
+                $pc = preg_quote($validated['postal_code'], '/');
+                $addressLine = preg_replace("/\s*{$pc}\s*$/", '', $addressLine);
+            } else {
+                // Jika tidak ada postal_code di form, buang pola 5 digit di akhir agar tidak dobel nanti
+                $addressLine = preg_replace('/\s*\d{5}\s*$/', '', $addressLine);
+            }
+            $addressLine = trim($addressLine);
+
+            // Simpan alamat user TANPA kode pos (karena ada field terpisah)
+            $profileAddress = 'Denpasar ' . $validated['area'] . ', ' . $addressLine;
+            // Alamat pengiriman (untuk payment/nota) dapat menyertakan kode pos jika ada
+            $shippingAddress = $profileAddress . (!empty($validated['postal_code']) ? ' ' . $validated['postal_code'] : '');
+
+            // Persist shipping info to profile for future checkouts
+            $user->name = $validated['name'] ?? $user->name;
+            $user->email = $validated['email'] ?? $user->email;
+            $user->phone = $validated['phone'];
+            $user->address = $profileAddress;
+            if (!empty($validated['postal_code'])) {
+                $user->postal_code = $validated['postal_code'];
+            }
+            $user->save();
+
             $userData = [
                 'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'address' => $user->address,
+                'name' => $validated['name'] ?? $user->name,
+                'email' => $validated['email'] ?? $user->email,
+                'phone' => $validated['phone'],
+                'address' => $shippingAddress,
             ];
 
             // Create payment redirect URL
@@ -103,6 +136,7 @@ class CheckoutController extends Controller
                     'cart_items' => $cartData,
                     'total_amount' => $paymentData['total_amount'],
                     'user_data' => $userData,
+                    'shipping_address' => $shippingAddress,
                 ]
             ]);
 
@@ -110,7 +144,7 @@ class CheckoutController extends Controller
             return Inertia::location($paymentData['redirect_url']);
         } catch (\Exception $e) {
             Log::error('Checkout error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Failed to process checkout. Please try again.');
+            return redirect()->back()->with('error', 'Gagal memproses checkout. Silakan coba lagi.');
         }
     }
 
@@ -149,61 +183,71 @@ class CheckoutController extends Controller
             $orderId = $request->query('order_id');
             $statusCode = $request->query('status_code');
             $transactionStatus = $request->query('transaction_status');
-            $status = $request->query('status'); // Our custom status parameter
-
-            if ($status) {
-                switch ($status) {
-                    case 'success':
-                        $this->handleSuccessfulPayment();
-                        return redirect()->route('payment.success')
-                            ->with('success', 'Payment completed successfully! Your order is being processed.');
-                    case 'pending':
-                        return redirect()->route('payment.pending')
-                            ->with('info', 'Payment is pending. Please complete your payment.');
-                    case 'failed':
-                        return redirect()->route('cart.index')
-                            ->with('error', 'Payment failed or was cancelled. Please try again.');
-                }
-            }
+            // Note: ignore any synthetic "status" query to avoid false positives from gateways
 
             // Fallback: Check transaction status from Midtrans
             if ($transactionStatus) {
                 if (in_array($transactionStatus, ['settlement', 'capture'])) {
                     $this->handleSuccessfulPayment();
                     return redirect()->route('payment.success')
-                        ->with('success', 'Payment completed successfully! Your order is being processed.');
+                        ->with('success', 'Pembayaran berhasil! Pesanan Anda sedang diproses.');
                 } elseif ($transactionStatus === 'pending') {
                     return redirect()->route('payment.pending')
-                        ->with('info', 'Payment is pending. Please complete your payment.');
+                        ->with('info', 'Pembayaran tertunda. Silakan selesaikan pembayaran Anda.');
                 } else {
                     return redirect()->route('cart.index')
-                        ->with('error', 'Payment failed or was cancelled. Please try again.');
+                        ->with('error', 'Pembayaran gagal atau dibatalkan. Silakan coba lagi.');
                 }
             }
 
-            // If no status information, check with Midtrans API
+            // If no reliable status in query, check with Midtrans API
             if ($orderId) {
                 $this->setupMidtransConfig();
                 $midtransService = new MidtransService();
                 $transactionDetails = $midtransService->checkTransactionStatus($orderId);
 
-                if (in_array($transactionDetails['transaction_status'], ['settlement', 'capture'])) {
+                $ts = $transactionDetails['transaction_status'] ?? null;
+                $fraud = $transactionDetails['fraud_status'] ?? null;
+
+                if ($ts === 'capture') {
+                    if ($fraud === 'accept') {
+                        $this->handleSuccessfulPayment();
+                        return redirect()->route('payment.success')
+                            ->with('success', 'Pembayaran berhasil! Pesanan Anda sedang diproses.');
+                    }
+                    // capture but not accept => treat as pending/failed and keep cart
+                    return redirect()->route('payment.pending')
+                        ->with('info', 'Pembayaran sedang ditinjau. Mohon tunggu konfirmasi.');
+                }
+
+                if (in_array($ts, ['settlement', 'success'])) {
                     $this->handleSuccessfulPayment();
                     return redirect()->route('payment.success')
-                        ->with('success', 'Payment completed successfully! Your order is being processed.');
-                } else {
-                    return redirect()->route('payment.pending')
-                        ->with('info', 'Payment is being processed. Please wait for confirmation.');
+                        ->with('success', 'Pembayaran berhasil! Pesanan Anda sedang diproses.');
                 }
+
+                if (in_array($ts, ['pending'])) {
+                    return redirect()->route('payment.pending')
+                        ->with('info', 'Pembayaran tertunda. Silakan selesaikan pembayaran Anda.');
+                }
+
+                if (in_array($ts, ['deny', 'cancel', 'expire', 'failure'])) {
+                    return redirect()->route('cart.index')
+                        ->with('error', 'Pembayaran gagal atau dibatalkan. Silakan coba lagi.');
+                }
+
+                // Unknown status: do not clear cart
+                return redirect()->route('cart.index')
+                    ->with('info', 'Status pembayaran tidak diketahui. Silakan periksa riwayat transaksi Anda.');
             }
 
             // Default fallback
             return redirect()->route('cart.index')
-                ->with('info', 'Payment status unknown. Please check your transaction history.');
+                ->with('info', 'Status pembayaran tidak diketahui. Silakan periksa riwayat transaksi Anda.');
         } catch (\Exception $e) {
             Log::error('Payment redirect error: ' . $e->getMessage());
             return redirect()->route('cart.index')
-                ->with('error', 'An error occurred while processing your payment redirect.');
+                ->with('error', 'Terjadi kesalahan saat memproses pengalihan pembayaran Anda.');
         }
     }
 

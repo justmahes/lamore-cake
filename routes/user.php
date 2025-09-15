@@ -18,6 +18,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::patch('/cart/update/{cart}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{cart}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
@@ -29,4 +30,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{order}', [TransactionController::class, 'show'])->name('transactions.show');
+
+    // Storefront profile (read-only view)
+    Route::get('/profile', function() { return Inertia::render('profile/show'); })->name('profile.show');
+    Route::get('/profile/edit', function() { return Inertia::render('profile/edit'); })->name('profile.edit.storefront');
 });

@@ -53,7 +53,8 @@ export const FAQ = () => {
 
             <h3 className="mt-4 font-medium">
                 Masih ada pertanyaan?{" "}
-                <a rel="noreferrer noopener" href="#" className="border-primary text-primary transition-all hover:border-b-2">
+                <a rel="noreferrer noopener" href="https://wa.me/6289634584455?text=Saya%20tertarik%20untuk%20memesan%20kue%20di%20Lamore%20Cake
+" className="border-primary text-primary transition-all hover:border-b-2">
                     Hubungi kami
                 </a>
             </h3>

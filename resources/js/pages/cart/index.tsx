@@ -1,5 +1,6 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+import { Navbar } from '@/components/home/Navbar';
+import { Footer } from '@/components/home/Footer';
 import {
     Card,
     CardContent,
@@ -17,14 +18,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { type BreadcrumbItem } from '@/types';
+import FlashMessage from '@/components/flash-message';
 import { useMemo, useState } from 'react';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: "Keranjang",
-        href: "/cart",
-    },
-];
+const breadcrumbs: BreadcrumbItem[] = [];
 
 export default function Cart() {
     const { cartItems, subtotal } = usePage().props as any;
@@ -48,10 +45,12 @@ export default function Cart() {
     const totalPages = Math.ceil(filteredCartItems.length / itemsPerPage);
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
+            <Navbar />
             <Head title="Keranjang" />
-            <div className="container mx-auto space-y-6 p-4">
-                <Card>
+            <FlashMessage />
+            <div className="container mx-auto max-w-5xl space-y-6 p-4">
+                <Card className="shadow-lg">
                     <CardHeader>
                         <CardTitle>Keranjang Belanja</CardTitle>
                         {cartItems.length > 0 && (
@@ -191,6 +190,17 @@ export default function Cart() {
                                                 Pesan via WhatsApp
                                             </a>
                                         </Button>
+                                        <Button
+                                            variant="destructive"
+                                            size="lg"
+                                            onClick={() => {
+                                                if (confirm('Bersihkan semua item di keranjang?')) {
+                                                    destroy('/cart/clear');
+                                                }
+                                            }}
+                                        >
+                                            Bersihkan Keranjang
+                                        </Button>
                                     </div>
                                 </div>
                             </>
@@ -198,6 +208,7 @@ export default function Cart() {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+            <Footer />
+        </>
     );
 }

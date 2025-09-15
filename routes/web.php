@@ -12,9 +12,7 @@ Route::get('/home', function () {
     return Inertia::render('home/index');
 });
 
-Route::get('/gallery', function () {
-    return Inertia::render('home/gallery');
-});
+// Gallery page removed; gallery section now lives in About page
 
 Route::get('/about', function () {
     return Inertia::render('home/about');

@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { useMemo, useState } from "react";
+import { Search, Edit3, Trash2, Tags } from "lucide-react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -89,6 +91,19 @@ export default function AdminCategories() {
                     <h1 className="text-2xl font-bold">Kelola Kategori</h1>
                 </div>
 
+                {/* Summary */}
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <Card>
+                        <CardContent className="flex items-center gap-3 p-4">
+                            <Tags className="text-muted-foreground" />
+                            <div>
+                                <div className="text-sm text-muted-foreground">Total Kategori</div>
+                                <div className="text-2xl font-semibold">{categories.length || 0}</div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
                 <Tabs defaultValue="list" className="w-full">
                     <TabsList>
                         <TabsTrigger value="list">Daftar Kategori</TabsTrigger>
@@ -99,21 +114,23 @@ export default function AdminCategories() {
                         <Card>
                             <CardHeader>
                                 <CardTitle>Daftar Kategori</CardTitle>
+                                <div className="mt-4">
+                                    <div className="relative w-full max-w-sm">
+                                        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                        <Input
+                                            type="text"
+                                            placeholder="Cari berdasarkan nama atau deskripsi..."
+                                            value={searchTerm}
+                                            onChange={(e) => {
+                                                setSearchTerm(e.target.value);
+                                                setCurrentPage(1);
+                                            }}
+                                            className="pl-9"
+                                        />
+                                    </div>
+                                </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="mb-4">
-                                    <Input
-                                        type="text"
-                                        placeholder="Cari berdasarkan nama atau deskripsi..."
-                                        value={searchTerm}
-                                        onChange={(e) => {
-                                            setSearchTerm(e.target.value);
-                                            setCurrentPage(1);
-                                        }}
-                                        className="max-w-sm"
-                                    />
-                                </div>
-
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -126,27 +143,33 @@ export default function AdminCategories() {
                                     </TableHeader>
                                     <TableBody>
                                         {paginatedCategories.map((c: any) => (
-                                            <TableRow key={c.id}>
-                                                <TableCell>{c.id}</TableCell>
-                                                <TableCell>{c.nama}</TableCell>
+                                            <TableRow key={c.id} className="hover:bg-muted/50">
+                                                <TableCell className="font-medium">{c.id}</TableCell>
+                                                <TableCell className="font-medium">{c.nama}</TableCell>
                                                 <TableCell>{c.deskripsi || "-"}</TableCell>
-                                                <TableCell>{new Date(c.created_at).toLocaleDateString()}</TableCell>
+                                                <TableCell>{new Date(c.created_at).toLocaleDateString("id-ID")}</TableCell>
                                                 <TableCell>
-                                                    <div className="flex gap-2">
-                                                        <Button
-                                                            size="sm"
-                                                            onClick={() => handleEdit(c)}
-                                                            variant="outline"
-                                                        >
-                                                            Edit
-                                                        </Button>
-                                                        <Button
-                                                            size="sm"
-                                                            onClick={() => handleDelete(c.id)}
-                                                            variant="destructive"
-                                                        >
-                                                            Hapus
-                                                        </Button>
+                                                    <div className="flex items-center gap-2">
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <Button size="sm" onClick={() => handleEdit(c)} variant="outline" aria-label="Edit">
+                                                                        <Edit3 className="size-4" />
+                                                                    </Button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>Edit</TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <Button size="sm" onClick={() => handleDelete(c.id)} variant="outline" className="text-red-600 hover:text-red-700" aria-label="Hapus">
+                                                                        <Trash2 className="size-4" />
+                                                                    </Button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>Hapus</TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
                                                     </div>
                                                 </TableCell>
                                             </TableRow>

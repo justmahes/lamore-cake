@@ -1,6 +1,7 @@
 import ImagePreview from "@/components/image-preview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
@@ -16,6 +17,15 @@ export default function AdminOrderShow() {
     const { order } = usePage().props as any;
     const { data, setData, post, delete: destroy } = useForm({ status: order.status });
 
+    const statusMap: Record<string, { label: string; color: string }> = {
+        pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800' },
+        paid: { label: 'Konfirmasi', color: 'bg-blue-100 text-blue-800' },
+        processing: { label: 'Di Proses', color: 'bg-amber-100 text-amber-800' },
+        shipped: { label: 'Dikirim', color: 'bg-purple-100 text-purple-800' },
+        delivered: { label: 'Selesai', color: 'bg-green-100 text-green-800' },
+        cancelled: { label: 'Dibatalkan', color: 'bg-red-100 text-red-800' },
+    };
+
     const updateStatus = () => {
         post(`/admin/orders/${order.id}/status`, {
             method: "post",
@@ -30,21 +40,53 @@ export default function AdminOrderShow() {
                 <h1 className="text-2xl font-bold">Order #{order.id}</h1>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Order Details</CardTitle>
+                        <CardTitle>Detail Pesanan</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                        <p>User: {order.user.name}</p>
-                        <p>Total: Rp {order.total_price}</p>
-                        <div className="space-y-1">
-                            <label className="block text-sm font-medium">Status</label>
-                            <select value={data.status} onChange={(e) => setData("status", e.target.value)} className="rounded border px-2 py-1">
-                                <option value="pending">pending</option>
-                                <option value="shipped">shipped</option>
-                            </select>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                            <div>
+                                <div className="text-sm text-muted-foreground">Pelanggan</div>
+                                <div className="font-medium">{order.user?.name ?? '-'}</div>
+                            </div>
+                            <div>
+                                <div className="text-sm text-muted-foreground">Total</div>
+                                <div className="font-semibold">Rp{(order.total_price || 0).toLocaleString()}</div>
+                            </div>
+                            <div>
+                                <div className="text-sm text-muted-foreground">Alamat</div>
+                                <div className="font-medium break-words">{order.address}</div>
+                            </div>
+                            <div>
+                                <div className="text-sm text-muted-foreground">Status Saat Ini</div>
+                                <div>
+                                    <span className={`rounded px-2 py-1 text-xs font-medium ${statusMap[data.status]?.color || 'bg-accent'}`}>
+                                        {statusMap[data.status]?.label || data.status}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-1 pt-2">
+                            <label className="block text-sm font-medium">Ubah Status</label>
+                            <div className="max-w-xs">
+                                <Select value={data.status} onValueChange={(v) => setData('status', v)}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Pilih status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="pending">Pending</SelectItem>
+                                        <SelectItem value="paid">Konfirmasi</SelectItem>
+                                        <SelectItem value="processing">Di Proses</SelectItem>
+                                        <SelectItem value="shipped">Dikirim</SelectItem>
+                                        <SelectItem value="delivered">Selesai</SelectItem>
+                                        <SelectItem value="cancelled">Dibatalkan</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
                         {order.payment && (
                             <div className="space-y-1">
-                                <p>Payment Proof:</p>
+                                <p>Bukti Pembayaran:</p>
                                 <ImagePreview src={order.payment.proof_file} alt="proof" className="w-48" />
                             </div>
                         )}

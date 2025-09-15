@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+import { Navbar } from '@/components/home/Navbar';
+import { Footer } from '@/components/home/Footer';
 import {
     Card,
     CardContent,
@@ -23,10 +24,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function PaymentSuccess() {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
+            <Navbar />
             <Head title="Payment Success" />
-            <div className="container mx-auto space-y-6 p-4">
-                <Card>
+            <div className="container mx-auto max-w-2xl space-y-6 p-4">
+                <Card className="shadow-lg">
                     <CardHeader className="text-center">
                         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
                             <CheckCircle className="h-10 w-10 text-green-600" />
@@ -45,7 +47,7 @@ export default function PaymentSuccess() {
                         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
                             <Button asChild>
                                 <Link href="/transactions">
-                                    View Order History
+                                    Lihat Riwayat Pesanan
                                 </Link>
                             </Button>
                             <Button variant="outline" asChild>
@@ -57,6 +59,7 @@ export default function PaymentSuccess() {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+            <Footer />
+        </>
     );
 }

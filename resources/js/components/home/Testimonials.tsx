@@ -69,22 +69,25 @@ export const Testimonials = () => {
                     Temukan kelezatan otentik dan kehangatan komunitas yang membuat pelanggan kami jatuh cinta.
                 </p>
 
-                <div className="z-10 mx-auto grid columns-2 space-y-4 sm:block md:grid-cols-2 lg:columns-3 lg:grid-cols-4 lg:gap-6 lg:space-y-6">
+                <div className="z-10 mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {testimonials.map(({ image, name, userName, comment }: TestimonialProps) => (
-                        <Card key={userName} className="max-w-md overflow-hidden md:break-inside-avoid">
+                        <Card
+                            key={userName}
+                            className="group overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-lg md:break-inside-avoid"
+                        >
                             <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                                <Avatar>
+                                <Avatar className="transition duration-200 group-hover:ring-2 group-hover:ring-accent group-hover:ring-offset-2">
                                     <AvatarImage alt="" src={image} />
                                     <AvatarFallback>OM</AvatarFallback>
                                 </Avatar>
 
                                 <div className="flex flex-col">
-                                    <CardTitle className="text-lg">{name}</CardTitle>
-                                    <CardDescription>{userName}</CardDescription>
+                                    <CardTitle className="text-lg transition-colors duration-200 group-hover:text-foreground">{name}</CardTitle>
+                                    <CardDescription className="transition-colors duration-200 group-hover:text-accent">{userName}</CardDescription>
                                 </div>
                             </CardHeader>
 
-                            <CardContent>{comment}</CardContent>
+                            <CardContent className="transition-colors duration-200 group-hover:text-foreground">{comment}</CardContent>
                         </Card>
                     ))}
                 </div>

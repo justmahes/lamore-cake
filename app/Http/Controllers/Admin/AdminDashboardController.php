@@ -62,9 +62,9 @@ class AdminDashboardController extends Controller
             ->map(function ($item) {
                 return [
                     'id' => $item->id,
-                    'product_name' => $item->product->name,
-                    'customer_name' => $item->order->user->name,
-                    'customer_postal_code' => $item->order->user->postal_code,
+                    'product_name' => $item->product?->name ?? '-',
+                    'customer_name' => $item->order?->user?->name ?? '-',
+                    'customer_postal_code' => $item->order?->user?->postal_code ?? null,
                     'quantity' => $item->quantity,
                     'price' => $item->price,
                     'total' => $item->price * $item->quantity,
@@ -89,9 +89,9 @@ class AdminDashboardController extends Controller
             ->get()
             ->map(function ($item) {
                 return [
-                    'id' => $item->order->id,
-                    'product_name' => $item->product->name,
-                    'customer_name' => $item->order->user->name,
+                    'id' => $item->order?->id ?? $item->id,
+                    'product_name' => $item->product?->name ?? '-',
+                    'customer_name' => $item->order?->user?->name ?? '-',
                     'quantity' => $item->quantity,
                     'price' => $item->price,
                     'total' => $item->price * $item->quantity,

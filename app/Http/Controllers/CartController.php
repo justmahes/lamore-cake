@@ -30,7 +30,7 @@ class CartController extends Controller
             $quantity = (int) $request->input('quantity', 1);
             
             if ($product->stock < $quantity) {
-                return redirect()->back()->with('error', 'Insufficient stock available.');
+                return redirect()->back()->with('error', 'Stok tidak mencukupi.');
             }
             
             $cartItem = Cart::where('user_id', Auth::id())
@@ -40,20 +40,20 @@ class CartController extends Controller
             if ($cartItem) {
                 $newQuantity = $cartItem->quantity + $quantity;
                 if ($product->stock < $newQuantity) {
-                    return redirect()->back()->with('error', 'Cannot add more items. Insufficient stock available.');
+                    return redirect()->back()->with('error', 'Tidak dapat menambah item. Stok tidak mencukupi.');
                 }
                 $cartItem->update(['quantity' => $newQuantity]);
-                return redirect()->back()->with('success', "Updated {$product->name} quantity in cart.");
+                return redirect()->back()->with('success', "Jumlah {$product->name} di keranjang diperbarui.");
             } else {
                 Cart::create([
                     'user_id' => Auth::id(),
                     'product_id' => $product->id,
                     'quantity' => $quantity
                 ]);
-                return redirect()->back()->with('success', "{$product->name} added to cart successfully!");
+                return redirect()->back()->with('success', "{$product->name} berhasil ditambahkan ke keranjang.");
             }
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to add product to cart. Please try again.');
+            return redirect()->back()->with('error', 'Gagal menambahkan produk ke keranjang. Silakan coba lagi.');
         }
     }
 
@@ -63,17 +63,17 @@ class CartController extends Controller
             $quantity = (int) $request->input('quantity', 1);
             
             if ($quantity <= 0) {
-                return redirect()->back()->with('error', 'Quantity must be greater than 0.');
+                return redirect()->back()->with('error', 'Jumlah harus lebih dari 0.');
             }
             
             if ($cart->product->stock < $quantity) {
-                return redirect()->back()->with('error', 'Insufficient stock available.');
+                return redirect()->back()->with('error', 'Stok tidak mencukupi.');
             }
             
             $cart->update(['quantity' => $quantity]);
-            return redirect()->back()->with('success', 'Cart updated successfully.');
+            return redirect()->back()->with('success', 'Keranjang berhasil diperbarui.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update cart. Please try again.');
+            return redirect()->back()->with('error', 'Gagal memperbarui keranjang. Silakan coba lagi.');
         }
     }
 
@@ -82,9 +82,19 @@ class CartController extends Controller
         try {
             $productName = $cart->product->name;
             $cart->delete();
-            return redirect()->back()->with('success', "{$productName} removed from cart.");
+            return redirect()->back()->with('success', "{$productName} dihapus dari keranjang.");
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to remove item from cart. Please try again.');
+            return redirect()->back()->with('error', 'Gagal menghapus item dari keranjang. Silakan coba lagi.');
+        }
+    }
+
+    public function clear(): RedirectResponse
+    {
+        try {
+            Cart::where('user_id', Auth::id())->delete();
+            return redirect()->back()->with('success', 'Keranjang berhasil dibersihkan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal membersihkan keranjang. Silakan coba lagi.');
         }
     }
 }

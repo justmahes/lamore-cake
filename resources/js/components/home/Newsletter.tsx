@@ -27,7 +27,7 @@ export const Newsletter = () => {
                     onSubmit={handleSubmit}
                 >
                     <Input
-                        placeholder="anjayani@gmail.com"
+                        placeholder="Sukmawati@gmail.com"
                         className="bg-muted/50 dark:bg-muted/80 "
                         aria-label="email"
                     />

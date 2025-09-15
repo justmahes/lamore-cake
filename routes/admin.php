@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Middleware\HandleRole;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 
@@ -35,4 +36,19 @@ Route::middleware(['auth', HandleRole::class])->prefix('admin')->name('admin.')-
     Route::post('/customers', [AdminCustomerController::class, 'store'])->name('customers.store');
     Route::put('/customers/{user}', [AdminCustomerController::class, 'update'])->name('customers.update');
     Route::delete('/customers/{user}', [AdminCustomerController::class, 'destroy'])->name('customers.destroy');
+
+    // Maintenance: clear carts table (admin-only)
+    Route::delete('/maintenance/carts/clear', function () {
+        try {
+            $driver = DB::connection()->getDriverName();
+            if (in_array($driver, ['mysql', 'pgsql'])) {
+                DB::statement('TRUNCATE TABLE carts');
+            } else {
+                DB::table('carts')->delete();
+            }
+            return redirect()->back()->with('success', 'Tabel carts berhasil dibersihkan.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal membersihkan tabel carts: ' . $e->getMessage());
+        }
+    })->name('maintenance.carts.clear');
 });

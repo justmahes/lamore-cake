@@ -33,24 +33,24 @@ class AdminOrderController extends Controller
             $payment = $order->payment;
             
             if (!$payment) {
-                return redirect()->back()->with('error', 'No payment found for this order.');
+                return redirect()->back()->with('error', 'Tidak ada pembayaran untuk pesanan ini.');
             }
             
             if ($payment->verified_at) {
-                return redirect()->back()->with('warning', 'Payment has already been verified.');
+                return redirect()->back()->with('warning', 'Pembayaran sudah diverifikasi.');
             }
             
             // For Midtrans payments, check if already processed
             if ($payment->transaction_status === 'settlement' || $payment->transaction_status === 'capture') {
-                return redirect()->back()->with('info', 'This payment has already been processed by Midtrans.');
+                return redirect()->back()->with('info', 'Pembayaran ini sudah diproses oleh Midtrans.');
             }
             
             $payment->update(['verified_at' => now()]);
             $order->update(['status' => 'paid']);
             
-            return redirect()->back()->with('success', "Payment for Order #{$order->id} verified successfully!");
+            return redirect()->back()->with('success', "Pembayaran untuk Pesanan #{$order->id} berhasil diverifikasi.");
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to verify payment. Please try again.');
+            return redirect()->back()->with('error', 'Gagal memverifikasi pembayaran. Silakan coba lagi.');
         }
     }
 
@@ -61,15 +61,15 @@ class AdminOrderController extends Controller
             $validStatuses = ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled'];
             
             if (!in_array($status, $validStatuses, true)) {
-                return redirect()->back()->with('error', 'Invalid order status provided.');
+                return redirect()->back()->with('error', 'Status pesanan tidak valid.');
             }
 
             $oldStatus = $order->status;
             $order->update(['status' => $status]);
 
-            return redirect()->back()->with('success', "Order #{$order->id} status updated from '{$oldStatus}' to '{$status}' successfully!");
+            return redirect()->back()->with('success', "Status Pesanan #{$order->id} diperbarui dari '{$oldStatus}' ke '{$status}'.");
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update order status. Please try again.');
+            return redirect()->back()->with('error', 'Gagal memperbarui status pesanan. Silakan coba lagi.');
         }
     }
 
@@ -79,14 +79,14 @@ class AdminOrderController extends Controller
             $orderId = $order->id;
             
             if ($order->status === 'shipped' || $order->status === 'delivered') {
-                return redirect()->back()->with('warning', "Cannot delete Order #{$orderId} as it has already been shipped or delivered.");
+                return redirect()->back()->with('warning', "Tidak dapat menghapus Pesanan #{$orderId} karena sudah dikirim atau diterima.");
             }
             
             $order->delete();
 
-            return redirect()->back()->with('success', "Order #{$orderId} deleted successfully!");
+            return redirect()->back()->with('success', "Pesanan #{$orderId} berhasil dihapus.");
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to delete order. Please try again.');
+            return redirect()->back()->with('error', 'Gagal menghapus pesanan. Silakan coba lagi.');
         }
     }
 }

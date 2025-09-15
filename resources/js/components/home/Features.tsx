@@ -20,7 +20,7 @@ export const Features = () => {
                 ))}
             </div>
 
-            <div className="bg-white px-4 py-12 md:px-12 lg:px-24">
+            <div className="bg-white px-4 py-10 sm:py-12 md:px-8 lg:px-16 xl:px-24">
                 <div className="mx-auto grid max-w-6xl items-center gap-8 md:grid-cols-2">
                     <div className="relative flex flex-col items-center gap-4 md:flex-row">
                         <div className="w-full overflow-hidden rounded-2xl">
@@ -33,23 +33,23 @@ export const Features = () => {
                                         <img src="/assets/home/3.jpg" alt="Lamore Cake" className="h-full w-full object-cover" />
                                     </CarouselItem>
                                 </CarouselContent>
-                                <CarouselPrevious />
-                                <CarouselNext />
+                                <CarouselPrevious className="left-3 top-1/2 -translate-y-1/2 md:-left-12" />
+                                <CarouselNext className="right-3 top-1/2 -translate-y-1/2 md:-right-12" />
                             </Carousel>
                         </div>
                     </div>
                     <div>
-                        <h4 className="mb-2 font-semibold text-accent">Tentang Lamore Cake Kami</h4>
-                        <h2 className="mb-4 text-3xl leading-tight font-bold text-secondary-foreground md:text-4xl">
+                        <h4 className="mb-2 text-sm font-semibold text-accent sm:text-base">Tentang Lamore Cake Kami</h4>
+                        <h2 className="mb-3 text-2xl font-bold leading-tight text-secondary-foreground sm:mb-4 sm:text-3xl md:text-4xl">
                             Kelezatan Lamore Cake Tradisional <br /> Penuh Dengan Cinta
                         </h2>
-                        <p className="mb-6 text-gray-600">
+                        <p className="mb-6 text-sm text-gray-600 sm:text-base">
                             Setiap butir Lamore Cake dibuat dengan sepenuh hati dan ketelitian, sehingga menghasilkan kelezatan yang sempurna di
                             setiap gigitan. Kami menjaga kualitas dan kebersihan agar Anda dapat menikmati Lamore Cake dengan aman dan nyaman.
                         </p>
-                        <div className="inline-block rounded-xl bg-primary-foreground p-6 shadow-md">
-                            <p className="text-3xl leading-tight font-bold text-primary">2+</p>
-                            <p className="text-sm font-semibold text-gray-700 uppercase">Tahun Usaha Lamore Cake</p>
+                        <div className="inline-block rounded-xl bg-primary-foreground p-4 shadow-md sm:p-6">
+                            <p className="text-2xl font-bold leading-tight text-primary sm:text-3xl">4+</p>
+                            <p className="text-xs font-semibold uppercase text-gray-700 sm:text-sm">Tahun Usaha Lamore Cake</p>
                         </div>
                     </div>
                 </div>

@@ -40,11 +40,11 @@ class AdminProductController extends Controller
             }
 
             $product = Product::create($data);
-            return redirect()->back()->with('success', "Product '{$product->name}' created successfully!");
+            return redirect()->back()->with('success', "Produk '{$product->name}' berhasil dibuat.");
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->with('error', 'Validation failed. Please check all required fields.');
+            return redirect()->back()->with('error', 'Validasi gagal. Mohon periksa semua kolom yang wajib diisi.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create product. Please try again.');
+            return redirect()->back()->with('error', 'Gagal membuat produk. Silakan coba lagi.');
         }
     }
 
@@ -70,11 +70,11 @@ class AdminProductController extends Controller
             }
 
             $product->update($data);
-            return redirect()->back()->with('success', "Product '{$product->name}' updated successfully!");
+            return redirect()->back()->with('success', "Produk '{$product->name}' berhasil diperbarui.");
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->with('error', 'Validation failed. Please check all required fields.');
+            return redirect()->back()->with('error', 'Validasi gagal. Mohon periksa semua kolom yang wajib diisi.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update product. Please try again.');
+            return redirect()->back()->with('error', 'Gagal memperbarui produk. Silakan coba lagi.');
         }
     }
 
@@ -85,13 +85,13 @@ class AdminProductController extends Controller
             
             // Check if product is in any cart or order
             if ($product->carts()->exists() || $product->orderItems()->exists()) {
-                return redirect()->back()->with('warning', "Cannot delete '{$productName}' as it's referenced in orders or carts. Consider marking it as out of stock instead.");
+                return redirect()->back()->with('warning', "Tidak dapat menghapus '{$productName}' karena digunakan pada pesanan atau keranjang. Pertimbangkan menandainya sebagai stok habis.");
             }
             
             $product->delete();
-            return redirect()->back()->with('success', "Product '{$productName}' deleted successfully!");
+            return redirect()->back()->with('success', "Produk '{$productName}' berhasil dihapus.");
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to delete product. Please try again.');
+            return redirect()->back()->with('error', 'Gagal menghapus produk. Silakan coba lagi.');
         }
     }
 }

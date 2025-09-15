@@ -6,15 +6,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, Link, usePage } from "@inertiajs/react";
+import ModeToggle from "@/components/mode-toggle";
 import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from "chart.js";
 import { useMemo, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { Package, Users, ShoppingBag, Coins, TrendingUp, Search, Download, ArrowUpDown } from "lucide-react";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, ArcElement);
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: "Dasbor Admin",
+        title: "Dashboard Admin",
         href: "/admin/dashboard",
     },
 ];
@@ -23,7 +25,9 @@ export default function AdminDashboard() {
     const { summary, salesData, productSalesData, bestSellers, allSales } = usePage().props as any;
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [sortKey, setSortKey] = useState<"product" | "customer" | "total" | "date">("date");
+    const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
     const filteredSales = useMemo(() => {
         return allSales.filter(
@@ -33,30 +37,91 @@ export default function AdminDashboard() {
         );
     }, [allSales, searchTerm]);
 
+    const sortedSales = useMemo(() => {
+        const copy = [...filteredSales];
+        copy.sort((a: any, b: any) => {
+            const dir = sortDir === "asc" ? 1 : -1;
+            if (sortKey === "product") return a.product_name.localeCompare(b.product_name) * dir;
+            if (sortKey === "customer") return a.customer_name.localeCompare(b.customer_name) * dir;
+            if (sortKey === "total") return (Number(a.total) - Number(b.total)) * dir;
+            // date
+            return (new Date(a.date).getTime() - new Date(b.date).getTime()) * dir;
+        });
+        return copy;
+    }, [filteredSales, sortKey, sortDir]);
+
     const paginatedSales = useMemo(() => {
         const startIndex = (currentPage - 1) * itemsPerPage;
-        return filteredSales.slice(startIndex, startIndex + itemsPerPage);
-    }, [filteredSales, currentPage]);
+        return sortedSales.slice(startIndex, startIndex + itemsPerPage);
+    }, [sortedSales, currentPage, itemsPerPage]);
 
-    const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
+    const totalPages = Math.ceil(sortedSales.length / itemsPerPage);
+
+    const toggleSort = (key: typeof sortKey) => {
+        if (sortKey === key) {
+            setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+        } else {
+            setSortKey(key);
+            setSortDir("asc");
+        }
+        setCurrentPage(1);
+    };
+
+    const exportCsv = () => {
+        const rows = [
+            ["ID", "Produk", "Pelanggan", "Kode Pos", "Jumlah", "Harga", "Total", "Tanggal"],
+            ...sortedSales.map((s: any) => [
+                s.id,
+                s.product_name,
+                s.customer_name,
+                s.customer_postal_code ?? "",
+                s.quantity,
+                s.price,
+                s.total,
+                s.date,
+            ]),
+        ];
+        const csv = rows.map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(",")).join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `sales-export.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
 
     const summaryCards = [
-        { title: "Total Produk", value: summary?.products || 0 },
-        { title: "Total Pelanggan", value: summary?.customers || 0 },
-        { title: "Total Pesanan", value: summary?.orders || 0 },
-        { title: "Total Penjualan", value: `Rp${(summary?.total_sales || 0).toLocaleString()}` },
+        { title: "Total Produk", value: summary?.products || 0, icon: Package },
+        { title: "Total Pelanggan", value: summary?.customers || 0, icon: Users },
+        { title: "Total Pesanan", value: summary?.orders || 0, icon: ShoppingBag },
+        { title: "Total Penjualan", value: `Rp${(summary?.total_sales || 0).toLocaleString('id-ID')}`, icon: Coins },
     ];
 
     // Prepare chart data
+    const [rangeDays, setRangeDays] = useState<7 | 30 | 90>(30);
+    const salesDataRanged = useMemo(() => {
+        try {
+            const cutoff = new Date();
+            cutoff.setDate(cutoff.getDate() - rangeDays);
+            const parsed = salesData.map((it: any) => ({ ...it, dateObj: new Date(it.date) }));
+            return parsed.filter((it: any) => isFinite((it as any).dateObj) && it.dateObj >= cutoff);
+        } catch {
+            return salesData;
+        }
+    }, [salesData, rangeDays]);
     const salesChartData = {
-        labels: salesData.map((item: any) => item.date),
+        labels: salesDataRanged.map((item: any) => item.date),
         datasets: [
             {
                 label: "Penjualan Harian (Rp)",
-                data: salesData.map((item: any) => item.total),
+                data: salesDataRanged.map((item: any) => item.total),
                 borderColor: "rgb(59, 130, 246)",
-                backgroundColor: "rgba(59, 130, 246, 0.1)",
+                backgroundColor: "rgba(59, 130, 246, 0.25)",
                 fill: true,
+                tension: 0.35,
+                pointRadius: 2,
+                pointHoverRadius: 4,
             },
         ],
     };
@@ -85,9 +150,10 @@ export default function AdminDashboard() {
 
     const chartOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: "top" as const,
+                position: "bottom" as const,
             },
             tooltip: {
                 mode: "index" as const,
@@ -97,7 +163,9 @@ export default function AdminDashboard() {
         scales: {
             y: {
                 beginAtZero: true,
+                grid: { color: "rgba(0,0,0,0.08)" },
             },
+            x: { grid: { display: false } },
         },
     };
 
@@ -115,22 +183,25 @@ export default function AdminDashboard() {
                 },
             },
         },
+        cutout: "60%",
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dasbor Admin" />
+            <Head title="Dashboard Admin" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {/* Header with Invoice Button */}
-                <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-3xl font-bold">Dasbor Admin</h1>
+                <div className="mb-4 flex items-center justify-between">
+                    <h1 className="text-3xl font-bold">Dashboard Admin</h1>
                     <Link href="/admin/invoice">
-                        <Button className="bg-green-600 hover:bg-green-700">
-                            📄 Buat Faktur Penjualan
-                        </Button>
+                        <Button onClick > Cetak Invoice</Button>
                     </Link>
+
                 </div>
-                
+                <div className="flex justify-end -mt-2 mb-2">
+                    <ModeToggle />
+                </div>
+
                 <Tabs defaultValue="overview" className="w-full space-y-4">
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="overview">Ikhtisar & Grafik</TabsTrigger>
@@ -139,17 +210,21 @@ export default function AdminDashboard() {
 
                     <TabsContent value="overview" className="space-y-4">
                         {/* Summary Cards */}
-                        <div className="grid auto-rows-min gap-4 md:grid-cols-4">
-                            {summaryCards.map((card) => (
-                                <Card key={card.title}>
-                                    <CardHeader className="pb-2">
-                                        <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="pt-0">
-                                        <div className="text-2xl font-bold">{card.value}</div>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                        <div className="grid auto-rows-min gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            {summaryCards.map((card) => {
+                                const Icon = (card as any).icon as any;
+                                return (
+                                    <Card key={card.title}>
+                                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                            <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
+                                            {Icon && <Icon className="size-5 text-muted-foreground" />}
+                                        </CardHeader>
+                                        <CardContent className="pt-0">
+                                            <div className="text-2xl font-semibold">{card.value}</div>
+                                        </CardContent>
+                                    </Card>
+                                );
+                            })}
                         </div>
 
                         {/* Charts */}
@@ -159,7 +234,21 @@ export default function AdminDashboard() {
                                     <CardTitle>Tren Penjualan (30 Hari Terakhir)</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="h-[300px]">
+                                    <div className="mb-3 flex items-center gap-2">
+                                        <Button size="sm" variant={rangeDays === 7 ? "default" : "outline"} onClick={() => setRangeDays(7)}>
+                                            7 Hari
+                                        </Button>
+                                        <Button size="sm" variant={rangeDays === 30 ? "default" : "outline"} onClick={() => setRangeDays(30)}>
+                                            30 Hari
+                                        </Button>
+                                        <Button size="sm" variant={rangeDays === 90 ? "default" : "outline"} onClick={() => setRangeDays(90)}>
+                                            90 Hari
+                                        </Button>
+                                        <div className="ml-auto inline-flex items-center gap-1 text-sm text-muted-foreground">
+                                            <TrendingUp className="size-4" /> Tren
+                                        </div>
+                                    </div>
+                                    <div className="h-[320px]">
                                         <Line data={salesChartData} options={chartOptions} />
                                     </div>
                                 </CardContent>
@@ -170,7 +259,7 @@ export default function AdminDashboard() {
                                     <CardTitle>Produk Terlaris</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="h-[300px]">
+                                    <div className="h-[320px]">
                                         <Doughnut data={productSalesChartData} options={doughnutOptions} />
                                     </div>
                                 </CardContent>
@@ -183,7 +272,7 @@ export default function AdminDashboard() {
                                 <CardTitle>Perbandingan Penjualan Produk</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="h-[400px]">
+                                <div className="h-[360px]">
                                     <Bar data={productSalesChartData} options={chartOptions} />
                                 </div>
                             </CardContent>
@@ -194,44 +283,80 @@ export default function AdminDashboard() {
                         <Card>
                             <CardHeader>
                                 <CardTitle>Semua Data Penjualan</CardTitle>
-                                <div className="mt-4 flex items-center space-x-2">
-                                    <Input
-                                        placeholder="Cari berdasarkan produk atau pelanggan..."
-                                        value={searchTerm}
-                                        onChange={(e) => {
-                                            setSearchTerm(e.target.value);
-                                            setCurrentPage(1);
-                                        }}
-                                        className="max-w-sm"
-                                    />
-                                    <span className="text-sm text-muted-foreground">{filteredSales.length} data ditemukan</span>
+                                <div className="mt-4 flex flex-wrap items-center gap-3">
+                                    <div className="relative w-full max-w-sm">
+                                        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                        <Input
+                                            placeholder="Cari berdasarkan produk atau pelanggan..."
+                                            value={searchTerm}
+                                            onChange={(e) => {
+                                                setSearchTerm(e.target.value);
+                                                setCurrentPage(1);
+                                            }}
+                                            className="pl-9"
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <label className="text-sm text-muted-foreground">Rows:</label>
+                                        <select
+                                            className="h-9 rounded-md border px-2 text-sm"
+                                            value={itemsPerPage}
+                                            onChange={(e) => {
+                                                setItemsPerPage(Number(e.target.value));
+                                                setCurrentPage(1);
+                                            }}
+                                        >
+                                            <option value={10}>10</option>
+                                            <option value={20}>20</option>
+                                            <option value={50}>50</option>
+                                        </select>
+                                    </div>
+                                    <Button variant="outline" size="sm" onClick={exportCsv} className="ml-auto">
+                                        <Download className="mr-2 size-4" /> Export CSV
+                                    </Button>
+                                    <span className="hidden text-sm text-muted-foreground md:inline">{sortedSales.length} data ditemukan</span>
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="overflow-x-auto">
+                                <div className="max-h-[520px] overflow-auto">
                                     <Table>
                                         <TableHeader>
-                                            <TableRow>
+                                            <TableRow className="sticky top-0 z-10 bg-background">
                                                 <TableHead>ID</TableHead>
-                                                <TableHead>Produk</TableHead>
-                                                <TableHead>Pelanggan</TableHead>
+                                                <TableHead>
+                                                    <button className="inline-flex items-center gap-1" onClick={() => toggleSort("product")}>Produk <ArrowUpDown className="size-3.5 opacity-60" /></button>
+                                                </TableHead>
+                                                <TableHead>
+                                                    <button className="inline-flex items-center gap-1" onClick={() => toggleSort("customer")}>Pelanggan <ArrowUpDown className="size-3.5 opacity-60" /></button>
+                                                </TableHead>
                                                 <TableHead>Kode Pos</TableHead>
                                                 <TableHead className="text-right">Jumlah</TableHead>
                                                 <TableHead className="text-right">Harga</TableHead>
-                                                <TableHead className="text-right">Total</TableHead>
-                                                <TableHead className="text-right">Tanggal</TableHead>
+                                                <TableHead className="text-right">
+                                                    <button className="inline-flex items-center gap-1" onClick={() => toggleSort("total")}>Total <ArrowUpDown className="size-3.5 opacity-60" /></button>
+                                                </TableHead>
+                                                <TableHead className="text-right">
+                                                    <button className="inline-flex items-center gap-1" onClick={() => toggleSort("date")}>Tanggal <ArrowUpDown className="size-3.5 opacity-60" /></button>
+                                                </TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
+                                            {paginatedSales.length === 0 && (
+                                                <TableRow>
+                                                    <TableCell colSpan={8} className="py-10 text-center text-sm text-muted-foreground">
+                                                        Tidak ada data untuk filter saat ini.
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
                                             {paginatedSales.map((sale: any) => (
-                                                <TableRow key={sale.id}>
+                                                <TableRow key={sale.id} className="hover:bg-muted/50">
                                                     <TableCell>{sale.id}</TableCell>
                                                     <TableCell className="font-medium">{sale.product_name}</TableCell>
                                                     <TableCell>{sale.customer_name}</TableCell>
                                                     <TableCell>{sale.customer_postal_code || "-"}</TableCell>
                                                     <TableCell className="text-right">{sale.quantity}</TableCell>
-                                                    <TableCell className="text-right">Rp{sale.price}</TableCell>
-                                                    <TableCell className="text-right font-medium">Rp{sale.total}</TableCell>
+                                                    <TableCell className="text-right">Rp{Number(sale.price).toLocaleString('id-ID')}</TableCell>
+                                                    <TableCell className="text-right font-medium">Rp{Number(sale.total).toLocaleString('id-ID')}</TableCell>
                                                     <TableCell className="text-right">{sale.date}</TableCell>
                                                 </TableRow>
                                             ))}
@@ -292,3 +417,4 @@ export default function AdminDashboard() {
         </AppLayout>
     );
 }
+

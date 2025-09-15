@@ -40,8 +40,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('admin.dashboard', absolute: false));
         }
         
-        // Redirect regular users to user dashboard
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Redirect regular users back to intended page or homepage
+        return redirect()->intended(route('home', absolute: false));
     }
 
     /**

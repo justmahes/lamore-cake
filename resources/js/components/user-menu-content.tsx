@@ -34,12 +34,22 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild variant="destructive" className="hover:cursor-pointer">
-                <Link className="block w-full" method="post" href={route("logout")} as="button" onClick={handleLogout}>
-                    <LogOut className="mr-2" />
-                    Log out
+            <DropdownMenuItem
+                asChild
+                className="group/destructive hover:cursor-pointer text-red-600 hover:bg-red-50 focus:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+            >
+                <Link
+                    className="flex w-full items-center gap-2 px-1.5 py-0.5"
+                    method="post"
+                    href={route("logout")}
+                    as="button"
+                    onClick={handleLogout}
+                >
+                    <LogOut className="mr-1 size-4 text-red-600 group-hover/destructive:text-red-700 dark:text-red-400 dark:group-hover/destructive:text-red-300" />
+                    <span className="font-medium">Log out</span>
                 </Link>
             </DropdownMenuItem>
+
         </>
     );
 }

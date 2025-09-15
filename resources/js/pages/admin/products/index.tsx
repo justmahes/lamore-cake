@@ -9,10 +9,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import { useMemo, useState } from "react";
+import { Search, Edit3, Trash2, PackageOpen, PackageCheck, PackageSearch } from "lucide-react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -124,6 +126,37 @@ export default function AdminProducts() {
             <div className="container mx-auto space-y-6 p-4">
                 <h1 className="text-2xl font-bold">Kelola Produk</h1>
 
+                {/* Summary */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <Card>
+                        <CardContent className="flex items-center gap-3 p-4">
+                            <PackageSearch className="text-muted-foreground" />
+                            <div>
+                                <div className="text-sm text-muted-foreground">Total Produk</div>
+                                <div className="text-2xl font-semibold">{products.length || 0}</div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="flex items-center gap-3 p-4">
+                            <PackageOpen className="text-muted-foreground" />
+                            <div>
+                                <div className="text-sm text-muted-foreground">Habis Stok</div>
+                                <div className="text-2xl font-semibold">{products.filter((p: any) => Number(p.stock) <= 0).length || 0}</div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="flex items-center gap-3 p-4">
+                            <PackageCheck className="text-muted-foreground" />
+                            <div>
+                                <div className="text-sm text-muted-foreground">Kategori</div>
+                                <div className="text-2xl font-semibold">{categories.length || 0}</div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
                 <Tabs defaultValue="list" className="w-full space-y-4">
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="list">Daftar Produk</TabsTrigger>
@@ -134,17 +167,29 @@ export default function AdminProducts() {
                         <Card>
                             <CardHeader>
                                 <CardTitle>Semua Produk</CardTitle>
-                                <div className="mt-4 flex items-center space-x-2">
-                                    <Input
-                                        placeholder="Cari berdasarkan nama atau kategori..."
-                                        value={searchTerm}
-                                        onChange={(e) => {
-                                            setSearchTerm(e.target.value);
-                                            setCurrentPage(1);
-                                        }}
-                                        className="max-w-sm"
-                                    />
-                                    <span className="text-sm text-muted-foreground">{filteredProducts.length} produk ditemukan</span>
+                                <div className="mt-4 flex items-center gap-3">
+                                    <div className="relative w-full max-w-sm">
+                                        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                        <Input
+                                            placeholder="Cari berdasarkan nama atau kategori..."
+                                            value={searchTerm}
+                                            onChange={(e) => {
+                                                setSearchTerm(e.target.value);
+                                                setCurrentPage(1);
+                                            }}
+                                            className="pl-9"
+                                        />
+                                        {searchTerm && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setSearchTerm("")}
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 text-xs text-muted-foreground hover:bg-muted/70"
+                                            >
+                                                Clear
+                                            </button>
+                                        )}
+                                    </div>
+                                    <span className="hidden text-sm text-muted-foreground sm:inline">{filteredProducts.length} produk ditemukan</span>
                                 </div>
                             </CardHeader>
                             <CardContent>
@@ -172,21 +217,36 @@ export default function AdminProducts() {
                                                     <TableCell>{p.category ? p.category.nama : p.kategori || "-"}</TableCell>
                                                     <TableCell className="text-right">Rp{(p.price || 0).toLocaleString()}</TableCell>
                                                     <TableCell className="text-right">{p.stock}</TableCell>
-                                                    <TableCell>
-                                                        <div className="flex space-x-2">
-                                                            <Button variant="outline" size="sm" onClick={() => startEdit(p)}>
-                                                                Edit
-                                                            </Button>
-                                                            <Button
-                                                                variant="outline"
-                                                                size="sm"
-                                                                onClick={() => destroy(`/admin/products/${p.id}`)}
-                                                                className="text-red-600 hover:text-red-700"
-                                                            >
-                                                                Hapus
-                                                            </Button>
-                                                        </div>
-                                                    </TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center gap-2">
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <Button variant="outline" size="sm" onClick={() => startEdit(p)} aria-label="Edit">
+                                                                        <Edit3 className="size-4" />
+                                                                    </Button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>Edit</TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        onClick={() => destroy(`/admin/products/${p.id}`)}
+                                                                        className="text-red-600 hover:text-red-700"
+                                                                        aria-label="Hapus"
+                                                                    >
+                                                                        <Trash2 className="size-4" />
+                                                                    </Button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>Hapus</TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                    </div>
+                                                </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>

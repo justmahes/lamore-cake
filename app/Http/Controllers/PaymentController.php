@@ -58,14 +58,14 @@ class PaymentController extends Controller
             switch ($status) {
                 case 'success':
                     return redirect()->route('transactions.index')
-                        ->with('success', 'Payment completed successfully! Your order has been created and is pending shipment.');
+                        ->with('success', 'Pembayaran berhasil! Pesanan Anda telah dibuat dan menunggu pengiriman.');
                 case 'failed':
                     return redirect()->route('cart.index')
-                        ->with('error', 'Payment failed. Please try again or contact support.');
+                        ->with('error', 'Pembayaran gagal. Silakan coba lagi atau hubungi dukungan.');
                 case 'pending':
                 default:
                     return redirect()->route('transactions.index')
-                        ->with('info', 'Payment is being processed. Your order will be created once payment is confirmed.');
+                        ->with('info', 'Pembayaran sedang diproses. Pesanan Anda akan dibuat setelah pembayaran dikonfirmasi.');
             }
         }
 
@@ -80,14 +80,14 @@ class PaymentController extends Controller
                     switch ($status) {
                         case 'success':
                             return redirect()->route('transactions.show', $order)
-                                ->with('success', 'Payment completed successfully! Thank you for your order.');
+                                ->with('success', 'Pembayaran berhasil! Terima kasih atas pesanan Anda.');
                         case 'failed':
                             return redirect()->route('transactions.show', $order)
-                                ->with('error', 'Payment failed. Please try again or contact support.');
+                                ->with('error', 'Pembayaran gagal. Silakan coba lagi atau hubungi dukungan.');
                         case 'pending':
                         default:
                             return redirect()->route('transactions.show', $order)
-                                ->with('info', 'Payment is being processed. You will receive confirmation once payment is complete.');
+                                ->with('info', 'Pembayaran sedang diproses. Anda akan menerima konfirmasi setelah pembayaran selesai.');
                     }
                 }
             }
@@ -97,14 +97,14 @@ class PaymentController extends Controller
         switch ($status) {
             case 'success':
                 return redirect()->route('transactions.index')
-                    ->with('success', 'Payment completed successfully!');
+                    ->with('success', 'Pembayaran berhasil!');
             case 'failed':
                 return redirect()->route('cart.index')
-                    ->with('error', 'Payment failed. Please try again.');
+                    ->with('error', 'Pembayaran gagal. Silakan coba lagi.');
             case 'pending':
             default:
                 return redirect()->route('transactions.index')
-                    ->with('info', 'Payment is being processed.');
+                    ->with('info', 'Pembayaran sedang diproses.');
         }
     }
 }

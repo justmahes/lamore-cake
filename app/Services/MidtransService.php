@@ -48,12 +48,14 @@ class MidtransService
                 ],
                 'item_details' => $this->getCartItemDetails($cartItems),
                 'callbacks' => [
-                    'finish' => route('payment.redirect') . '?status=success',
-                    'unfinish' => route('payment.redirect') . '?status=pending', 
-                    'error' => route('payment.redirect') . '?status=failed',
+                    // Let Midtrans append reliable parameters (order_id, transaction_status, status_code)
+                    'finish' => route('payment.redirect'),
+                    'unfinish' => route('payment.redirect'), 
+                    'error' => route('payment.redirect'),
                 ],
                 'custom_field1' => json_encode($cartItems), // Store cart data for later order creation
                 'custom_field2' => $user['id'], // Store user ID
+                'custom_field3' => $user['address'] ?? null, // Store shipping address used at checkout
             ];
 
             // Get the snap redirect URL instead of token
@@ -170,6 +172,7 @@ class MidtransService
             $transactionDetails = Transaction::status($orderId);
             $cartItems = json_decode($transactionDetails['custom_field1'] ?? '[]', true);
             $userId = $transactionDetails['custom_field2'] ?? null;
+            $shippingAddress = $transactionDetails['custom_field3'] ?? null;
             
             if (empty($cartItems) || !$userId) {
                 throw new Exception('Cart data or user ID not found in transaction');
@@ -185,7 +188,7 @@ class MidtransService
                 $order = Order::create([
                     'user_id' => $user->id,
                     'total_price' => $notification['gross_amount'],
-                    'address' => $user->address,
+                    'address' => $shippingAddress ?: $user->address,
                     'phone' => $user->phone,
                     'status' => 'pending', // pending = not shipped yet (payment is already confirmed)
                 ]);
@@ -238,7 +241,8 @@ class MidtransService
             return $fraudStatus === 'accept';
         }
 
-        return in_array($transactionStatus, ['settlement', 'success']);
+        // Treat settlement as success, or capture with fraud accept
+        return $transactionStatus === 'settlement' || ($transactionStatus === 'capture' && $fraudStatus === 'accept');
     }
 
     /**
