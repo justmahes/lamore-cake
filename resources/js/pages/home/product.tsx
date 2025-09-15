@@ -29,6 +29,13 @@ export default function GuestProductShow() {
                         <p className="text-lg font-semibold">Rp {product.price}</p>
                         <div className="text-sm text-gray-600">Stok: <span className="font-medium">{product.stock ?? '-'}</span></div>
                     </div>
+                    {product.expires_at && (
+                        new Date(product.expires_at).getTime() < Date.now() ? (
+                            <div className="mb-2 text-sm text-red-600">Sudah kadaluwarsa — penjual akan segera restock produk</div>
+                        ) : (
+                            <div className="mb-2 text-sm text-amber-600">Kadaluwarsa: {new Date(product.expires_at).toLocaleDateString()}</div>
+                        )
+                    )}
                     <div className="tiptap-content" dangerouslySetInnerHTML={{ __html: product.description }} />
                     <div className="mt-4">
                         <Button className="w-full" onClick={() => setOpen(true)}>Beli</Button>

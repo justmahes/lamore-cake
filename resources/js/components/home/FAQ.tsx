@@ -13,6 +13,16 @@ const FAQList: FAQProps[] = [
         value: "item-1",
     },
     {
+        question: "Bagaimana cara penyimpanan kue basah agar tahan lama?",
+        answer: "Simpan di kulkas (±4°C) dalam wadah tertutup. Umumnya tahan hingga 3–5 hari tergantung jenisnya. Untuk suhu ruang (24–30°C), sebaiknya dikonsumsi di hari yang sama.",
+        value: "item-6",
+    },
+    {
+        question: "Berapa umur simpan produk Lamore Cake?",
+        answer: "Rata-rata kue basah bertahan 1 hari di suhu ruang dan 3–5 hari di kulkas. Beberapa produk memiliki tanggal kadaluwarsa khusus yang tertera pada halaman produk.",
+        value: "item-7",
+    },
+    {
         question: "Apa saja jenis jajanan tradisional yang tersedia?",
         answer: "Kami menyediakan berbagai jajanan tradisional Bali homemade, termasuk pudding tape, kue bolu Bali, dan hampers aneka jajanan tradisional.",
         value: "item-2",

@@ -46,10 +46,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        // Redirect new users back to products listing; admins to admin dashboard
+        // Redirect new users: admins → admin dashboard, others → homepage
         if ($user->role === 'admin') {
             return redirect()->intended(route('admin.dashboard', absolute: false));
         }
-        return redirect()->intended(route('products.index', absolute: false));
+        return redirect()->intended(route('home', absolute: false));
     }
 }

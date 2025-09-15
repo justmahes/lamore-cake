@@ -102,7 +102,7 @@ export const Navbar = () => {
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem
                                       className="hover:bg-primary hover:text-primary-foreground font-medium"
-                                      onClick={() => (window.location.href = "/profile/edit")}
+                                      onClick={() => (window.location.href = "/profile")}
                                     >
                                       Kelola Profil
                                     </DropdownMenuItem>

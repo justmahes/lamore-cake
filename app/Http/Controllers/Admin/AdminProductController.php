@@ -16,6 +16,7 @@ class AdminProductController extends Controller
     {
         return Inertia::render('admin/products/index', [
             'products' => Product::with('category')->get(),
+            'trashed' => Product::onlyTrashed()->with('category')->get(),
             'categories' => Category::all(),
         ]);
     }
@@ -32,6 +33,7 @@ class AdminProductController extends Controller
                 'price' => 'required|numeric|min:0',
                 'stock' => 'required|integer|min:0',
                 'image' => 'nullable|image|max:2048',
+                'expires_at' => 'nullable|date',
             ]);
 
             if ($request->hasFile('image')) {
@@ -60,6 +62,7 @@ class AdminProductController extends Controller
                 'price' => 'required|numeric|min:0',
                 'stock' => 'required|integer|min:0',
                 'image' => 'nullable|image|max:2048',
+                'expires_at' => 'nullable|date',
             ]);
 
             if ($request->hasFile('image')) {
@@ -83,15 +86,50 @@ class AdminProductController extends Controller
         try {
             $productName = $product->name;
             
-            // Check if product is in any cart or order
-            if ($product->carts()->exists() || $product->orderItems()->exists()) {
-                return redirect()->back()->with('warning', "Tidak dapat menghapus '{$productName}' karena digunakan pada pesanan atau keranjang. Pertimbangkan menandainya sebagai stok habis.");
+            // Block deletion only if product is currently in any cart
+            if ($product->carts()->exists()) {
+                return redirect()->back()->with('warning', "Tidak dapat menghapus '{$productName}' karena masih ada di keranjang pengguna. Kosongkan keranjang terkait terlebih dahulu.");
             }
             
             $product->delete();
             return redirect()->back()->with('success', "Produk '{$productName}' berhasil dihapus.");
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menghapus produk. Silakan coba lagi.');
+        }
+    }
+
+    public function restore(string $id): RedirectResponse
+    {
+        try {
+            $product = Product::withTrashed()->findOrFail($id);
+            $product->restore();
+            return redirect()->back()->with('success', "Produk '{$product->name}' berhasil dipulihkan.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal memulihkan produk. Silakan coba lagi.');
+        }
+    }
+
+    public function forceDestroy(string $id): RedirectResponse
+    {
+        try {
+            $product = Product::withTrashed()->findOrFail($id);
+            if ($product->carts()->exists()) {
+                return redirect()->back()->with('warning', "Tidak dapat menghapus permanen '{$product->name}' karena masih ada di keranjang pengguna.");
+            }
+            $product->forceDelete();
+            return redirect()->back()->with('success', "Produk '{$product->name}' berhasil dihapus permanen.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menghapus permanen produk. Silakan coba lagi.');
+        }
+    }
+
+    public function stockZero(Product $product): RedirectResponse
+    {
+        try {
+            $product->update(['stock' => 0]);
+            return redirect()->back()->with('success', "Stok produk '{$product->name}' diset menjadi 0.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal mengubah stok produk. Silakan coba lagi.');
         }
     }
 }

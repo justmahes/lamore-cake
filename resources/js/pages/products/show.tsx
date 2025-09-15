@@ -31,6 +31,13 @@ export default function ProductShow() {
                 {product.image && <ImagePreview src={product.image} alt={product.name} className="h-80 w-full object-cover" />}
                 <div className="quill-content" dangerouslySetInnerHTML={{ __html: product.description }} />
                 <p className="text-sm text-gray-600">Stock: {product.stock}</p>
+                {product.expires_at && (
+                    new Date(product.expires_at).getTime() < Date.now() ? (
+                        <p className="text-sm text-red-600">Sudah kadaluwarsa — Stok akan tersedia kembali segera</p>
+                    ) : (
+                        <p className="text-sm text-amber-600">Kadaluwarsa: {new Date(product.expires_at).toLocaleDateString()}</p>
+                    )
+                )}
                 {auth.user ? (
                     <div className="space-y-3">
                         <div className="flex items-center space-x-3">

@@ -24,7 +24,7 @@ export default function Products() {
     };
 
     const getQuantity = (productId: number) => quantities[productId] || 1;
-    
+
     const setQuantity = (productId: number, quantity: number) => {
         setQuantities(prev => ({ ...prev, [productId]: quantity }));
     };
@@ -41,7 +41,7 @@ export default function Products() {
             <FlashMessage />
             <div className="container mx-auto p-4">
                 <h1 className="mb-4 text-2xl font-bold">Produk</h1>
-                
+
                 {/* Category Filter Tabs */}
                 {categories && categories.length > 0 && (
                     <div className="flex flex-wrap gap-2 border-b mb-4">
@@ -83,15 +83,19 @@ export default function Products() {
                                 {selectedCategory === 'all' ? 'Tidak ada produk' : `Tidak ada produk di kategori "${selectedCategory}"`}
                             </h3>
                             <p className="text-gray-500">
-                                {selectedCategory === 'all' 
-                                    ? 'Belum ada produk yang tersedia saat ini.' 
+                                {selectedCategory === 'all'
+                                    ? 'Belum ada produk yang tersedia saat ini.'
                                     : 'Belum ada produk yang tersedia di kategori ini.'}
                             </p>
                         </div>
                     </div>
                 ) : (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {products.map((p: any) => (
+                        {products.map((p: any) => {
+                        const daysLeft = p.expires_at ? Math.ceil((new Date(p.expires_at).getTime() - Date.now()) / (1000*60*60*24)) : null;
+                        const nearExpiry = typeof daysLeft === 'number' && daysLeft >= 0 && daysLeft <= 3;
+                        const expired = typeof daysLeft === 'number' && daysLeft < 0;
+                        return (
                         <Card key={p.id} className="overflow-hidden border bg-card p-3 shadow hover:shadow-md">
                             <button onClick={() => quickView(p)} className="block w-full text-left">
                                 <div className="aspect-[4/3] w-full overflow-hidden rounded-md">
@@ -104,6 +108,12 @@ export default function Products() {
                                             <span className="text-sm text-gray-500 capitalize">
                                                 {p.category?.nama || p.kategori}
                                             </span>
+                                        )}
+                                        {nearExpiry && (
+                                            <div className="mt-1 inline-flex items-center rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Hampir kadaluwarsa</div>
+                                        )}
+                                        {expired && (
+                                            <div className="mt-1 inline-flex items-center rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Sudah kadaluwarsa</div>
                                         )}
                                     </div>
                                     <div className="text-right">
@@ -123,11 +133,12 @@ export default function Products() {
                                     </div>
                                 </div>
                                 <form onSubmit={(e) => { e.preventDefault(); router.post(`/cart/add/${p.id}`, { quantity: getQuantity(p.id) }); }}>
-                                    <Button type="submit" className="w-full">Tambah {getQuantity(p.id)} ke Keranjang</Button>
+                                    <Button type="submit" className="w-full" disabled={expired} title={expired ? 'Produk telah kadaluwarsa' : undefined}>Tambah {getQuantity(p.id)} ke Keranjang</Button>
                                 </form>
                             </div>
                         </Card>
-                        ))}
+                        );
+                        })}
                     </div>
                 )}
             </div>
@@ -145,6 +156,13 @@ export default function Products() {
                             <div>
                                 <div className="mb-2 text-lg font-semibold">Rp {selected.price}</div>
                                 <div className="mb-1 text-sm text-gray-600">Stok: <span className="font-medium">{selected.stock ?? '-'}</span></div>
+                                {selected.expires_at && (
+                                    new Date(selected.expires_at).getTime() < Date.now() ? (
+                                        <div className="mb-1 text-xs text-red-700">Sudah kadaluwarsa — Stok akan tersedia kembali segera</div>
+                                    ) : (
+                                        <div className="mb-1 text-xs text-amber-700">Kadaluwarsa: {new Date(selected.expires_at).toLocaleDateString()}</div>
+                                    )
+                                )}
                                 <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: selected.description || '' }} />
                                 <div className="mt-4">
                                     <Button onClick={() => setQuickOpen(false)}>Tutup</Button>

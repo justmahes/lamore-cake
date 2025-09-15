@@ -19,6 +19,9 @@ Route::middleware(['auth', HandleRole::class])->prefix('admin')->name('admin.')-
     Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
     Route::post('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+    Route::post('/products/{id}/restore', [AdminProductController::class, 'restore'])->name('products.restore');
+    Route::delete('/products/{id}/force', [AdminProductController::class, 'forceDestroy'])->name('products.forceDestroy');
+    Route::put('/products/{product}/stock-zero', [AdminProductController::class, 'stockZero'])->name('products.stock_zero');
 
     Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
     Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');

@@ -85,11 +85,6 @@ export const Footer = () => {
                 {/* Bottom bar */}
                 <section className="flex flex-col items-center justify-between gap-4 border-t border-border py-6 text-sm text-muted-foreground md:flex-row">
                     <p className="order-2 md:order-1">© {new Date().getFullYear()} Lamore Cake. All rights reserved.</p>
-                    <div className="order-1 flex items-center gap-2 md:order-2">
-                        <Button variant="outline" size="sm" className="group" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                            <ArrowUp className="mr-2 size-4 transition-transform group-hover:-translate-y-0.5" /> Ke atas
-                        </Button>
-                    </div>
                 </section>
             </div>
         </footer>

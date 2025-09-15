@@ -33,7 +33,7 @@ export default function GuestProducts() {
             <FlashMessage />
             <div className="container mx-auto space-y-4 p-4">
                 <h1 className="text-2xl font-bold">Produk</h1>
-                
+
                 {/* Category Filter Tabs */}
                 {categories && categories.length > 0 && (
                     <div className="flex flex-wrap gap-2 border-b">
@@ -75,15 +75,19 @@ export default function GuestProducts() {
                                 {selectedCategory === 'all' ? 'Tidak ada produk' : `Tidak ada produk di kategori "${selectedCategory}"`}
                             </h3>
                             <p className="text-gray-500">
-                                {selectedCategory === 'all' 
-                                    ? 'Belum ada produk yang tersedia saat ini.' 
+                                {selectedCategory === 'all'
+                                    ? 'Belum ada produk yang tersedia saat ini.'
                                     : 'Belum ada produk yang tersedia di kategori ini.'}
                             </p>
                         </div>
                     </div>
                 ) : (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {products.map((p: any) => (
+                        {products.map((p: any) => {
+                            const daysLeft = p.expires_at ? Math.ceil((new Date(p.expires_at).getTime() - Date.now()) / (1000*60*60*24)) : null;
+                            const nearExpiry = typeof daysLeft === 'number' && daysLeft >= 0 && daysLeft <= 3;
+                            const expired = typeof daysLeft === 'number' && daysLeft < 0;
+                            return (
                             <div key={p.id} className="group overflow-hidden rounded-lg border bg-card p-3 shadow hover:shadow-md">
                                 <button onClick={() => quickView(p)} className="block w-full text-left">
                                     <div className="aspect-[4/3] w-full overflow-hidden rounded-md">
@@ -96,8 +100,7 @@ export default function GuestProducts() {
                                                 <span className="text-sm text-gray-500 capitalize">
                                                     {p.category?.nama || p.kategori}
                                                 </span>
-                                            )}
-                                        </div>
+                                            )}\n                                        </div>
                                         <div className="text-right">
                                             <div className="text-sm text-gray-500">Stok</div>
                                             <div className="text-sm font-medium">{p.stock ?? '-'}</div>
@@ -107,10 +110,11 @@ export default function GuestProducts() {
                                 </button>
                                 <div className="mt-3 grid grid-cols-2 gap-2">
                                     <Button onClick={() => quickView(p)} variant="outline">Lihat</Button>
-                                    <Button onClick={() => requireAuth(p)}>Beli</Button>
+                                    <Button onClick={() => requireAuth(p)} disabled={expired} title={expired ? 'Produk telah kadaluwarsa' : undefined}>Beli</Button>
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>
@@ -128,10 +132,17 @@ export default function GuestProducts() {
                             <div>
                                 <div className="mb-2 text-lg font-semibold">Rp {selected.price}</div>
                                 <div className="text-sm text-gray-600 mb-1">Stok: <span className="font-medium">{selected.stock ?? '-'}</span></div>
+                                {selected.expires_at && (
+                                    new Date(selected.expires_at).getTime() < Date.now() ? (
+                                        <div className="mb-1 text-xs text-red-700">Sudah kadaluwarsa — Stok akan tersedia kembali segera</div>
+                                    ) : (
+                                        <div className="mb-1 text-xs text-amber-700">Kadaluwarsa: {new Date(selected.expires_at).toLocaleDateString()}</div>
+                                    )
+                                )}
                                 <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: selected.description || '' }} />
                                 <div className="mt-4 grid grid-cols-2 gap-2">
                                     <Button variant="outline" onClick={() => setQuickOpen(false)}>Tutup</Button>
-                                    <Button onClick={() => { setQuickOpen(false); requireAuth(selected); }}>Beli</Button>
+                                    <Button onClick={() => { setQuickOpen(false); requireAuth(selected); }} disabled={selected.expires_at && new Date(selected.expires_at).getTime() < Date.now()}>Beli</Button>
                                 </div>
                             </div>
                         </div>
@@ -157,3 +168,4 @@ export default function GuestProducts() {
         </>
     );
 }
+
