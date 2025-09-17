@@ -10,7 +10,7 @@ import ModeToggle from "@/components/mode-toggle";
 import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from "chart.js";
 import { useEffect, useMemo, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
-import { Package, Users, ShoppingBag, Coins, TrendingUp, Search, Download, ArrowUpDown } from "lucide-react";
+import { Package, Users, ShoppingBag, Coins, TrendingUp, Search, Download, ArrowUpDown, X } from "lucide-react";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, ArcElement);
 
@@ -191,9 +191,29 @@ export default function AdminDashboard() {
 
     const doughnutOptions = {
         responsive: true,
+        maintainAspectRatio: false,
+        aspectRatio: 1,
+        layout: {
+            padding: {
+                top: 12,
+                bottom: 12,
+                left: 12,
+                right: 12,
+            },
+        },
         plugins: {
             legend: {
                 position: "right" as const,
+                align: "start" as const,
+                labels: {
+                    boxWidth: 14,
+                    boxHeight: 14,
+                    padding: 10,
+                    usePointStyle: true,
+                    font: {
+                        size: 12,
+                    },
+                },
             },
             tooltip: {
                 callbacks: {
@@ -203,7 +223,7 @@ export default function AdminDashboard() {
                 },
             },
         },
-        cutout: "60%",
+        cutout: "70%",
     };
 
     return (
@@ -223,7 +243,7 @@ export default function AdminDashboard() {
                             aria-label="Tutup"
                             title="Tutup"
                         >
-                            Ã—
+                            <X className="h-4 w-4" aria-hidden="true" />
                         </button>
                         <div id="low-stock-alert">
                             Stok menipis: {lowStock.count} produk di bawah {lowStock.threshold}. Silakan tambah stok.
@@ -304,7 +324,7 @@ export default function AdminDashboard() {
                                     <CardTitle>Produk Terlaris</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="h-[320px]">
+                                    <div className="mx-auto h-[260px] w-full max-w-[320px] md:h-[280px] md:max-w-[360px]">
                                         <Doughnut data={productSalesChartData} options={doughnutOptions} />
                                     </div>
                                 </CardContent>
