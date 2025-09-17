@@ -21,7 +21,7 @@ class HandleRole
         }
 
         if (Auth::user()->role != "admin") {
-            return redirect("/dashboard")->with("error", "Anda tidak memiliki akses sebagai administrator.");
+            return redirect("/")->with("error", "Anda tidak memiliki akses sebagai administrator.");
         }
 
         return $next($request);

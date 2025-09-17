@@ -6,6 +6,9 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Order;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -46,6 +49,27 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            // Jumlah item pada keranjang untuk user yang login (total quantity)
+            'cart_count' => function () use ($request) {
+                $user = $request->user();
+                if (! $user) return 0;
+                try {
+                    // Hitung jumlah item unik di keranjang (bukan total kuantitas)
+                    return (int) DB::table('carts')->where('user_id', $user->id)->count();
+                } catch (\Throwable) {
+                    return 0;
+                }
+            },
+            // Admin badges for sidebar (e.g., pending orders count)
+            'admin_badges' => function () use ($request) {
+                $user = $request->user();
+                if (!$user || ($user->role ?? null) !== 'admin') {
+                    return null;
+                }
+                return [
+                    'orders_pending' => Order::where('status', 'pending')->count(),
+                ];
+            },
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

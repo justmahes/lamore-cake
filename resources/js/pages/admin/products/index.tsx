@@ -279,6 +279,7 @@ export default function AdminProducts() {
                                                 const daysLeft = p.expires_at ? Math.ceil((new Date(p.expires_at).getTime() - Date.now()) / (1000*60*60*24)) : null;
                                                 const nearExpiry = typeof daysLeft === 'number' && daysLeft >= 0 && daysLeft <= 3;
                                                 const expired = typeof daysLeft === 'number' && daysLeft < 0;
+                                                const lowStock = Number(p.stock) < 20;
                                                 return (
                                                 <TableRow key={p.id} className={expired ? 'bg-red-50' : (nearExpiry ? 'bg-amber-50' : '')}>
                                                     <TableCell>
@@ -299,7 +300,15 @@ export default function AdminProducts() {
                                                     </TableCell>
                                                     <TableCell>{p.category ? p.category.nama : p.kategori || "-"}</TableCell>
                                                     <TableCell className="text-right">Rp{(p.price || 0).toLocaleString()}</TableCell>
-                                                    <TableCell className="text-right">{p.stock}</TableCell>
+                                                    <TableCell className="text-right">
+                                                        {lowStock ? (
+                                                            <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
+                                                                {p.stock} (Stok menipis)
+                                                            </span>
+                                                        ) : (
+                                                            p.stock
+                                                        )}
+                                                    </TableCell>
                                                     <TableCell>{p.expires_at ? new Date(p.expires_at).toLocaleDateString() : '-'}</TableCell>
                                                 <TableCell>
                                                     <div className="flex items-center gap-2">

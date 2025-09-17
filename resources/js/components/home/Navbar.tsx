@@ -7,7 +7,7 @@ import { useState } from "react";
 
 // import { GitHubLogoIcon } from "@radix-ui/react-icons";
 // import { ModeToggle } from "./mode-toggle";
-import { Menu, User } from "lucide-react";
+import { Menu, User, ShoppingCart } from "lucide-react";
 // import { LogoIcon } from "./Icons";
 import { buttonVariants } from "./ui/button";
 
@@ -22,7 +22,7 @@ const commonRoutes: RouteProps[] = [
 ];
 
 export const Navbar = () => {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, cart_count } = usePage<SharedData>().props;
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const isAdmin = Boolean((auth as any)?.user?.role === 'admin');
     const routeList: RouteProps[] = [
@@ -77,6 +77,10 @@ export const Navbar = () => {
                     {/* desktop */}
                     <nav className="hidden items-center gap-1 md:flex">
                         {routeList.map((route: RouteProps, i) => {
+                            if (route.label === 'Keranjang') {
+                                // Keranjang ditampilkan sebagai ikon terpisah di kanan
+                                return null;
+                            }
                             const active = current === route.href || (route.href !== "/" && current.startsWith(route.href));
                             return (
                                 <a
@@ -93,25 +97,40 @@ export const Navbar = () => {
                             );
                         })}
                         {auth.user && (
+                            <a
+                                href="/cart"
+                                aria-label="Keranjang"
+                                className={buttonVariants({ variant: "ghost" }) + " relative"}
+                                title="Keranjang"
+                            >
+                                <ShoppingCart className="h-5 w-5" />
+                                {(cart_count ?? 0) > 0 && (
+                                    <span className="absolute -right-1 -top-1 inline-flex min-w-[18px] translate-x-1/4 -translate-y-1/4 items-center justify-center rounded-full bg-red-600 px-1.5 text-[10px] font-semibold leading-4 text-white">
+                                        {Math.min(99, Number(cart_count))}
+                                    </span>
+                                )}
+                            </a>
+                        )}
+                        {auth.user && (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className={buttonVariants({ variant: "ghost" })} aria-label="Profil">
+                                    <button className={buttonVariants({ variant: "ghost" })} aria-label="Profil" title="Profil">
                                         <User className="h-5 w-5" />
                                     </button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem
-                                      className="hover:bg-primary hover:text-primary-foreground font-medium"
-                                      onClick={() => (window.location.href = "/profile")}
+                                        className="hover:bg-primary hover:text-primary-foreground font-medium"
+                                        onClick={() => (window.location.href = "/profile")}
                                     >
-                                      Kelola Profil
+                                        Kelola Profil
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
-                                      className="group/destructive text-red-600 hover:bg-red-50 focus:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 font-medium"
-                                      onClick={() => router.post(route('logout'))}
+                                        className="group/destructive text-red-600 hover:bg-red-50 focus:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 font-medium"
+                                        onClick={() => router.post(route('logout'))}
                                     >
-                                      <span className="group-hover/destructive:text-red-700 dark:group-hover/destructive:text-red-300">Keluar</span>
+                                        <span className="group-hover/destructive:text-red-700 dark:group-hover/destructive:text-red-300">Keluar</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>

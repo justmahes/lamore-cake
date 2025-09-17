@@ -34,15 +34,15 @@ export default function PaymentSuccess() {
                             <CheckCircle className="h-10 w-10 text-green-600" />
                         </div>
                         <CardTitle className="text-2xl font-bold text-green-600">
-                            Payment Successful!
+                            Pembayaran Berhasil !
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="text-center space-y-4">
                         <p className="text-gray-600">
-                            Thank you for your order! Your payment has been processed successfully.
+                          Terima kasih atas pesanan Anda ! Pembayaran Anda telah berhasil diproses.
                         </p>
                         <p className="text-sm text-gray-500">
-                            You will receive an email confirmation shortly with your order details.
+                            Anda akan segera menerima konfirmasi dengan detail pesanan Anda.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
                             <Button asChild>
@@ -52,7 +52,7 @@ export default function PaymentSuccess() {
                             </Button>
                             <Button variant="outline" asChild>
                                 <Link href="/products">
-                                    Continue Shopping
+                                    Belanja Lagi
                                 </Link>
                             </Button>
                         </div>

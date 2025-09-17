@@ -16,6 +16,11 @@ class AdminDashboardController extends Controller
 {
     public function index(): Response
     {
+        // Expire pending orders whose expires_at passed (global sweep)
+        \App\Models\Order::where('status', 'pending')
+            ->whereNotNull('expires_at')
+            ->where('expires_at', '<', now())
+            ->update(['status' => 'failed']);
         // Summary data for cards
         $summary = [
             'products' => Product::count(),
@@ -72,12 +77,31 @@ class AdminDashboardController extends Controller
                 ];
             });
 
+        // Recent successful orders within last 10 minutes (paid)
+        $recentSuccess = Order::where('status', 'paid')
+            ->where('created_at', '>=', Carbon::now()->subMinutes(10))
+            ->count();
+
+        // Low stock products (use configurable threshold)
+        $threshold = (int) config('shop.low_stock_threshold', 20);
+        $lowStockCount = Product::where('stock', '<', $threshold)->count();
+        $lowStockItems = Product::where('stock', '<', $threshold)
+            ->orderBy('stock')
+            ->take(5)
+            ->get(['id', 'name', 'stock']);
+
         return Inertia::render('admin/dashboard', [
             'summary' => $summary,
             'salesData' => $salesData,
             'productSalesData' => $productSalesData,
             'bestSellers' => $bestSellers,
             'allSales' => $allSales,
+            'recentSuccess' => $recentSuccess,
+            'lowStock' => [
+                'count' => $lowStockCount,
+                'items' => $lowStockItems,
+                'threshold' => $threshold,
+            ],
         ]);
     }
 

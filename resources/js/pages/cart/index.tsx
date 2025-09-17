@@ -1,4 +1,4 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { Navbar } from '@/components/home/Navbar';
 import { Footer } from '@/components/home/Footer';
 import {
@@ -29,6 +29,12 @@ export default function Cart() {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const idr = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
+
+    const updateQty = (item: any, nextQty: number) => {
+        const q = Math.max(1, Number(nextQty) || 1);
+        router.patch(`/cart/update/${item.id}`, { quantity: q }, { preserveScroll: true });
+    };
 
     // Filter and paginate cart items
     const filteredCartItems = useMemo(() => {
@@ -95,10 +101,22 @@ export default function Cart() {
                                             {paginatedCartItems.map((item: any) => (
                                                 <TableRow key={item.id}>
                                                     <TableCell className="font-medium">{item.product.name}</TableCell>
-                                                    <TableCell className="text-center">{item.quantity}</TableCell>
-                                                    <TableCell className="text-right">Rp{(item.product.price || 0).toLocaleString()}</TableCell>
+                                                    <TableCell className="text-center">
+                                                        <div className="inline-flex items-center gap-2">
+                                                            <Button variant="outline" size="icon" onClick={() => updateQty(item, item.quantity - 1)}>-</Button>
+                                                            <Input
+                                                                type="number"
+                                                                min={1}
+                                                                value={item.quantity}
+                                                                onChange={(e) => updateQty(item, Number(e.target.value))}
+                                                                className="w-16 text-center"
+                                                            />
+                                                            <Button variant="outline" size="icon" onClick={() => updateQty(item, item.quantity + 1)}>+</Button>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="text-right">{idr.format(Number(item.product.price || 0))}</TableCell>
                                                     <TableCell className="text-right font-medium">
-                                                        Rp{((item.product.price || 0) * item.quantity).toLocaleString()}
+                                                        {idr.format(Number((item.product.price || 0) * item.quantity))}
                                                     </TableCell>
                                                     <TableCell>
                                                         <Button
@@ -170,7 +188,7 @@ export default function Cart() {
                                 <div className="border-t pt-4 mt-4">
                                     <div className="flex justify-between items-center mb-4">
                                         <span className="text-lg font-semibold">Subtotal:</span>
-                                        <span className="text-xl font-bold">Rp{(subtotal || 0).toLocaleString()}</span>
+                                        <span className="text-xl font-bold">{idr.format(Number(subtotal || 0))}</span>
                                     </div>
                                     <div className="flex gap-2 flex-wrap">
                                         <Button asChild size="lg">

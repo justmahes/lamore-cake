@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\PendingPayment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -127,7 +128,39 @@ class CheckoutController extends Controller
             // Create payment redirect URL
             $midtransService = new MidtransService();
             $paymentData = $midtransService->createRedirectPaymentFromCart($cartData, $userData);
+
+            // Create order so it appears in history immediately (single order per checkout)
+            DB::transaction(function () use ($user, $paymentData, $cartItems) {
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'midtrans_order_id' => $paymentData['order_id'],
+                    'total_price' => $paymentData['total_amount'],
+                    'address' => $user->address,
+                    'phone' => $user->phone,
+                    'status' => 'pending', // menunggu pembayaran diselesaikan
+                    'expires_at' => now()->addMinutes(5),
+                ]);
+
+                foreach ($cartItems as $cartItem) {
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $cartItem->product_id,
+                        'quantity' => $cartItem->quantity,
+                        'price' => $cartItem->product->price,
+                    ]);
+                }
+            });
             // Log::info('Payment redirect URL: ' . $paymentData['redirect_url']);
+
+            // Persist pending payment to DB for cross-session resume
+            PendingPayment::updateOrCreate(
+                ['midtrans_order_id' => $paymentData['order_id']],
+                [
+                    'user_id' => $user->id,
+                    'redirect_url' => $paymentData['redirect_url'],
+                    'amount' => $paymentData['total_amount'],
+                ]
+            );
 
             session([
                 'pending_payment' => [
@@ -137,6 +170,7 @@ class CheckoutController extends Controller
                     'total_amount' => $paymentData['total_amount'],
                     'user_data' => $userData,
                     'shipping_address' => $shippingAddress,
+                    'redirect_url' => $paymentData['redirect_url'],
                 ]
             ]);
 
@@ -187,16 +221,28 @@ class CheckoutController extends Controller
 
             // Fallback: Check transaction status from Midtrans
             if ($transactionStatus) {
+                // Upayakan sinkronisasi status + stok via pengecekan status langsung ke Midtrans
+                if ($orderId) {
+                    $this->setupMidtransConfig();
+                    $midtransService = new MidtransService();
+                    $transactionDetails = $midtransService->checkTransactionStatus($orderId);
+                    // Jalankan handler yang sama seperti webhook (idempoten)
+                    $midtransService->handleNotification($transactionDetails);
+                }
+
                 if (in_array($transactionStatus, ['settlement', 'capture'])) {
-                    $this->handleSuccessfulPayment();
+                    if ($orderId) { \App\Models\PendingPayment::where('midtrans_order_id', $orderId)->delete(); }
+                    session()->forget('pending_payment');
                     return redirect()->route('payment.success')
-                        ->with('success', 'Pembayaran berhasil! Pesanan Anda sedang diproses.');
+                        ->with('success', 'Pembayaran berhasil!');
                 } elseif ($transactionStatus === 'pending') {
                     return redirect()->route('payment.pending')
                         ->with('info', 'Pembayaran tertunda. Silakan selesaikan pembayaran Anda.');
-                } else {
+                } else { // deny/cancel/expire/failure
+                    if ($orderId) { \App\Models\PendingPayment::where('midtrans_order_id', $orderId)->delete(); }
+                    session()->forget('pending_payment');
                     return redirect()->route('cart.index')
-                        ->with('error', 'Pembayaran gagal atau dibatalkan. Silakan coba lagi.');
+                        ->with('error', 'Pembayaran gagal atau dibatalkan.');
                 }
             }
 
@@ -211,19 +257,24 @@ class CheckoutController extends Controller
 
                 if ($ts === 'capture') {
                     if ($fraud === 'accept') {
-                        $this->handleSuccessfulPayment();
+                        // Sinkronkan status dan stok secara idempoten
+                        $midtransService->handleNotification($transactionDetails);
+                        if ($orderId) { \App\Models\PendingPayment::where('midtrans_order_id', $orderId)->delete(); }
+                        session()->forget('pending_payment');
                         return redirect()->route('payment.success')
-                            ->with('success', 'Pembayaran berhasil! Pesanan Anda sedang diproses.');
+                            ->with('success', 'Pembayaran berhasil!');
                     }
-                    // capture but not accept => treat as pending/failed and keep cart
                     return redirect()->route('payment.pending')
                         ->with('info', 'Pembayaran sedang ditinjau. Mohon tunggu konfirmasi.');
                 }
 
                 if (in_array($ts, ['settlement', 'success'])) {
-                    $this->handleSuccessfulPayment();
+                    // Sinkronkan status dan stok secara idempoten
+                    $midtransService->handleNotification($transactionDetails);
+                    if ($orderId) { \App\Models\PendingPayment::where('midtrans_order_id', $orderId)->delete(); }
+                    session()->forget('pending_payment');
                     return redirect()->route('payment.success')
-                        ->with('success', 'Pembayaran berhasil! Pesanan Anda sedang diproses.');
+                        ->with('success', 'Pembayaran berhasil!');
                 }
 
                 if (in_array($ts, ['pending'])) {
@@ -232,6 +283,8 @@ class CheckoutController extends Controller
                 }
 
                 if (in_array($ts, ['deny', 'cancel', 'expire', 'failure'])) {
+                    if ($orderId) { \App\Models\PendingPayment::where('midtrans_order_id', $orderId)->delete(); }
+                    session()->forget('pending_payment');
                     return redirect()->route('cart.index')
                         ->with('error', 'Pembayaran gagal atau dibatalkan. Silakan coba lagi.');
                 }
@@ -254,68 +307,7 @@ class CheckoutController extends Controller
     /**
      * Handle successful payment - create order and clear cart as fallback
      */
-    private function handleSuccessfulPayment()
-    {
-        try {
-            $pendingPayment = session('pending_payment');
-            
-            if (!$pendingPayment || !Auth::check()) {
-                return;
-            }
-
-            $user = Auth::user();
-            
-            // Check if order already exists to prevent duplicates
-            $existingOrder = Order::where('user_id', $user->id)
-                ->where('total_price', $pendingPayment['total_amount'])
-                ->where('created_at', '>=', now()->subHours(1))
-                ->first();
-                
-            if ($existingOrder) {
-                // Order already exists, just clear cart and session
-                Cart::where('user_id', $user->id)->delete();
-                session()->forget('pending_payment');
-                return;
-            }
-
-            DB::transaction(function () use ($pendingPayment, $user) {
-                // Create the order
-                $order = Order::create([
-                    'user_id' => $user->id,
-                    'total_price' => $pendingPayment['total_amount'],
-                    'address' => $user->address,
-                    'phone' => $user->phone,
-                    'status' => 'pending', // pending = not shipped yet (payment is confirmed)
-                ]);
-                
-                // Create order items and update stock
-                foreach ($pendingPayment['cart_items'] as $cartItem) {
-                    $product = \App\Models\Product::find($cartItem['product_id']);
-                    if ($product && $product->stock >= $cartItem['quantity']) {
-                        OrderItem::create([
-                            'order_id' => $order->id,
-                            'product_id' => $cartItem['product_id'],
-                            'quantity' => $cartItem['quantity'],
-                            'price' => $cartItem['price'],
-                        ]);
-                        
-                        // Decrease stock
-                        $product->decrement('stock', $cartItem['quantity']);
-                    }
-                }
-                
-                // Clear the user's cart
-                Cart::where('user_id', $user->id)->delete();
-                
-                // Clear session data
-                session()->forget('pending_payment');
-                
-                Log::info('Order created successfully via payment redirect fallback', ['order_id' => $order->id, 'user_id' => $user->id]);
-            });
-        } catch (\Exception $e) {
-            Log::error('Failed to handle successful payment: ' . $e->getMessage());
-        }
-    }
+    private function handleSuccessfulPayment() { /* handled via Midtrans webhook; no-op */ }
 
     /**
      * Payment success page

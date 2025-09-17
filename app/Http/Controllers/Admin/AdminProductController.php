@@ -86,13 +86,15 @@ class AdminProductController extends Controller
         try {
             $productName = $product->name;
             
-            // Block deletion only if product is currently in any cart
-            if ($product->carts()->exists()) {
-                return redirect()->back()->with('warning', "Tidak dapat menghapus '{$productName}' karena masih ada di keranjang pengguna. Kosongkan keranjang terkait terlebih dahulu.");
-            }
-            
+            // Automatically remove this product from all carts to allow deletion
+            $removed = $product->carts()->count();
+            $product->carts()->delete();
+
             $product->delete();
-            return redirect()->back()->with('success', "Produk '{$productName}' berhasil dihapus.");
+            $msg = $removed > 0
+                ? "Produk '{$productName}' berhasil dihapus dan dikeluarkan dari {$removed} keranjang."
+                : "Produk '{$productName}' berhasil dihapus.";
+            return redirect()->back()->with('success', $msg);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menghapus produk. Silakan coba lagi.');
         }
@@ -113,11 +115,15 @@ class AdminProductController extends Controller
     {
         try {
             $product = Product::withTrashed()->findOrFail($id);
-            if ($product->carts()->exists()) {
-                return redirect()->back()->with('warning', "Tidak dapat menghapus permanen '{$product->name}' karena masih ada di keranjang pengguna.");
-            }
+            // Clean up related cart items before force delete
+            $removed = $product->carts()->count();
+            $product->carts()->delete();
+
             $product->forceDelete();
-            return redirect()->back()->with('success', "Produk '{$product->name}' berhasil dihapus permanen.");
+            $msg = $removed > 0
+                ? "Produk '{$product->name}' berhasil dihapus permanen dan dikeluarkan dari {$removed} keranjang."
+                : "Produk '{$product->name}' berhasil dihapus permanen.";
+            return redirect()->back()->with('success', $msg);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menghapus permanen produk. Silakan coba lagi.');
         }

@@ -14,10 +14,16 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'midtrans_order_id',
         'total_price',
         'address',
         'phone',
         'status',
+        'expires_at',
+    ];
+
+    protected $casts = [
+        'expires_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

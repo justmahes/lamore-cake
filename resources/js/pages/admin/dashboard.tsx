@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -8,7 +8,7 @@ import { type BreadcrumbItem } from "@/types";
 import { Head, Link, usePage } from "@inertiajs/react";
 import ModeToggle from "@/components/mode-toggle";
 import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from "chart.js";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { Package, Users, ShoppingBag, Coins, TrendingUp, Search, Download, ArrowUpDown } from "lucide-react";
 
@@ -22,7 +22,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function AdminDashboard() {
-    const { summary, salesData, productSalesData, bestSellers, allSales } = usePage().props as any;
+    const { summary, salesData, productSalesData, bestSellers, allSales, recentSuccess, lowStock } = usePage().props as any;
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -56,6 +56,14 @@ export default function AdminDashboard() {
     }, [sortedSales, currentPage, itemsPerPage]);
 
     const totalPages = Math.ceil(sortedSales.length / itemsPerPage);
+    const [showNewOrderAlert, setShowNewOrderAlert] = useState(false);
+    useEffect(() => {
+        if (typeof recentSuccess === 'number' && recentSuccess > 0) {
+            setShowNewOrderAlert(true);
+            const t = setTimeout(() => setShowNewOrderAlert(false), 3500);
+            return () => clearTimeout(t);
+        }
+    }, [recentSuccess]);
 
     const toggleSort = (key: typeof sortKey) => {
         if (sortKey === key) {
@@ -91,11 +99,12 @@ export default function AdminDashboard() {
         URL.revokeObjectURL(url);
     };
 
+    const idr = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
     const summaryCards = [
         { title: "Total Produk", value: summary?.products || 0, icon: Package },
         { title: "Total Pelanggan", value: summary?.customers || 0, icon: Users },
         { title: "Total Pesanan", value: summary?.orders || 0, icon: ShoppingBag },
-        { title: "Total Penjualan", value: `Rp${(summary?.total_sales || 0).toLocaleString('id-ID')}`, icon: Coins },
+        { title: "Total Penjualan", value: idr.format(Number(summary?.total_sales || 0)), icon: Coins },
     ];
 
     // Prepare chart data
@@ -158,12 +167,23 @@ export default function AdminDashboard() {
             tooltip: {
                 mode: "index" as const,
                 intersect: false,
+                callbacks: {
+                    label: function (context: any) {
+                        const v = Number(context.parsed.y || context.parsed || 0);
+                        return `${context.dataset.label}: ${idr.format(v)}`;
+                    },
+                },
             },
         },
         scales: {
             y: {
                 beginAtZero: true,
                 grid: { color: "rgba(0,0,0,0.08)" },
+                ticks: {
+                    callback: function (value: any) {
+                        return idr.format(Number(value));
+                    },
+                },
             },
             x: { grid: { display: false } },
         },
@@ -190,6 +210,31 @@ export default function AdminDashboard() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard Admin" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                {showNewOrderAlert && (
+                    <div className="animate-in fade-in slide-in-from-top-1 rounded-md border border-green-300 bg-green-50 p-3 text-sm text-green-900">
+                        Ada pesanan masuk! Periksa dan konfirmasi segera.
+                    </div>
+                )}
+                {lowStock?.count > 0 && (
+                    <div className="relative rounded-md border border-amber-300 bg-amber-50 p-3 pr-8 text-sm text-amber-900">
+                        <button
+                            onClick={(e) => { try { localStorage.setItem('hide_low_stock_alert', '1'); } catch {} const box = (e.currentTarget as HTMLElement).parentElement as HTMLElement | null; if (box) box.remove(); }}
+                            className="absolute right-2 top-2 inline-flex h-5 w-5 items-center justify-center rounded hover:bg-amber-100"
+                            aria-label="Tutup"
+                            title="Tutup"
+                        >
+                            Ã—
+                        </button>
+                        <div id="low-stock-alert">
+                            Stok menipis: {lowStock.count} produk di bawah {lowStock.threshold}. Silakan tambah stok.
+                            {Array.isArray(lowStock.items) && lowStock.items.length > 0 && (
+                                <div className="mt-2 text-xs">
+                                    Nama Produk: {lowStock.items.map((it: any) => `${it.name} (${it.stock})`).join(', ')}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
                 {/* Header with Invoice Button */}
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">Dashboard Admin</h1>
@@ -204,7 +249,7 @@ export default function AdminDashboard() {
 
                 <Tabs defaultValue="overview" className="w-full space-y-4">
                     <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="overview">Ikhtisar & Grafik</TabsTrigger>
+                        <TabsTrigger value="overview">Performa Penjualan</TabsTrigger>
                         <TabsTrigger value="sales">Detail Penjualan</TabsTrigger>
                     </TabsList>
 
@@ -355,8 +400,8 @@ export default function AdminDashboard() {
                                                     <TableCell>{sale.customer_name}</TableCell>
                                                     <TableCell>{sale.customer_postal_code || "-"}</TableCell>
                                                     <TableCell className="text-right">{sale.quantity}</TableCell>
-                                                    <TableCell className="text-right">Rp{Number(sale.price).toLocaleString('id-ID')}</TableCell>
-                                                    <TableCell className="text-right font-medium">Rp{Number(sale.total).toLocaleString('id-ID')}</TableCell>
+                                                    <TableCell className="text-right">{idr.format(Number(sale.price || 0))}</TableCell>
+                                                    <TableCell className="text-right font-medium">{idr.format(Number(sale.total || 0))}</TableCell>
                                                     <TableCell className="text-right">{sale.date}</TableCell>
                                                 </TableRow>
                                             ))}
@@ -417,4 +462,3 @@ export default function AdminDashboard() {
         </AppLayout>
     );
 }
-

@@ -17,6 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Products() {
     const { products, categories, selectedCategory, auth } = usePage().props as any;
+    const idr = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
     const [quantities, setQuantities] = useState<Record<number, number>>({});
 
     const handleCategoryFilter = (category: string) => {
@@ -154,7 +155,7 @@ export default function Products() {
                                 <img src={selected.image} alt={selected.name} className="w-full object-cover" />
                             </div>
                             <div>
-                                <div className="mb-2 text-lg font-semibold">Rp {selected.price}</div>
+                                <div className="mb-2 text-lg font-semibold">{idr.format(Number(selected.price || 0))}</div>
                                 <div className="mb-1 text-sm text-gray-600">Stok: <span className="font-medium">{selected.stock ?? '-'}</span></div>
                                 {selected.expires_at && (
                                     new Date(selected.expires_at).getTime() < Date.now() ? (

@@ -10,6 +10,7 @@ import AppLogo from "./app-logo";
 function useMainNavItems(): NavItem[] {
     const {
         auth: { user },
+        admin_badges,
     } = usePage<SharedData>().props;
 
     const items: NavItem[] = [];
@@ -20,7 +21,6 @@ function useMainNavItems(): NavItem[] {
 
     if (user.role === "user") {
         items.push(
-            { title: "Dasbor", href: "/dashboard", icon: LayoutGrid },
             { title: "Produk", href: "/products", icon: Package },
             { title: "Keranjang", href: "/cart", icon: ShoppingCart },
         );
@@ -31,7 +31,7 @@ function useMainNavItems(): NavItem[] {
             { title: "Produk", href: "/admin/products", icon: Package },
             { title: "Kategori", href: "/admin/categories", icon: Tags },
             { title: "Pelanggan", href: "/admin/customers", icon: Users },
-            { title: "Pesanan", href: "/admin/orders", icon: FileText },
+            { title: "Pesanan", href: "/admin/orders", icon: FileText, badge: admin_badges?.orders_pending as number },
         );
     }
 

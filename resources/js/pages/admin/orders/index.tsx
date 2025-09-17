@@ -21,6 +21,7 @@ export default function AdminOrders() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
+
     // Filter and paginate orders
     const filteredOrders = useMemo(() => {
         return orders.filter(
@@ -37,11 +38,12 @@ export default function AdminOrders() {
     }, [filteredOrders, currentPage]);
 
     const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+    const idr = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
 
     const statusLabel = (s?: string) => {
         switch (s) {
             case 'pending': return 'Pending';
-            case 'paid': return 'Konfirmasi';
+            case 'paid': return 'Pembayaran Berhasil';
             case 'processing': return 'Di Proses';
             case 'shipped': return 'Dikirim';
             case 'delivered': return 'Selesai';
@@ -107,7 +109,7 @@ export default function AdminOrders() {
                                             </TableCell>
                                             <TableCell className="font-medium">{o?.user?.name || "N/A"}</TableCell>
                                             <TableCell>{o?.user?.postal_code || "-"}</TableCell>
-                                            <TableCell className="text-right">Rp{(o?.total_price || 0).toLocaleString()}</TableCell>
+                                            <TableCell className="text-right">{idr.format(Number(o?.total_price || 0))}</TableCell>
                                             <TableCell>
                                                 <span className={`rounded px-2 py-1 text-xs font-medium ${statusClass(o?.status)}`}>
                                                     {statusLabel(o?.status)}

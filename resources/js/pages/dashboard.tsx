@@ -173,10 +173,10 @@ export default function Dashboard() {
                 {isUserDashboard ? (
                     <Tabs defaultValue="overview" className="w-full space-y-4">
                         <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="overview">Ikhtisar & Grafik</TabsTrigger>
+                            <TabsTrigger value="overview">Performa Penjualan</TabsTrigger>
                             <TabsTrigger value="orders">Riwayat Pesanan</TabsTrigger>
                         </TabsList>
-                        
+
                         <TabsContent value="overview" className="space-y-4">
                             {/* Summary Cards */}
                             <div className="grid auto-rows-min gap-4 md:grid-cols-4">
@@ -292,7 +292,7 @@ export default function Dashboard() {
                                             </TableBody>
                                         </Table>
                                     </div>
-                                    
+
                                     {/* Pagination */}
                                     {totalPages > 1 && (
                                         <div className="flex items-center justify-between space-x-2 py-4">
@@ -310,9 +310,9 @@ export default function Dashboard() {
                                                 </Button>
                                                 <div className="flex items-center space-x-1">
                                                     {Array.from({ length: totalPages }, (_, i) => i + 1)
-                                                        .filter(page => 
-                                                            page === 1 || 
-                                                            page === totalPages || 
+                                                        .filter(page =>
+                                                            page === 1 ||
+                                                            page === totalPages ||
                                                             Math.abs(page - currentPage) <= 1
                                                         )
                                                         .map((page, index, array) => (

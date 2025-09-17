@@ -8,6 +8,7 @@ import { useState } from "react";
 
 export default function GuestProducts() {
     const { products, auth, categories, selectedCategory } = usePage().props as any;
+    const idr = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
     const [open, setOpen] = useState(false); // login/register dialog
     const [quickOpen, setQuickOpen] = useState(false); // quick view dialog
     const [selected, setSelected] = useState<any | null>(null);
@@ -106,7 +107,7 @@ export default function GuestProducts() {
                                             <div className="text-sm font-medium">{p.stock ?? '-'}</div>
                                         </div>
                                     </div>
-                                    <p className="mt-1 font-bold">Rp {p.price}</p>
+                                    <p className="mt-1 font-bold">{idr.format(Number(p.price || 0))}</p>
                                 </button>
                                 <div className="mt-3 grid grid-cols-2 gap-2">
                                     <Button onClick={() => quickView(p)} variant="outline">Lihat</Button>
@@ -130,7 +131,7 @@ export default function GuestProducts() {
                                 <img src={selected.image} alt={selected.name} className="w-full object-cover" />
                             </div>
                             <div>
-                                <div className="mb-2 text-lg font-semibold">Rp {selected.price}</div>
+                                <div className="mb-2 text-lg font-semibold">{idr.format(Number(selected.price || 0))}</div>
                                 <div className="text-sm text-gray-600 mb-1">Stok: <span className="font-medium">{selected.stock ?? '-'}</span></div>
                                 {selected.expires_at && (
                                     new Date(selected.expires_at).getTime() < Date.now() ? (
@@ -168,4 +169,3 @@ export default function GuestProducts() {
         </>
     );
 }
-

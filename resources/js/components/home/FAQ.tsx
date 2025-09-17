@@ -13,6 +13,16 @@ const FAQList: FAQProps[] = [
         value: "item-1",
     },
     {
+        question: "Apakah pengiriman di area Denpasar gratis?",
+        answer: "Ya, Lamore Cake memberikan gratis ongkir untuk area Denpasar dan sekitar Denpasar.",
+        value: "item-free-shipping",
+    },
+    {
+        question: "Apakah Lamore Cake hanya beroperasi di Denpasar?",
+        answer: "Saat ini Lamore Cake hanya melayani pembelian di wilayah Denpasar dan sekitar Denpasar. Kami belum melayani pengiriman ke luar Denpasar.",
+        value: "item-operation-area",
+    },
+    {
         question: "Bagaimana cara penyimpanan kue basah agar tahan lama?",
         answer: "Simpan di kulkas (±4°C) dalam wadah tertutup. Umumnya tahan hingga 3–5 hari tergantung jenisnya. Untuk suhu ruang (24–30°C), sebaiknya dikonsumsi di hari yang sama.",
         value: "item-6",

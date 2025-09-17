@@ -76,6 +76,16 @@
         border-color: var(--color-gray-200, currentColor);
         scroll-behavior: smooth;
     }
+
+    /* Hilangkan spinner default pada input[type=number] */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
 }
 
 :root {

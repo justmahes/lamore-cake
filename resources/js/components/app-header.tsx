@@ -11,7 +11,7 @@ import { useInitials } from "@/hooks/use-initials";
 import { cn } from "@/lib/utils";
 import { type BreadcrumbItem, type NavItem, type SharedData } from "@/types";
 import { Link, usePage } from "@inertiajs/react";
-import { LayoutGrid, Menu, Search } from "lucide-react";
+import { LayoutGrid, Menu, Search, User as UserIcon } from "lucide-react";
 import AppLogo from "./app-logo";
 import AppLogoIcon from "./app-logo-icon";
 
@@ -154,13 +154,8 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="size-10 rounded-full p-1">
-                                    <Avatar className="size-8 overflow-hidden rounded-full">
-                                        <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
-                                        <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                            {getInitials(auth.user.name)}
-                                        </AvatarFallback>
-                                    </Avatar>
+                                <Button variant="ghost" className="size-10 rounded-full p-0">
+                                    <UserIcon className="h-6 w-6" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end">

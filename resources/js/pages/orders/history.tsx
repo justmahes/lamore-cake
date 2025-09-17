@@ -5,11 +5,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import FlashMessage from '@/components/flash-message';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
+function Countdown({ expireAt }: { expireAt: number }) {
+  const [remain, setRemain] = useState<number>(Math.max(0, expireAt - Date.now()));
+  useEffect(() => {
+    const id = setInterval(() => setRemain(Math.max(0, expireAt - Date.now())), 1000);
+    return () => clearInterval(id);
+  }, [expireAt]);
+  const mm = String(Math.floor(remain / 60000)).padStart(2, '0');
+  const ss = String(Math.floor((remain % 60000) / 1000)).padStart(2, '0');
+  return <span>{mm}:{ss}</span>;
+}
+
 export default function OrderHistory() {
-  const { orders } = usePage().props as any;
+  const { orders, pending_payments } = usePage().props as any;
   const [q, setQ] = useState('');
 
   const list = useMemo(() => {
@@ -25,11 +36,20 @@ export default function OrderHistory() {
         id: o.id,
         status: o.status,
         date: o.created_at,
+        expires_at: (o as any).expires_at,
         total: o.total_price ?? sum,
         items,
+        resume_url: (o as any).resume_url,
       };
     });
   }, [orders]);
+
+  const orderIndexMap = useMemo(() => {
+    const sorted = [...list].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const map = new Map<number, number>();
+    sorted.forEach((o: any, i: number) => map.set(o.id, i + 1));
+    return map;
+  }, [list]);
 
   const filtered = useMemo(() => {
     const ql = q.toLowerCase();
@@ -40,14 +60,16 @@ export default function OrderHistory() {
     );
   }, [list, q]);
 
+  const idr = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
   const statusLabel = (s?: string) => {
     switch (s) {
       case 'pending': return 'Pending';
-      case 'paid': return 'Konfirmasi';
+      case 'paid': return 'Pembayaran Berhasil';
       case 'processing': return 'Di Proses';
       case 'shipped': return 'Dikirim';
       case 'delivered': return 'Selesai';
       case 'cancelled': return 'Dibatalkan';
+      case 'failed': return 'Pembayaran gagal';
       default: return s || '-';
     }
   };
@@ -67,6 +89,26 @@ export default function OrderHistory() {
 
         <div className="text-sm text-muted-foreground">{filtered.length} pesanan ditemukan</div>
 
+        {Array.isArray(pending_payments) && pending_payments.length > 0 && (
+          <Card className="border border-yellow-300 bg-yellow-50">
+            <CardHeader>
+              <CardTitle className="text-sm">Anda belum menyelesaikan pembayaran</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm space-y-2">
+              {pending_payments.map((p: any, idx: number) => (
+                <div key={p.order_id || idx} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    Order: <span className="font-mono">{p.order_id}</span>
+                    <span className="mx-2">•</span>
+                    Total: <span className="font-semibold">Rp{Number(p.total_amount || 0).toLocaleString()}</span>
+                  </div>
+                  <a href={p.redirect_url} className="underline text-primary">Lanjutkan Pembayaran</a>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
         {filtered.length === 0 && (
           <Card className="shadow-lg border">
             <CardContent className="p-6 text-center text-sm text-muted-foreground">Tidak ada pesanan.</CardContent>
@@ -78,7 +120,7 @@ export default function OrderHistory() {
             <Card key={o.id} className="shadow-lg border">
               <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
                 <div className="space-y-1">
-                  <CardTitle className="text-base">Pesanan #{o.id}</CardTitle>
+                  <CardTitle className="text-base">Pesanan #{orderIndexMap.get(o.id) ?? o.id}</CardTitle>
                   <div className="text-xs text-muted-foreground">
                     {(() => { try { const dt = new Date(o.date); if (isNaN(dt.getTime())) return '-'; return dt.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short', hour12: false }); } catch { return '-'; } })()}
                   </div>
@@ -90,16 +132,26 @@ export default function OrderHistory() {
                     o.status === 'processing' ? 'bg-amber-100 text-amber-800' :
                     o.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
                     o.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                    o.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-accent'
+                    o.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                    o.status === 'unpaid' ? 'bg-orange-100 text-orange-800' :
+                    o.status === 'failed' ? 'bg-red-100 text-red-800' : 'bg-accent'
                   }`}>{statusLabel(o.status)}</span>
-                  <div className="text-right text-sm font-semibold">Rp{o.total?.toLocaleString()}</div>
+                  <div className="text-right text-sm font-semibold">{idr.format(Number(o.total || 0))}</div>
                 </div>
               </CardHeader>
               <CardContent>
                 <Collapsible>
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-muted-foreground">Detail item</div>
-                    <CollapsibleTrigger className="text-sm font-medium text-primary underline-offset-4 hover:underline">Lihat</CollapsibleTrigger>
+                    <div className="flex items-center gap-3">
+                      {o.status === 'pending' && o.resume_url && (
+                        <>
+                          <span className="text-xs text-muted-foreground">Anda belum menyelesaikan pembayaran • Sisa waktu <Countdown expireAt={o.expires_at ? new Date(o.expires_at).getTime() : (new Date(o.date).getTime() + 5 * 60 * 1000)} /></span>
+                          <a href={o.resume_url} className="text-sm font-medium text-primary underline underline-offset-4">Selesaikan Pembayaran</a>
+                        </>
+                      )}
+                      <CollapsibleTrigger className="text-sm font-medium text-primary underline-offset-4 hover:underline">Lihat</CollapsibleTrigger>
+                    </div>
                   </div>
                   <CollapsibleContent>
                     <div className="mt-3 overflow-x-auto">
@@ -117,8 +169,8 @@ export default function OrderHistory() {
                             <TableRow key={idx}>
                               <TableCell>{it.name}</TableCell>
                               <TableCell className="text-center">{it.qty}</TableCell>
-                              <TableCell className="text-right">Rp{(it.price || 0).toLocaleString()}</TableCell>
-                              <TableCell className="text-right font-medium">Rp{(it.total || 0).toLocaleString()}</TableCell>
+                              <TableCell className="text-right">{idr.format(Number(it.price || 0))}</TableCell>
+                              <TableCell className="text-right font-medium">{idr.format(Number(it.total || 0))}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>

@@ -20,6 +20,7 @@ export interface NavItem {
     href: string;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    badge?: number;
 }
 
 export interface SharedData {
@@ -28,6 +29,8 @@ export interface SharedData {
     auth: Auth;
     ziggy: Config & { location: string };
     sidebarOpen: boolean;
+    admin_badges?: { orders_pending: number } | null;
+    cart_count?: number;
     [key: string]: unknown;
 }
 

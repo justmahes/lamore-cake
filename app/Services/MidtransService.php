@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\PendingPayment;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Transaction;
@@ -112,9 +113,37 @@ class MidtransService
                     \Log::info('Order already exists for transaction: ' . $orderId);
                     return true;
                 }
-                
-                // Create the actual order from payment success
-                $order = $this->createOrderFromPayment($notification);
+
+                // Try to find provisional order by midtrans_order_id
+                $order = \App\Models\Order::where('midtrans_order_id', $orderId)->first();
+                if ($order) {
+                    $order->update(['status' => 'paid']);
+
+                    // Ensure order items exist (if not yet created)
+                    $transactionDetailsObj = Transaction::status($orderId);
+                    $transactionDetails = json_decode(json_encode($transactionDetailsObj), true);
+                    $cartItems = json_decode($transactionDetails['custom_field1'] ?? '[]', true);
+                    foreach ($cartItems as $cartItem) {
+                        $product = \App\Models\Product::find($cartItem['product_id']);
+                        if ($product && $cartItem['quantity'] > 0) {
+                            \App\Models\OrderItem::firstOrCreate([
+                                'order_id' => $order->id,
+                                'product_id' => $cartItem['product_id'],
+                            ], [
+                                'quantity' => $cartItem['quantity'],
+                                'price' => $cartItem['price'],
+                            ]);
+                            // Decrement stock on first successful payment (existingPayment already checked earlier)
+                            $product->decrement('stock', $cartItem['quantity']);
+                        }
+                    }
+
+                    // Clear the user's cart
+                    \App\Models\Cart::where('user_id', $order->user_id)->delete();
+                } else {
+                    // Create the actual order from payment success
+                    $order = $this->createOrderFromPayment($notification);
+                }
                 
                 if ($order) {
                     // Create payment record for the new order
@@ -131,6 +160,9 @@ class MidtransService
                         'midtrans_response' => $notification,
                         'verified_at' => now(),
                     ]);
+
+                    // Clear any pending payment record for this Midtrans order
+                    PendingPayment::where('midtrans_order_id', $orderId)->delete();
                 }
             } else {
                 // Handle existing order payment updates
@@ -149,7 +181,32 @@ class MidtransService
 
                     if ($payment->order) {
                         $this->updateOrderStatus($payment->order, $transactionStatus, $fraudStatus);
+                        if ($this->shouldMarkAsVerified($transactionStatus, $fraudStatus)) {
+                            // Pastikan order items ada dan stok berkurang (idempoten)
+                            $transactionDetailsObj = Transaction::status($orderId);
+                            $transactionDetails = json_decode(json_encode($transactionDetailsObj), true);
+                            $cartItems = json_decode($transactionDetails['custom_field1'] ?? '[]', true);
+                            foreach ($cartItems as $cartItem) {
+                                $product = \App\Models\Product::find($cartItem['product_id']);
+                                if ($product && $cartItem['quantity'] > 0) {
+                                    $oi = \App\Models\OrderItem::firstOrCreate([
+                                        'order_id' => $payment->order->id,
+                                        'product_id' => $cartItem['product_id'],
+                                    ], [
+                                        'quantity' => $cartItem['quantity'],
+                                        'price' => $cartItem['price'],
+                                    ]);
+                                    if ($oi->wasRecentlyCreated) {
+                                        $product->decrement('stock', $cartItem['quantity']);
+                                    }
+                                }
+                            }
+                            \App\Models\Cart::where('user_id', $payment->order->user_id)->delete();
+                        }
                     }
+
+                    // Also clear pending payment record if exists
+                    PendingPayment::where('midtrans_order_id', $orderId)->delete();
                 }
             }
 
@@ -169,7 +226,8 @@ class MidtransService
             $orderId = $notification['order_id'];
             
             // Get the original transaction details to retrieve cart data
-            $transactionDetails = Transaction::status($orderId);
+            $transactionDetailsObj = Transaction::status($orderId);
+            $transactionDetails = json_decode(json_encode($transactionDetailsObj), true);
             $cartItems = json_decode($transactionDetails['custom_field1'] ?? '[]', true);
             $userId = $transactionDetails['custom_field2'] ?? null;
             $shippingAddress = $transactionDetails['custom_field3'] ?? null;
@@ -226,7 +284,12 @@ class MidtransService
     public function checkTransactionStatus(string $orderId): array
     {
         try {
-            return Transaction::status($orderId);
+            $res = Transaction::status($orderId);
+            // Midtrans SDK mengembalikan stdClass; kembalikan sebagai array asosiatif
+            if (is_object($res)) {
+                return json_decode(json_encode($res), true);
+            }
+            return (array) $res;
         } catch (Exception $e) {
             throw new Exception('Failed to check transaction status: ' . $e->getMessage());
         }
@@ -250,11 +313,12 @@ class MidtransService
      */
     private function updateOrderStatus(Order $order, string $transactionStatus, ?string $fraudStatus): void
     {
-        // For this new flow, orders are only created AFTER payment success
-        // So we only handle payment failures/cancellations here
         if (in_array($transactionStatus, ['deny', 'cancel', 'expire', 'failure'])) {
-            $order->update(['status' => 'cancelled']);
+            $order->update(['status' => 'failed']);
+            return;
         }
-        // Orders start with 'pending' status (meaning not shipped) after successful payment
+        if ($this->shouldMarkAsVerified($transactionStatus, $fraudStatus)) {
+            $order->update(['status' => 'paid']);
+        }
     }
 }

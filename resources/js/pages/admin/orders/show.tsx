@@ -19,7 +19,7 @@ export default function AdminOrderShow() {
 
     const statusMap: Record<string, { label: string; color: string }> = {
         pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800' },
-        paid: { label: 'Konfirmasi', color: 'bg-blue-100 text-blue-800' },
+        paid: { label: 'Pembayaran Berhasil', color: 'bg-blue-100 text-blue-800' },
         processing: { label: 'Di Proses', color: 'bg-amber-100 text-amber-800' },
         shipped: { label: 'Dikirim', color: 'bg-purple-100 text-purple-800' },
         delivered: { label: 'Selesai', color: 'bg-green-100 text-green-800' },
@@ -84,12 +84,7 @@ export default function AdminOrderShow() {
                                 </Select>
                             </div>
                         </div>
-                        {order.payment && (
-                            <div className="space-y-1">
-                                <p>Bukti Pembayaran:</p>
-                                <ImagePreview src={order.payment.proof_file} alt="proof" className="w-48" />
-                            </div>
-                        )}
+                        {/* Bukti pembayaran tidak diperlukan karena diverifikasi melalui Midtrans dashboard */}
                         <div className="flex gap-2">
                             <Button onClick={updateStatus}>Simpan Status</Button>
                             <Button variant="destructive" onClick={() => destroy(`/admin/orders/${order.id}`)}>

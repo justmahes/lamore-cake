@@ -19,11 +19,9 @@ export default function AuthModernLayout({ children, title, description }: Props
             <div className="relative z-10 mx-auto flex min-h-svh w-full max-w-6xl flex-col items-center justify-center p-6 md:flex-row md:gap-10 md:p-10">
                 {/* Left panel (branding) */}
                 <div className="relative hidden w-[50%] flex-1 flex-col justify-center md:flex">
-                    <div className="mb-6 flex items-center gap-3">
-                        <img src="/assets/brand/logo.png" alt="Lamore Cake" className="h-14 w-auto md:h-16" />
-                        <div className="sr-only">
-                            <AppLogo />
-                        </div>
+                    <div className="mb-8 flex items-center gap-3">
+                        <img src="/assets/brand/logo.png" alt="Lamore Cake" className="h-12 w-auto md:h-14 object-contain" />
+                        <span className="text-2xl font-semibold tracking-tight">Lamore Cake</span>
                     </div>
 
                     <h2 className="text-3xl font-semibold leading-tight tracking-tight text-foreground md:text-4xl">
@@ -42,8 +40,8 @@ export default function AuthModernLayout({ children, title, description }: Props
                 {/* Right panel (auth card) */}
                 <div className="w-full max-w-md">
                     {/* Mobile logo */}
-                    <div className="mb-4 flex items-center justify-center md:hidden">
-                        <img src="/assets/brand/logo.png" alt="Lamore Cake" className="h-10 w-auto" />
+                    <div className="mb-6 flex items-center justify-center md:hidden">
+                        <img src="/assets/brand/logo.png" alt="Lamore Cake" className="h-12 w-auto object-contain" />
                     </div>
                     <div className="bg-card relative rounded-2xl border shadow-md shadow-rose-400/5 transition-shadow duration-300 hover:shadow-rose-400/10">
                         <div className="px-6 pb-2 pt-6 text-center">

@@ -54,4 +54,36 @@ Route::middleware(['auth', HandleRole::class])->prefix('admin')->name('admin.')-
             return redirect()->back()->with('error', 'Gagal membersihkan tabel carts: ' . $e->getMessage());
         }
     })->name('maintenance.carts.clear');
+
+    // Maintenance: keep only product named "pie belafo" and reset auto-increment
+    Route::post('/maintenance/products/keep-pie-belafo', function () {
+        try {
+            $keep = \App\Models\Product::where('name', 'pie belafo')->first();
+            if (!$keep) {
+                return redirect()->back()->with('error', "Produk 'pie belafo' tidak ditemukan.");
+            }
+
+            $keepId = $keep->id;
+            // Delete other products
+            \DB::table('products')->where('id', '!=', $keepId)->delete();
+
+            // If its ID is not 1, remap references and set to 1
+            if ($keepId !== 1) {
+                \DB::table('carts')->where('product_id', $keepId)->update(['product_id' => 1]);
+                \DB::table('order_items')->where('product_id', $keepId)->update(['product_id' => 1]);
+                \DB::table('products')->where('id', 1)->delete();
+                \DB::table('products')->where('id', $keepId)->update(['id' => 1]);
+                $keepId = 1;
+            }
+
+            // Reset AUTO_INCREMENT to next after max(id)
+            $maxId = (int) \DB::table('products')->max('id');
+            $next = max(1, $maxId + 1);
+            \DB::statement('ALTER TABLE products AUTO_INCREMENT = ' . $next);
+
+            return redirect()->back()->with('success', "Produk dibersihkan. Menyisakan 'pie belafo' (ID {$keepId}). AUTO_INCREMENT berikutnya: {$next}");
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal membersihkan produk: ' . $e->getMessage());
+        }
+    })->name('maintenance.products.keep_pie_belafo');
 });
