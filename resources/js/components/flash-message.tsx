@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type { JSX } from "react";
 import { usePage } from "@inertiajs/react";
 import { CheckCircle, XCircle, AlertTriangle, Info, X as CloseIcon } from "lucide-react";
 
@@ -8,6 +9,15 @@ type Msg = {
   id: string;
   type: MsgType;
   text: string;
+  duration?: number;
+};
+
+type ToastEventDetail = {
+  id?: string;
+  type: MsgType;
+  text: string;
+  duration?: number;
+  replace?: boolean;
 };
 
 export default function FlashMessage() {
@@ -16,14 +26,34 @@ export default function FlashMessage() {
   const incoming: Msg[] = useMemo(() => {
     const list: Msg[] = [];
     if (!flash) return list;
-    if (flash.success) list.push({ id: `success-${Date.now()}` , type: "success", text: String(flash.success) });
-    if (flash.error) list.push({ id: `error-${Date.now()}` , type: "error", text: String(flash.error) });
-    if (flash.warning) list.push({ id: `warning-${Date.now()}` , type: "warning", text: String(flash.warning) });
-    if (flash.info) list.push({ id: `info-${Date.now()}` , type: "info", text: String(flash.info) });
+    if (flash.success) list.push({ id: `success-${Date.now()}`, type: "success", text: String(flash.success) });
+    if (flash.error) list.push({ id: `error-${Date.now()}`, type: "error", text: String(flash.error) });
+    if (flash.warning) list.push({ id: `warning-${Date.now()}`, type: "warning", text: String(flash.warning) });
+    if (flash.info) list.push({ id: `info-${Date.now()}`, type: "info", text: String(flash.info) });
     return list;
   }, [flash]);
 
   const [messages, setMessages] = useState<Msg[]>([]);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const customEvent = event as CustomEvent<ToastEventDetail>;
+      const detail = customEvent.detail;
+      if (!detail || !detail.type || !detail.text) return;
+      setMessages((prev) => {
+        const id = detail.id ?? `${detail.type}-${Date.now()}`;
+        const base = detail.replace ? [] : prev;
+        const filtered = base.filter((x) => x.id !== id);
+        return [...filtered, { id, type: detail.type, text: detail.text, duration: detail.duration }];
+      });
+    };
+
+    window.addEventListener("app:toast", handler);
+
+    return () => {
+      window.removeEventListener("app:toast", handler);
+    };
+  }, []);
 
   useEffect(() => {
     if (incoming.length) {
@@ -35,7 +65,7 @@ export default function FlashMessage() {
   useEffect(() => {
     // Auto dismiss with different durations
     const timers = messages.map((m) => {
-      const duration = m.type === "error" ? 6000 : 4000;
+      const duration = m.duration ?? (m.type === "error" ? 6000 : 4000);
       return setTimeout(() => {
         setMessages((prev) => prev.filter((x) => x.id !== m.id));
       }, duration);

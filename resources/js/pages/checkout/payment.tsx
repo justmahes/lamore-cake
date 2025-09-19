@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AppLayout from "@/layouts/app-layout";
 import { Head, usePage } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 declare global {
     interface Window {
@@ -29,12 +29,28 @@ interface PageProps {
     totalAmount: number;
     clientKey: string;
     isProduction: boolean;
+    [key: string]: unknown;
 }
 
+type ToastDetail = {
+    type: "success" | "error" | "warning" | "info";
+    text: string;
+    duration?: number;
+    id?: string;
+};
+
 export default function CheckoutPayment() {
-    const { cartItems, snapToken, tempOrderId, totalAmount, clientKey, isProduction } = usePage().props as PageProps;
+    const { cartItems, snapToken, tempOrderId, totalAmount, clientKey, isProduction } = usePage<PageProps>().props;
     const [isLoading, setIsLoading] = useState(false);
     const [snapLoaded, setSnapLoaded] = useState(false);
+
+    const pushToast = useCallback(
+        (detail: ToastDetail) => {
+            if (typeof window === "undefined") return;
+            window.dispatchEvent(new CustomEvent("app:toast", { detail }));
+        },
+        []
+    );
 
     useEffect(() => {
         // Load Midtrans Snap script
@@ -51,6 +67,11 @@ export default function CheckoutPayment() {
 
         script.onerror = () => {
             console.error("Failed to load Midtrans Snap script");
+            pushToast({
+                type: "error",
+                text: "Gagal memuat gateway Midtrans. Periksa koneksi Anda lalu coba lagi.",
+                duration: 7000,
+            });
         };
 
         document.head.appendChild(script);
@@ -58,7 +79,7 @@ export default function CheckoutPayment() {
         return () => {
             // Don't remove script as it might be needed for retries
         };
-    }, [clientKey, isProduction]);
+    }, [clientKey, isProduction, pushToast]);
 
     const handlePayment = () => {
         if (!snapLoaded || !window.snap) {
@@ -72,14 +93,33 @@ export default function CheckoutPayment() {
         window.snap.pay(snapToken, {
             onSuccess: function (result: any) {
                 console.log("Payment success:", result);
+                pushToast({
+                    type: "success",
+                    text: "Pembayaran berhasil! Pesanan kamu sedang kami proses.",
+                    duration: 6000,
+                });
+                setIsLoading(false);
                 // Redirect will be handled by the callback URL
             },
             onPending: function (result: any) {
                 console.log("Payment pending:", result);
+                pushToast({
+                    type: "info",
+                    text: "Pembayaran tertunda. Selesaikan pembayaranmu di Midtrans untuk melanjutkan pesanan.",
+                    duration: 7000,
+                });
+                setIsLoading(false);
                 // Redirect will be handled by the callback URL
             },
             onError: function (result: any) {
-                console.log("Payment error:", result);
+                console.error("Payment error:", result);
+                const message = result?.status_message || "Transaksi pembayaran gagal diproses.";
+                pushToast({
+                    type: "error",
+                    text: `Midtrans: ${message}`,
+                    duration: 7000,
+                });
+                setIsLoading(false);
                 // Redirect will be handled by the callback URL
             },
             onClose: function () {

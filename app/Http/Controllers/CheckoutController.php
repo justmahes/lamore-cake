@@ -233,10 +233,10 @@ class CheckoutController extends Controller
                 if (in_array($transactionStatus, ['settlement', 'capture'])) {
                     if ($orderId) { \App\Models\PendingPayment::where('midtrans_order_id', $orderId)->delete(); }
                     session()->forget('pending_payment');
-                    return redirect()->route('payment.success')
-                        ->with('success', 'Pembayaran berhasil!');
+                    return redirect()->route('transactions.index')
+                        ->with('success', 'Pembayaran berhasil! Pesanan kamu sedang kami proses.');
                 } elseif ($transactionStatus === 'pending') {
-                    return redirect()->route('payment.pending')
+                    return redirect()->route('transactions.index')
                         ->with('info', 'Pembayaran tertunda. Silakan selesaikan pembayaran Anda.');
                 } else { // deny/cancel/expire/failure
                     if ($orderId) { \App\Models\PendingPayment::where('midtrans_order_id', $orderId)->delete(); }
@@ -261,10 +261,10 @@ class CheckoutController extends Controller
                         $midtransService->handleNotification($transactionDetails);
                         if ($orderId) { \App\Models\PendingPayment::where('midtrans_order_id', $orderId)->delete(); }
                         session()->forget('pending_payment');
-                        return redirect()->route('payment.success')
-                            ->with('success', 'Pembayaran berhasil!');
+                        return redirect()->route('transactions.index')
+                            ->with('success', 'Pembayaran berhasil! Pesanan kamu sedang kami proses.');
                     }
-                    return redirect()->route('payment.pending')
+                    return redirect()->route('transactions.index')
                         ->with('info', 'Pembayaran sedang ditinjau. Mohon tunggu konfirmasi.');
                 }
 
@@ -273,12 +273,12 @@ class CheckoutController extends Controller
                     $midtransService->handleNotification($transactionDetails);
                     if ($orderId) { \App\Models\PendingPayment::where('midtrans_order_id', $orderId)->delete(); }
                     session()->forget('pending_payment');
-                    return redirect()->route('payment.success')
-                        ->with('success', 'Pembayaran berhasil!');
+                    return redirect()->route('transactions.index')
+                        ->with('success', 'Pembayaran berhasil! Pesanan kamu sedang kami proses.');
                 }
 
                 if (in_array($ts, ['pending'])) {
-                    return redirect()->route('payment.pending')
+                    return redirect()->route('transactions.index')
                         ->with('info', 'Pembayaran tertunda. Silakan selesaikan pembayaran Anda.');
                 }
 
@@ -314,7 +314,8 @@ class CheckoutController extends Controller
      */
     public function paymentSuccess()
     {
-        return Inertia::render('checkout/success');
+        return redirect()->route('transactions.index')
+            ->with('success', 'Pembayaran berhasil! Pesanan kamu sedang kami proses.');
     }
 
     /**
@@ -322,6 +323,7 @@ class CheckoutController extends Controller
      */
     public function paymentPending()
     {
-        return Inertia::render('checkout/pending');
+        return redirect()->route('transactions.index')
+            ->with('info', 'Pembayaran sedang ditinjau. Mohon tunggu konfirmasi dari Midtrans.');
     }
 }
