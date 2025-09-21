@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -27,6 +30,15 @@ class Product extends Model
     protected $casts = [
         'expires_at' => 'date',
     ];
+
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value
+                ? (Str::startsWith($value, ['http://', 'https://', 'data:', '/storage', 'storage/']) ? $value : Storage::url($value))
+                : null,
+        );
+    }
 
     public function carts(): HasMany
     {

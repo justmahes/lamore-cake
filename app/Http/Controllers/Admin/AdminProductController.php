@@ -8,6 +8,8 @@ use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Response;
 
 class AdminProductController extends Controller
@@ -37,8 +39,8 @@ class AdminProductController extends Controller
             ]);
 
             if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $data['image'] = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->get());
+                $path = $request->file('image')->store('products', 'public');
+                $data['image'] = $path;
             }
 
             $product = Product::create($data);
@@ -66,8 +68,13 @@ class AdminProductController extends Controller
             ]);
 
             if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $data['image'] = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->get());
+                $oldImage = $product->getRawOriginal('image');
+                $path = $request->file('image')->store('products', 'public');
+                $data['image'] = $path;
+
+                if ($oldImage && !Str::startsWith($oldImage, ['data:', 'http://', 'https://'])) {
+                    Storage::disk('public')->delete($oldImage);
+                }
             } else {
                 unset($data['image']);
             }
