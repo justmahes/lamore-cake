@@ -1,4 +1,4 @@
-// landing page
+﻿import { About } from "@/components/home/About";
 import { FAQ } from "@/components/home/FAQ";
 import { Features } from "@/components/home/Features";
 import { Footer } from "@/components/home/Footer";
@@ -9,21 +9,21 @@ import { Navbar } from "@/components/home/Navbar";
 import { ScrollToTop } from "@/components/home/ScrollToTop";
 import { Testimonials } from "@/components/home/Testimonials";
 import { Head } from "@inertiajs/react";
-// import "@/components/home/App.css";
 
 function App() {
     return (
         <>
-            <Head title="Welcome" />
+            <Head title="Lamore Cake - Kue Bali Modern" />
             <Navbar />
-            <Hero />
-            <Featured />
-            <CategoryQuick />
-            <Features />
-            <Testimonials />
-            {/* General storage and shelf-life note */}
-
-            <FAQ />
+            <main className="bg-white text-slate-900">
+                <Hero />
+                <Featured />
+                <CategoryQuick />
+                <Features />
+                <About />
+                <Testimonials />
+                <FAQ />
+            </main>
             <Footer />
             <ScrollToTop />
         </>

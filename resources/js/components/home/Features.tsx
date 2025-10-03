@@ -1,57 +1,62 @@
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
+﻿import { Reveal } from "./Reveal";
 import { Badge } from "./ui/badge";
+import { Leaf, Sparkles, Timer, Trophy } from "lucide-react";
 
-const featureList: string[] = ["Menggoda Selera", "Jajanan Fresh", "Lembut dan Nikmat", "Kue Penuh Cinta", "Promo & Penawaran Spesial"];
+const highlights = [
+    {
+        icon: Leaf,
+        title: "Bahan Segar & Natural",
+        description: "Menggunakan bahan lokal pilihan tanpa pengawet sehingga rasa dan kualitas selalu terjaga.",
+    },
+    {
+        icon: Sparkles,
+        title: "Sentuhan Artisanal",
+        description: "Setiap cake dihias manual oleh pastry chef kami, dengan detail yang memanjakan mata.",
+    },
+    {
+        icon: Timer,
+        title: "Produksi Cepat",
+        description: "Sistem pre-order yang efisien memastikan pesanan Anda siap tepat waktu, bahkan untuk acara besar.",
+    },
+    {
+        icon: Trophy,
+        title: "Terpercaya Sejak 2021",
+        description: "Telah menjadi pilihan utama lebih dari 5.000 pelanggan dengan rating 4.9/5.",
+    },
+];
 
 export const Features = () => {
     return (
-        <section id="features" className="container mx-auto space-y-8 py-24 sm:py-32">
-            <h2 className="text-3xl font-bold md:text-center lg:text-4xl">
-                <span className="bg-gradient-to-b from-primary/60 to-primary bg-clip-text text-transparent">Apa Yang Kami Tawarkan?</span>
-            </h2>
+        <section className="relative overflow-hidden py-24 sm:py-28">
+            <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-emerald-50 to-white" aria-hidden="true" />
+            <div className="container mx-auto px-4">
+                <Reveal className="mx-auto max-w-2xl text-center">
+                    <span className="inline-flex items-center justify-center rounded-full bg-teal-100 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-teal-700">
+                        Keunggulan Lamore Cake
+                    </span>
+                    <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                        Homemade Modern yang Dibuat dengan Sepenuh Hati
+                    </h2>
+                    <p className="mt-3 text-base text-slate-600 sm:text-lg">
+                        Kami memadukan resep tradisi dengan teknik pastry modern untuk menghadirkan pengalaman manis yang tak terlupakan.
+                    </p>
+                </Reveal>
 
-            <div className="flex flex-wrap gap-4 md:justify-center">
-                {featureList.map((feature: string) => (
-                    <div key={feature}>
-                        <Badge variant="secondary" className="text-sm">
-                            {feature}
-                        </Badge>
-                    </div>
-                ))}
-            </div>
-
-            <div className="bg-white px-4 py-10 sm:py-12 md:px-8 lg:px-16 xl:px-24">
-                <div className="mx-auto grid max-w-6xl items-center gap-8 md:grid-cols-2">
-                    <div className="relative flex flex-col items-center gap-4 md:flex-row">
-                        <div className="w-full overflow-hidden rounded-2xl">
-                            <Carousel>
-                                <CarouselContent>
-                                    <CarouselItem>
-                                        <img src="/assets/home/2.jpg" alt="Owner" className="h-full w-full object-cover" />
-                                    </CarouselItem>
-                                    <CarouselItem>
-                                        <img src="/assets/home/3.jpg" alt="Lamore Cake" className="h-full w-full object-cover" />
-                                    </CarouselItem>
-                                </CarouselContent>
-                                <CarouselPrevious className="left-3 top-1/2 -translate-y-1/2 md:-left-12" />
-                                <CarouselNext className="right-3 top-1/2 -translate-y-1/2 md:-right-12" />
-                            </Carousel>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 className="mb-2 text-sm font-semibold text-accent sm:text-base">Tentang Lamore Cake Kami</h4>
-                        <h2 className="mb-3 text-2xl font-bold leading-tight text-secondary-foreground sm:mb-4 sm:text-3xl md:text-4xl">
-                            Kelezatan Lamore Cake Tradisional <br /> Penuh Dengan Cinta
-                        </h2>
-                        <p className="mb-6 text-sm text-gray-600 sm:text-base">
-                            Setiap butir Lamore Cake dibuat dengan sepenuh hati dan ketelitian, sehingga menghasilkan kelezatan yang sempurna di
-                            setiap gigitan. Kami menjaga kualitas dan kebersihan agar Anda dapat menikmati Lamore Cake dengan aman dan nyaman.
-                        </p>
-                        <div className="inline-block rounded-xl bg-primary-foreground p-4 shadow-md sm:p-6">
-                            <p className="text-2xl font-bold leading-tight text-primary sm:text-3xl">4+</p>
-                            <p className="text-xs font-semibold uppercase text-gray-700 sm:text-sm">Tahun Usaha Lamore Cake</p>
-                        </div>
-                    </div>
+                <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+                    {highlights.map(({ icon: Icon, title, description }, index) => (
+                        <Reveal key={title} delay={120 + index * 80}>
+                            <article className="group flex h-full flex-col gap-4 rounded-3xl border border-emerald-100 bg-white/80 p-6 shadow-[0_25px_60px_-45px_rgba(13,148,136,0.55)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_30px_80px_-40px_rgba(13,148,136,0.55)]">
+                                <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 transition group-hover:scale-110">
+                                    <Icon className="h-5 w-5" />
+                                </span>
+                                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                                <p className="text-sm text-slate-600">{description}</p>
+                                <Badge className="mt-auto w-max rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
+                                    Terbukti oleh pelanggan
+                                </Badge>
+                            </article>
+                        </Reveal>
+                    ))}
                 </div>
             </div>
         </section>
