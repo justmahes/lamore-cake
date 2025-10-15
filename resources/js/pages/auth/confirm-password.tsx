@@ -1,12 +1,3 @@
-/**
- * Halaman ini berfungsi untuk meminta pengguna memasukkan kembali kata sandi mereka.
- * Ini biasanya digunakan untuk melindungi area sensitif dari aplikasi yang memerlukan konfirmasi keamanan tambahan.
- * Fitur utama:
- * - Menampilkan form untuk memasukkan kata sandi.
- * - Memvalidasi kata sandi yang dimasukkan.
- * - Menampilkan pesan error jika kata sandi salah.
- */
-
 // Components
 import { Head, useForm } from "@inertiajs/react";
 import { LoaderCircle } from "lucide-react";
@@ -19,16 +10,13 @@ import { Label } from "@/components/ui/label";
 import AuthLayout from "@/layouts/auth-layout";
 
 export default function ConfirmPassword() {
-    // SECTION: Inisialisasi form untuk data konfirmasi password.
     const { data, setData, post, processing, errors, reset } = useForm<Required<{ password: string }>>({
         password: "",
     });
 
-    // SECTION: Fungsi yang dijalankan saat form disubmit.
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        // Mengirim data ke server untuk konfirmasi.
         post(route("password.confirm"), {
             onFinish: () => reset("password"),
         });
@@ -41,7 +29,6 @@ export default function ConfirmPassword() {
         >
             <Head title="Confirm password" />
 
-            {/* SECTION: Form konfirmasi password */}
             <form onSubmit={submit}>
                 <div className="space-y-6">
                     <div className="grid gap-2">

@@ -1,12 +1,3 @@
-/**
- * Halaman ini digunakan oleh pengguna untuk mengatur ulang kata sandi mereka setelah mengklik tautan dari email.
- * Pengguna akan memasukkan kata sandi baru dan konfirmasinya.
- * Fitur utama:
- * - Menampilkan alamat email pengguna (tidak dapat diubah).
- * - Form input untuk kata sandi baru dan konfirmasi kata sandi.
- * - Mengirim data ke server untuk menyimpan kata sandi yang baru.
- * - Menampilkan pesan error jika ada masalah (misal: kata sandi tidak cocok).
- */
 import { Head, useForm } from "@inertiajs/react";
 import { LoaderCircle } from "lucide-react";
 import { FormEventHandler } from "react";
@@ -30,7 +21,6 @@ type ResetPasswordForm = {
 };
 
 export default function ResetPassword({ token, email }: ResetPasswordProps) {
-    // SECTION: Inisialisasi form dengan data token, email, dan field untuk password baru.
     const { data, setData, post, processing, errors, reset } = useForm<Required<ResetPasswordForm>>({
         token: token,
         email: email,
@@ -38,10 +28,8 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
         password_confirmation: "",
     });
 
-    // SECTION: Fungsi yang dijalankan saat form reset password disubmit.
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        // Mengirim data ke server untuk menyimpan password baru.
         post(route("password.store"), {
             onFinish: () => reset("password", "password_confirmation"),
         });
@@ -51,10 +39,8 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
         <AuthLayout title="Reset kata sandi" description="Silakan masukkan kata sandi baru Anda di bawah">
             <Head title="Reset kata sandi" />
 
-            {/* SECTION: Form untuk reset password */}
             <form onSubmit={submit}>
                 <div className="grid gap-6">
-                    {/* Input Email (read-only) */}
                     <div className="grid gap-2">
                         <Label htmlFor="email">Email</Label>
                         <Input
@@ -70,7 +56,6 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                         <InputError message={errors.email} className="mt-2" />
                     </div>
 
-                    {/* Input Kata Sandi Baru */}
                     <div className="grid gap-2">
                         <Label htmlFor="password">Kata Sandi</Label>
                         <Input
@@ -87,7 +72,6 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                         <InputError message={errors.password} />
                     </div>
 
-                    {/* Input Konfirmasi Kata Sandi Baru */}
                     <div className="grid gap-2">
                         <Label htmlFor="password_confirmation">Konfirmasi kata sandi</Label>
                         <Input

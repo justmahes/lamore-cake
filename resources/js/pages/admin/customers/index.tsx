@@ -1,12 +1,3 @@
-/**
- * Halaman ini digunakan oleh admin untuk mengelola data semua pelanggan (kustomer).
- * Fitur di halaman ini meliputi:
- * - Menampilkan daftar semua pelanggan dalam bentuk tabel.
- * - Mencari pelanggan berdasarkan nama, email, atau nomor HP.
- * - Mengubah data pelanggan (nama, email, nomor HP, alamat).
- * - Menghapus data pelanggan.
- * - Navigasi halaman (pagination) jika data pelanggan banyak.
- */
 import InputError from "@/components/input-error";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,14 +19,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function AdminCustomers() {
-    // SECTION: Mengambil data pelanggan dari server
     const { customers } = usePage().props as any;
     const [editing, setEditing] = useState<any>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // SECTION: Form untuk mengubah data pelanggan
     const editForm = useForm({
         name: "",
         email: "",
@@ -43,7 +32,7 @@ export default function AdminCustomers() {
         address: "",
     });
 
-    // SECTION: Logika untuk mencari dan membagi data pelanggan ke beberapa halaman
+    // Filter and paginate customers
     const filteredCustomers = useMemo(() => {
         return customers.filter(
             (customer: any) =>
@@ -60,7 +49,6 @@ export default function AdminCustomers() {
 
     const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
 
-    // SECTION: Fungsi untuk memulai mode edit dan mengisi form dengan data pelanggan
     const startEdit = (customer: any) => {
         setEditing(customer);
         editForm.setData({
@@ -71,7 +59,6 @@ export default function AdminCustomers() {
         });
     };
 
-    // SECTION: Fungsi untuk mengirim data yang sudah diubah ke server
     const submitEdit = (e: React.FormEvent) => {
         e.preventDefault();
         if (editing) {
@@ -84,7 +71,6 @@ export default function AdminCustomers() {
         }
     };
 
-    // SECTION: Hook untuk menghapus data
     const { delete: destroy } = useForm({});
 
     return (
@@ -93,7 +79,7 @@ export default function AdminCustomers() {
             <div className="container mx-auto space-y-6 p-4">
                 <h1 className="text-2xl font-bold">Kustomer</h1>
 
-                {/* SECTION: Menampilkan ringkasan jumlah total pelanggan */}
+                {/* Summary */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <Card>
                         <CardContent className="flex items-center gap-3 p-4">
@@ -106,7 +92,6 @@ export default function AdminCustomers() {
                     </Card>
                 </div>
 
-                {/* SECTION: Form untuk mengubah data pelanggan, hanya muncul saat mode edit aktif */}
                 {editing && (
                     <Card>
                         <CardHeader>
@@ -145,7 +130,6 @@ export default function AdminCustomers() {
                     </Card>
                 )}
 
-                {/* SECTION: Tabel untuk menampilkan semua data pelanggan */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Daftar Kustomer</CardTitle>
@@ -186,7 +170,6 @@ export default function AdminCustomers() {
                                             <TableCell>{c.address || "-"}</TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
-                                                    {/* Tombol untuk mengubah data */}
                                                     <TooltipProvider>
                                                         <Tooltip>
                                                             <TooltipTrigger asChild>
@@ -197,7 +180,6 @@ export default function AdminCustomers() {
                                                             <TooltipContent>Edit</TooltipContent>
                                                         </Tooltip>
                                                     </TooltipProvider>
-                                                    {/* Tombol untuk menghapus data */}
                                                     <TooltipProvider>
                                                         <Tooltip>
                                                             <TooltipTrigger asChild>
@@ -222,7 +204,7 @@ export default function AdminCustomers() {
                             </Table>
                         </div>
 
-                        {/* SECTION: Navigasi untuk pindah halaman */}
+                        {/* Pagination */}
                         {totalPages > 1 && (
                             <div className="flex items-center justify-between space-x-2 py-4">
                                 <div className="text-sm text-muted-foreground">

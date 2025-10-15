@@ -1,13 +1,3 @@
-/**
- * Halaman ini ditampilkan setelah pengguna berhasil menyelesaikan pembayaran.
- * Berfungsi sebagai halaman konfirmasi bahwa transaksi telah sukses.
- * Fitur utama:
- * - Menampilkan pesan "Pembayaran Berhasil" dengan ikon centang.
- * - Memberikan informasi bahwa pesanan sedang diproses.
- * - Menyediakan tombol aksi bagi pengguna untuk:
- *   - Melihat riwayat pesanan mereka.
- *   - Kembali berbelanja produk lain.
- */
 import { Head, Link } from '@inertiajs/react';
 import { Navbar } from '@/components/home/Navbar';
 import { Footer } from '@/components/home/Footer';
@@ -38,7 +28,6 @@ export default function PaymentSuccess() {
             <Navbar />
             <Head title="Payment Success" />
             <div className="container mx-auto max-w-2xl space-y-6 p-4">
-                {/* SECTION: Kartu konfirmasi pembayaran berhasil */}
                 <Card className="shadow-lg">
                     <CardHeader className="text-center">
                         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
@@ -55,7 +44,6 @@ export default function PaymentSuccess() {
                         <p className="text-sm text-gray-500">
                             Anda akan segera menerima konfirmasi dengan detail pesanan Anda.
                         </p>
-                        {/* SECTION: Tombol aksi setelah pembayaran berhasil */}
                         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
                             <Button asChild>
                                 <Link href="/transactions">

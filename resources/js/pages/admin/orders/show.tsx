@@ -1,12 +1,3 @@
-/**
- * Halaman ini menampilkan detail dari satu pesanan spesifik untuk admin.
- * Admin dapat melihat informasi lengkap pesanan dan mengubah statusnya.
- * Fitur utama:
- * - Menampilkan detail pelanggan, total harga, dan alamat pengiriman.
- * - Menampilkan status pesanan saat ini dengan label berwarna.
- * - Menyediakan dropdown untuk mengubah status pesanan (misal: dari 'pending' ke 'processing').
- * - Tombol untuk menyimpan perubahan status atau menghapus pesanan.
- */
 import ImagePreview from "@/components/image-preview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,12 +14,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function AdminOrderShow() {
-    // SECTION: Mengambil data pesanan tunggal dari server.
     const { order } = usePage().props as any;
-    // SECTION: Inisialisasi form untuk mengubah status pesanan.
     const { data, setData, post, delete: destroy } = useForm({ status: order.status });
 
-    // SECTION: Mendefinisikan label dan warna untuk setiap status pesanan.
     const statusMap: Record<string, { label: string; color: string }> = {
         pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800' },
         paid: { label: 'Pembayaran Berhasil', color: 'bg-blue-100 text-blue-800' },
@@ -38,7 +26,6 @@ export default function AdminOrderShow() {
         cancelled: { label: 'Dibatalkan', color: 'bg-red-100 text-red-800' },
     };
 
-    // SECTION: Fungsi untuk mengirim permintaan perubahan status ke server.
     const updateStatus = () => {
         post(`/admin/orders/${order.id}/status`, {
             method: "post",
@@ -56,7 +43,6 @@ export default function AdminOrderShow() {
                         <CardTitle>Detail Pesanan</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                        {/* SECTION: Menampilkan informasi dasar pesanan */}
                         <div className="grid gap-2 sm:grid-cols-2">
                             <div>
                                 <div className="text-sm text-muted-foreground">Pelanggan</div>
@@ -80,7 +66,6 @@ export default function AdminOrderShow() {
                             </div>
                         </div>
 
-                        {/* SECTION: Dropdown untuk mengubah status pesanan */}
                         <div className="space-y-1 pt-2">
                             <label className="block text-sm font-medium">Ubah Status</label>
                             <div className="max-w-xs">
@@ -99,8 +84,6 @@ export default function AdminOrderShow() {
                                 </Select>
                             </div>
                         </div>
-                        
-                        {/* SECTION: Tombol aksi untuk menyimpan atau menghapus */}
                         {/* Bukti pembayaran tidak diperlukan karena diverifikasi melalui Midtrans dashboard */}
                         <div className="flex gap-2">
                             <Button onClick={updateStatus}>Simpan Status</Button>

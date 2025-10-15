@@ -1,13 +1,3 @@
-/**
- * Halaman ini adalah bagian dari pengaturan akun, khusus untuk mengedit informasi profil pengguna.
- * Fitur utama:
- * - Form untuk memperbarui nama, email, telepon, alamat, dan kode pos.
- * - Mengisi form secara otomatis dengan data pengguna yang sudah ada.
- * - Fitur untuk mengambil kode pos secara otomatis berdasarkan alamat yang dimasukkan.
- * - Menampilkan notifikasi jika email pengguna belum diverifikasi, dengan opsi untuk mengirim ulang email verifikasi.
- * - Menampilkan pesan "Tersimpan" sesaat setelah profil berhasil diperbarui.
- * - Menyertakan komponen `DeleteUser` untuk fungsionalitas hapus akun.
- */
 import { type BreadcrumbItem, type SharedData } from "@/types";
 import { Transition } from "@headlessui/react";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
@@ -22,11 +12,24 @@ import { Label } from "@/components/ui/label";
 import AppLayout from "@/layouts/app-layout";
 import SettingsLayout from "@/layouts/settings/layout";
 
-// ... (Definisi breadcrumbs dan tipe ProfileForm)
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: "Pengaturan profil",
+        href: "/settings/profile",
+    },
+];
+
+type ProfileForm = {
+    name: string;
+    email: string;
+    phone: any;
+    address: any;
+    postal_code: any;
+};
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string; }) {
-    // SECTION: Mengambil data otentikasi dan menginisialisasi form dengan data pengguna.
     const { auth } = usePage<SharedData>().props;
+
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
         email: auth.user.email,
@@ -37,12 +40,25 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
     const [isAutoFetching, setIsAutoFetching] = useState(false);
 
-    // SECTION: Fungsi untuk mengambil data kode pos dari API eksternal secara otomatis.
     const fetchPostalCode = useCallback(async (cityName: string) => {
-        // ... (Logika fetch API)
+        if (!cityName || cityName.length < 3) return;
+        
+        try {
+            setIsAutoFetching(true);
+            const response = await fetch(`https://kodepos.vercel.app/search/?q=${encodeURIComponent(cityName)}`);
+            const result = await response.json();
+            
+            if (result.statusCode === 200 && result.data && result.data.length > 0) {
+                const firstResult = result.data[0];
+                setData("postal_code", firstResult.code.toString());
+            }
+        } catch (error) {
+            console.error("Failed to fetch postal code:", error);
+        } finally {
+            setIsAutoFetching(false);
+        }
     }, [setData]);
 
-    // SECTION: Efek untuk memicu pengambilan kode pos saat pengguna selesai mengetik alamat.
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             if (data.address) {
@@ -52,12 +68,13 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                 }
             }
         }, 1000);
+
         return () => clearTimeout(timeoutId);
     }, [data.address, fetchPostalCode]);
 
-    // SECTION: Fungsi yang dijalankan saat form profil disubmit.
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+
         patch(route("profile.update"), {
             preserveScroll: true,
         });
@@ -66,24 +83,112 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Pengaturan profil" />
+
             <SettingsLayout>
                 <div className="space-y-6">
                     <HeadingSmall title="Informasi profil" description="Perbarui nama dan alamat email Anda" />
 
-                    {/* SECTION: Form untuk mengedit profil pengguna */}
                     <form onSubmit={submit} className="space-y-6">
-                        {/* Input Nama, Email, Telepon, Alamat, Kode Pos */}
-                        {/* ... */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="name">Nama</Label>
 
-                        {/* SECTION: Notifikasi jika email belum diverifikasi */}
+                            <Input
+                                id="name"
+                                className="mt-1 block w-full"
+                                value={data.name}
+                                onChange={(e) => setData("name", e.target.value)}
+                                required
+                                autoComplete="name"
+                                placeholder="Nama lengkap"
+                            />
+
+                            <InputError className="mt-2" message={errors.name} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">Alamat email</Label>
+
+                            <Input
+                                id="email"
+                                type="email"
+                                className="mt-1 block w-full"
+                                value={data.email}
+                                onChange={(e) => setData("email", e.target.value)}
+                                required
+                                autoComplete="username"
+                                placeholder="Alamat email"
+                            />
+
+                            <InputError className="mt-2" message={errors.email} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="text">Nomor Telepon</Label>
+
+                            <Input
+                                name="phone"
+                                required
+                                id="phone"
+                                type="phone"
+                                className="mt-1 block w-full"
+                                value={data.phone}
+                                onChange={(e) => setData("phone", e.target.value)}
+                                placeholder="Nomor Telepon"
+                            />
+
+                            <InputError className="mt-2" message={errors.phone} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="text">Alamat</Label>
+
+                            <Input
+                                name="address"
+                                required
+                                id="address"
+                                type="address"
+                                className="mt-1 block w-full"
+                                value={data.address}
+                                onChange={(e) => setData("address", e.target.value)}
+                                placeholder="Alamat"
+                            />
+
+                            <InputError className="mt-2" message={errors.address} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="postal_code">
+                                Kode Pos 
+                                {isAutoFetching && <span className="text-sm text-muted-foreground ml-2">(mencari...)</span>}
+                            </Label>
+
+                            <Input
+                                name="postal_code"
+                                id="postal_code"
+                                type="text"
+                                className="mt-1 block w-full"
+                                value={data.postal_code}
+                                onChange={(e) => setData("postal_code", e.target.value)}
+                                placeholder="Kode pos akan terisi otomatis"
+                            />
+
+                            <InputError className="mt-2" message={errors.postal_code} />
+                        </div>
+
                         {mustVerifyEmail && auth.user.email_verified_at === null && (
                             <div>
                                 <p className="-mt-4 text-sm text-muted-foreground">
                                     Alamat email Anda belum diverifikasi.{" "}
-                                    <Link href={route("verification.send")} method="post" as="button" className="...">
+                                    <Link
+                                        href={route("verification.send")}
+                                        method="post"
+                                        as="button"
+                                        className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                    >
                                         Klik di sini untuk mengirim ulang email verifikasi.
                                     </Link>
                                 </p>
+
                                 {status === "verification-link-sent" && (
                                     <div className="mt-2 text-sm font-medium text-green-600">
                                         Tautan verifikasi baru telah dikirim ke alamat email Anda.
@@ -94,15 +199,20 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                         <div className="flex items-center gap-4">
                             <Button disabled={processing} className="cursor-pointer">Simpan</Button>
-                            {/* Pesan konfirmasi "Tersimpan" */}
-                            <Transition show={recentlySuccessful} ...>
+
+                            <Transition
+                                show={recentlySuccessful}
+                                enter="transition ease-in-out"
+                                enterFrom="opacity-0"
+                                leave="transition ease-in-out"
+                                leaveTo="opacity-0"
+                            >
                                 <p className="text-sm text-neutral-600">Tersimpan</p>
                             </Transition>
                         </div>
                     </form>
                 </div>
 
-                {/* SECTION: Komponen terpisah untuk fungsionalitas hapus akun */}
                 <DeleteUser />
             </SettingsLayout>
         </AppLayout>

@@ -1,7 +1,3 @@
-/**
- * File ini mengatur halaman untuk admin mengelola kategori produk.
- * Admin bisa menambah, melihat, mengubah, dan menghapus kategori.
- */
 import InputError from "@/components/input-error";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,20 +26,18 @@ export default function AdminCategories() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // SECTION: Form untuk menambah kategori baru
     const { data, setData, post, reset, errors } = useForm({
         nama: "",
         deskripsi: "",
     });
 
-    // SECTION: State dan form untuk mengubah kategori
     const [editing, setEditing] = useState<any>(null);
     const editForm = useForm({
         nama: "",
         deskripsi: "",
     });
 
-    // SECTION: Logika untuk mencari dan membagi halaman
+    // Filter and paginate categories
     const filteredCategories = useMemo(() => {
         return categories.filter(
             (category: any) =>
@@ -55,7 +49,6 @@ export default function AdminCategories() {
     const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
     const paginatedCategories = filteredCategories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-    // SECTION: Fungsi untuk mengirim data kategori baru
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post("/admin/categories", {
@@ -66,7 +59,6 @@ export default function AdminCategories() {
         });
     };
 
-    // SECTION: Fungsi untuk mengirim data kategori yang diubah
     const handleEditSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         editForm.put(`/admin/categories/${editing.id}`, {
@@ -77,14 +69,12 @@ export default function AdminCategories() {
         });
     };
 
-    // SECTION: Fungsi untuk menghapus kategori
     const handleDelete = (id: number) => {
         if (confirm("Apakah Anda yakin ingin menghapus kategori ini?")) {
             editForm.delete(`/admin/categories/${id}`);
         }
     };
 
-    // SECTION: Fungsi untuk menampilkan dialog edit dan mengisi data
     const handleEdit = (category: any) => {
         setEditing(category);
         editForm.setData({
@@ -101,7 +91,7 @@ export default function AdminCategories() {
                     <h1 className="text-2xl font-bold">Kelola Kategori</h1>
                 </div>
 
-                {/* SECTION: Ringkasan jumlah total kategori */}
+                {/* Summary */}
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <Card>
                         <CardContent className="flex items-center gap-3 p-4">
@@ -120,7 +110,6 @@ export default function AdminCategories() {
                         <TabsTrigger value="add">Tambah Kategori</TabsTrigger>
                     </TabsList>
 
-                    {/* SECTION: Tab untuk menampilkan daftar kategori */}
                     <TabsContent value="list" className="space-y-4">
                         <Card>
                             <CardHeader>
@@ -161,7 +150,6 @@ export default function AdminCategories() {
                                                 <TableCell>{new Date(c.created_at).toLocaleDateString("id-ID")}</TableCell>
                                                 <TableCell>
                                                     <div className="flex items-center gap-2">
-                                                        {/* Tombol untuk mengubah kategori */}
                                                         <TooltipProvider>
                                                             <Tooltip>
                                                                 <TooltipTrigger asChild>
@@ -172,7 +160,6 @@ export default function AdminCategories() {
                                                                 <TooltipContent>Edit</TooltipContent>
                                                             </Tooltip>
                                                         </TooltipProvider>
-                                                        {/* Tombol untuk menghapus kategori */}
                                                         <TooltipProvider>
                                                             <Tooltip>
                                                                 <TooltipTrigger asChild>
@@ -190,7 +177,7 @@ export default function AdminCategories() {
                                     </TableBody>
                                 </Table>
 
-                                {/* SECTION: Navigasi halaman */}
+                                {/* Pagination */}
                                 {totalPages > 1 && (
                                     <div className="flex justify-center space-x-2 mt-4">
                                         {[...Array(totalPages)].map((_, i) => (
@@ -209,7 +196,6 @@ export default function AdminCategories() {
                         </Card>
                     </TabsContent>
 
-                    {/* SECTION: Tab untuk menambah kategori baru */}
                     <TabsContent value="add">
                         <Card>
                             <CardHeader>
@@ -249,7 +235,7 @@ export default function AdminCategories() {
                     </TabsContent>
                 </Tabs>
 
-                {/* SECTION: Dialog untuk mengubah kategori */}
+                {/* Edit Dialog */}
                 <Dialog open={editing !== null} onOpenChange={() => setEditing(null)}>
                     <DialogContent>
                         <DialogHeader>
