@@ -1,3 +1,12 @@
+/**
+ * Halaman ini digunakan oleh admin untuk melihat dan mengelola semua pesanan yang masuk.
+ * Fitur utama:
+ * - Menampilkan daftar semua pesanan dalam bentuk tabel.
+ * - Mencari pesanan berdasarkan ID, nama pelanggan, atau status.
+ * - Menampilkan status pesanan dengan label warna yang berbeda untuk kemudahan.
+ * - Memberikan aksi untuk melihat detail pesanan atau menghapus pesanan.
+ * - Terdapat pagination untuk data yang banyak.
+ */
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,6 +24,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function AdminOrders() {
+    // SECTION: Mengambil data pesanan dari server dan inisialisasi state
     const { orders } = usePage().props as any;
     const { delete: destroy } = useForm({});
     const [searchTerm, setSearchTerm] = useState("");
@@ -22,7 +32,7 @@ export default function AdminOrders() {
     const itemsPerPage = 10;
 
 
-    // Filter and paginate orders
+    // SECTION: Logika untuk memfilter pesanan berdasarkan pencarian
     const filteredOrders = useMemo(() => {
         return orders.filter(
             (order: any) =>
@@ -32,6 +42,7 @@ export default function AdminOrders() {
         );
     }, [orders, searchTerm]);
 
+    // SECTION: Logika untuk membagi data pesanan ke beberapa halaman (pagination)
     const paginatedOrders = useMemo(() => {
         const startIndex = (currentPage - 1) * itemsPerPage;
         return filteredOrders.slice(startIndex, startIndex + itemsPerPage);
@@ -40,6 +51,7 @@ export default function AdminOrders() {
     const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
     const idr = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
 
+    // SECTION: Fungsi untuk mendapatkan label status yang mudah dibaca
     const statusLabel = (s?: string) => {
         switch (s) {
             case 'pending': return 'Pending';
@@ -52,6 +64,7 @@ export default function AdminOrders() {
         }
     };
 
+    // SECTION: Fungsi untuk mendapatkan kelas CSS (warna background) berdasarkan status
     const statusClass = (s?: string) => {
         switch (s) {
             case 'pending': return 'bg-yellow-100 text-yellow-800';
@@ -72,6 +85,7 @@ export default function AdminOrders() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Daftar Order</CardTitle>
+                        {/* SECTION: Input untuk mencari pesanan */}
                         <div className="mt-4 flex items-center space-x-2">
                             <Input
                                 placeholder="Cari berdasarkan ID, kustomer atau status"
@@ -86,6 +100,7 @@ export default function AdminOrders() {
                         </div>
                     </CardHeader>
                     <CardContent>
+                        {/* SECTION: Tabel untuk menampilkan daftar pesanan */}
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
@@ -118,6 +133,7 @@ export default function AdminOrders() {
                                             <TableCell>{o?.created_at ? new Date(o.created_at).toLocaleDateString("id-ID") : "N/A"}</TableCell>
                                             <TableCell>
                                                 <div className="flex space-x-2">
+                                                    {/* Tombol untuk melihat detail pesanan */}
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
@@ -125,6 +141,7 @@ export default function AdminOrders() {
                                                     >
                                                         Detail
                                                     </Button>
+                                                    {/* Tombol untuk menghapus pesanan */}
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
@@ -141,7 +158,7 @@ export default function AdminOrders() {
                             </Table>
                         </div>
 
-                        {/* Pagination */}
+                        {/* SECTION: Navigasi halaman (pagination) */}
                         {totalPages > 1 && (
                             <div className="flex items-center justify-between space-x-2 py-4">
                                 <div className="text-sm text-muted-foreground">

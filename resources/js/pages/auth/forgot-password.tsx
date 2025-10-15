@@ -1,3 +1,13 @@
+/**
+ * Halaman ini digunakan ketika pengguna lupa kata sandi mereka.
+ * Pengguna dapat memasukkan alamat email mereka untuk menerima tautan reset kata sandi.
+ * Fitur utama:
+ * - Menampilkan form untuk memasukkan alamat email.
+ * - Mengirim permintaan ke server untuk mengirim email reset kata sandi.
+ * - Menampilkan status (misalnya, jika email berhasil dikirim).
+ * - Tautan untuk kembali ke halaman login.
+ */
+
 // Components
 import { Head, useForm } from "@inertiajs/react";
 import { LoaderCircle } from "lucide-react";
@@ -11,13 +21,16 @@ import { Label } from "@/components/ui/label";
 import AuthLayout from "@/layouts/auth-layout";
 
 export default function ForgotPassword({ status }: { status?: string }) {
+    // SECTION: Inisialisasi form untuk menampung alamat email pengguna.
     const { data, setData, post, processing, errors } = useForm<Required<{ email: string }>>({
         email: "",
     });
 
+    // SECTION: Fungsi yang dijalankan saat form disubmit.
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
+        // Mengirim alamat email ke server untuk proses reset password.
         post(route("password.email"));
     };
 
@@ -25,9 +38,11 @@ export default function ForgotPassword({ status }: { status?: string }) {
         <AuthLayout title="Lupa kata sandi" description="Masukkan email Anda untuk menerima tautan reset kata sandi">
             <Head title="Lupa kata sandi" />
 
+            {/* Menampilkan pesan status jika ada (misal: email berhasil dikirim) */}
             {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
 
             <div className="space-y-6">
+                {/* SECTION: Form untuk memasukkan email */}
                 <form onSubmit={submit}>
                     <div className="grid gap-2">
                         <Label htmlFor="email">Alamat Email</Label>
@@ -53,6 +68,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     </div>
                 </form>
 
+                {/* Tautan untuk kembali ke halaman login */}
                 <div className="space-x-1 text-center text-sm text-muted-foreground">
                     <span>Atau, kembali ke</span>
                     <TextLink href={route("login")}>masuk</TextLink>

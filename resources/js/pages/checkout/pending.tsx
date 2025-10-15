@@ -1,3 +1,13 @@
+/**
+ * Halaman ini ditampilkan ketika pembayaran pengguna tertunda (pending).
+ * Ini terjadi jika pengguna menutup popup pembayaran sebelum menyelesaikan transaksi
+ * atau jika pembayaran memerlukan waktu untuk diproses (misalnya, transfer bank).
+ * Fitur utama:
+ * - Menampilkan pesan yang jelas bahwa pembayaran tertunda.
+ * - Memberikan tombol aksi kepada pengguna untuk:
+ *   - Melihat riwayat pesanan mereka.
+ *   - Kembali berbelanja.
+ */
 import { Head, Link } from '@inertiajs/react';
 import { Navbar } from '@/components/home/Navbar';
 import { Footer } from '@/components/home/Footer';
@@ -11,6 +21,7 @@ export default function PaymentPending() {
       <Navbar />
       <Head title="Pembayaran Tertunda" />
       <div className="container mx-auto max-w-2xl space-y-6 p-4">
+        {/* SECTION: Kartu informasi status pembayaran tertunda */}
         <Card className="shadow-lg">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100">
@@ -24,6 +35,7 @@ export default function PaymentPending() {
             <p className="text-gray-600">
               Anda belum menyelesaikan pembayaran. Segera lakukan pembayaran agar pesanan diproses.
             </p>
+            {/* SECTION: Tombol aksi untuk pengguna */}
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Button asChild>
                 <Link href="/transactions">Lihat Riwayat Pesanan</Link>

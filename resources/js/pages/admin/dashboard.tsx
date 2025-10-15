@@ -1,4 +1,16 @@
-﻿import { Button } from "@/components/ui/button";
+/**
+ * Halaman ini berfungsi sebagai dashboard utama untuk admin.
+ * Menampilkan ringkasan data penting dan visualisasi performa bisnis.
+ * Fitur utama:
+ * - Menampilkan kartu ringkasan (total produk, pelanggan, pesanan, penjualan).
+ * - Grafik tren penjualan harian (Line chart) dengan filter rentang waktu (7, 30, 90 hari).
+ * - Grafik produk terlaris (Doughnut chart).
+ * - Grafik perbandingan penjualan produk (Bar chart).
+ * - Tabel detail semua data penjualan dengan fitur pencarian, pengurutan, dan pagination.
+ * - Fitur untuk mengekspor data penjualan ke format CSV.
+ * - Notifikasi untuk pesanan baru dan stok produk yang menipis.
+ */
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -12,6 +24,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { Package, Users, ShoppingBag, Coins, TrendingUp, Search, Download, ArrowUpDown, X } from "lucide-react";
 
+// SECTION: Mendaftarkan komponen-komponen dari Chart.js yang akan digunakan
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, ArcElement);
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -22,13 +35,17 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function AdminDashboard() {
+    // SECTION: Mengambil data dari server menggunakan hook usePage dari Inertia
     const { summary, salesData, productSalesData, bestSellers, allSales, recentSuccess, lowStock } = usePage().props as any;
+    
+    // SECTION: State untuk fungsionalitas tabel (pencarian, halaman, pengurutan)
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [sortKey, setSortKey] = useState<"product" | "customer" | "total" | "date">("date");
     const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
+    // SECTION: Logika untuk memfilter data penjualan berdasarkan kata kunci pencarian
     const filteredSales = useMemo(() => {
         return allSales.filter(
             (sale: any) =>
@@ -37,6 +54,7 @@ export default function AdminDashboard() {
         );
     }, [allSales, searchTerm]);
 
+    // SECTION: Logika untuk mengurutkan data penjualan yang sudah difilter
     const sortedSales = useMemo(() => {
         const copy = [...filteredSales];
         copy.sort((a: any, b: any) => {
@@ -50,12 +68,15 @@ export default function AdminDashboard() {
         return copy;
     }, [filteredSales, sortKey, sortDir]);
 
+    // SECTION: Logika untuk membagi data penjualan yang sudah diurutkan ke beberapa halaman
     const paginatedSales = useMemo(() => {
         const startIndex = (currentPage - 1) * itemsPerPage;
         return sortedSales.slice(startIndex, startIndex + itemsPerPage);
     }, [sortedSales, currentPage, itemsPerPage]);
 
     const totalPages = Math.ceil(sortedSales.length / itemsPerPage);
+
+    // SECTION: State dan Efek untuk menampilkan notifikasi pesanan baru
     const [showNewOrderAlert, setShowNewOrderAlert] = useState(false);
     useEffect(() => {
         if (typeof recentSuccess === 'number' && recentSuccess > 0) {
@@ -65,6 +86,7 @@ export default function AdminDashboard() {
         }
     }, [recentSuccess]);
 
+    // SECTION: Fungsi untuk mengubah kunci dan arah pengurutan tabel
     const toggleSort = (key: typeof sortKey) => {
         if (sortKey === key) {
             setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -75,6 +97,7 @@ export default function AdminDashboard() {
         setCurrentPage(1);
     };
 
+    // SECTION: Fungsi untuk mengekspor data penjualan menjadi file CSV
     const exportCsv = () => {
         const rows = [
             ["ID", "Produk", "Pelanggan", "Kode Pos", "Jumlah", "Harga", "Total", "Tanggal"],
@@ -99,6 +122,7 @@ export default function AdminDashboard() {
         URL.revokeObjectURL(url);
     };
 
+    // SECTION: Konfigurasi untuk kartu ringkasan dan format mata uang
     const idr = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' });
     const summaryCards = [
         { title: "Total Produk", value: summary?.products || 0, icon: Package },
@@ -107,7 +131,7 @@ export default function AdminDashboard() {
         { title: "Total Penjualan", value: idr.format(Number(summary?.total_sales || 0)), icon: Coins },
     ];
 
-    // Prepare chart data
+    // SECTION: Mempersiapkan data untuk grafik (chart)
     const [rangeDays, setRangeDays] = useState<7 | 30 | 90>(30);
     const salesDataRanged = useMemo(() => {
         try {
@@ -157,6 +181,7 @@ export default function AdminDashboard() {
         ],
     };
 
+    // SECTION: Opsi konfigurasi untuk grafik (Line dan Bar)
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
@@ -189,6 +214,7 @@ export default function AdminDashboard() {
         },
     };
 
+    // SECTION: Opsi konfigurasi untuk grafik Doughnut
     const doughnutOptions = {
         responsive: true,
         maintainAspectRatio: false,
@@ -230,6 +256,7 @@ export default function AdminDashboard() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard Admin" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                {/* SECTION: Notifikasi untuk pesanan baru dan stok menipis */}
                 {showNewOrderAlert && (
                     <div className="animate-in fade-in slide-in-from-top-1 rounded-md border border-green-300 bg-green-50 p-3 text-sm text-green-900">
                         Ada pesanan masuk! Periksa dan konfirmasi segera.
@@ -255,7 +282,8 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                 )}
-                {/* Header with Invoice Button */}
+                
+                {/* SECTION: Judul halaman dan tombol aksi (Cetak Invoice, Ganti Tema) */}
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className="text-3xl font-bold">Dashboard Admin</h1>
                     <Link href="/admin/invoice">
@@ -267,14 +295,16 @@ export default function AdminDashboard() {
                     <ModeToggle />
                 </div>
 
+                {/* SECTION: Tampilan utama dengan sistem Tab (Performa dan Detail Penjualan) */}
                 <Tabs defaultValue="overview" className="w-full space-y-4">
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="overview">Performa Penjualan</TabsTrigger>
                         <TabsTrigger value="sales">Detail Penjualan</TabsTrigger>
                     </TabsList>
 
+                    {/* SECTION: Konten Tab Performa Penjualan */}
                     <TabsContent value="overview" className="space-y-4">
-                        {/* Summary Cards */}
+                        {/* Kartu-kartu ringkasan data */}
                         <div className="grid auto-rows-min gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {summaryCards.map((card) => {
                                 const Icon = (card as any).icon as any;
@@ -292,7 +322,7 @@ export default function AdminDashboard() {
                             })}
                         </div>
 
-                        {/* Charts */}
+                        {/* Berbagai macam grafik untuk visualisasi data */}
                         <div className="grid gap-4 md:grid-cols-2">
                             <Card>
                                 <CardHeader>
@@ -331,7 +361,6 @@ export default function AdminDashboard() {
                             </Card>
                         </div>
 
-                        {/* Bar Chart */}
                         <Card>
                             <CardHeader>
                                 <CardTitle>Perbandingan Penjualan Produk</CardTitle>
@@ -344,11 +373,13 @@ export default function AdminDashboard() {
                         </Card>
                     </TabsContent>
 
+                    {/* SECTION: Konten Tab Detail Penjualan */}
                     <TabsContent value="sales" className="space-y-4">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Semua Data Penjualan</CardTitle>
                                 <div className="mt-4 flex flex-wrap items-center gap-3">
+                                    {/* Fitur Pencarian, Filter, dan Ekspor CSV */}
                                     <div className="relative w-full max-w-sm">
                                         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                                         <Input
@@ -383,6 +414,7 @@ export default function AdminDashboard() {
                                 </div>
                             </CardHeader>
                             <CardContent>
+                                {/* Tabel yang menampilkan semua data penjualan */}
                                 <div className="max-h-[520px] overflow-auto">
                                     <Table>
                                         <TableHeader>
@@ -429,7 +461,7 @@ export default function AdminDashboard() {
                                     </Table>
                                 </div>
 
-                                {/* Pagination */}
+                                {/* Navigasi halaman untuk tabel penjualan */}
                                 {totalPages > 1 && (
                                     <div className="flex items-center justify-between space-x-2 py-4">
                                         <div className="text-sm text-muted-foreground">

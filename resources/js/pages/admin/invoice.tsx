@@ -1,3 +1,12 @@
+/**
+ * Halaman ini berfungsi untuk membuat dan menampilkan invoice (faktur) penjualan.
+ * Admin dapat melihat pratinjau invoice dan mencetaknya.
+ * Fitur utama:
+ * - Menampilkan data penjualan dalam format faktur yang siap cetak.
+ * - Menghitung total penjualan, total transaksi, dan rata-rata per transaksi.
+ * - Menyediakan tombol untuk memicu fungsi cetak browser.
+ * - Memiliki dua tampilan: satu untuk pratinjau di layar, dan satu lagi format khusus untuk dicetak.
+ */
 import { Head, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +27,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function AdminInvoice() {
+    // SECTION: Mengambil data penjualan, ringkasan, dan rentang tanggal dari server.
     const { salesData, summary, dateRange } = usePage().props as any;
     const [isPrintMode, setIsPrintMode] = useState(false);
 
@@ -28,6 +38,7 @@ export default function AdminInvoice() {
         day: 'numeric'
     });
 
+    // SECTION: Fungsi untuk mengaktifkan mode cetak dan memanggil fungsi print browser.
     const handlePrint = () => {
         setIsPrintMode(true);
         setTimeout(() => {
@@ -36,18 +47,19 @@ export default function AdminInvoice() {
         }, 100);
     };
 
-    // Calculate totals
+    // SECTION: Menghitung total dari data penjualan.
     const totalSales = salesData?.reduce((sum: number, item: any) => sum + parseFloat(item.total || 0), 0) || 0;
     const totalTransactions = salesData?.length || 0;
     const averagePerTransaction = totalTransactions > 0 ? totalSales / totalTransactions : 0;
 
+    // SECTION: Tampilan khusus yang akan dirender saat mode cetak aktif.
     if (isPrintMode) {
         return (
             <div className="min-h-screen bg-white p-8 text-black">
                 <Head title="Sales Invoice - Print" />
                 <style>{`@media print{ @page{ size:A4; margin:12mm } .no-print{ display:none!important } .avoid-break-inside{ break-inside: avoid } .page-break{ break-after: page } }`}</style>
                 <div className="mx-auto w-[210mm] max-w-full">
-                    {/* Header */}
+                    {/* Header Invoice */}
                     <div className="mb-6 flex items-start justify-between border-b border-gray-300 pb-4">
                         <div className="flex items-center gap-4">
                             <img src="/assets/brand/logo.png" alt="Lamore Cake" className="h-10 w-10" />
@@ -66,7 +78,7 @@ export default function AdminInvoice() {
                         </div>
                     </div>
 
-                    {/* Summary */}
+                    {/* Ringkasan Total */}
                     <div className="mb-6 grid grid-cols-3 gap-4">
                         <div className="rounded border border-gray-300 p-3">
                             <p className="text-xs text-gray-600">Total Sales</p>
@@ -82,7 +94,7 @@ export default function AdminInvoice() {
                         </div>
                     </div>
 
-                    {/* Sales Table */}
+                    {/* Tabel Detail Penjualan */}
                     <div className="mb-8">
                         <h2 className="mb-2 text-base font-semibold">Sales Details</h2>
                         <table className="w-full border-collapse border border-gray-300 text-sm">
@@ -120,7 +132,7 @@ export default function AdminInvoice() {
                         </table>
                     </div>
 
-                    {/* Signatures */}
+                    {/* Bagian Tanda Tangan */}
                     <div className="mt-10 grid grid-cols-2 gap-8">
                         <div>
                             <p className="mb-12 text-sm text-gray-600">Prepared by,</p>
@@ -134,7 +146,7 @@ export default function AdminInvoice() {
                         </div>
                     </div>
 
-                    {/* Footer */}
+                    {/* Footer Invoice */}
                     <div className="mt-8 border-t border-gray-300 pt-4 text-center text-xs text-gray-500">
                         <p>Lamore Cake • lamorecake.id • Denpasar, Bali</p>
                         <p>Printed on {currentDate}</p>
@@ -144,11 +156,12 @@ export default function AdminInvoice() {
         );
     }
 
+    // SECTION: Tampilan pratinjau invoice di halaman web.
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Sales Invoice" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                {/* Header with Print Button */}
+                {/* Tombol untuk mencetak invoice */}
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Sales Invoice</h1>
                     <Button onClick={handlePrint} className="print:hidden">
@@ -156,7 +169,7 @@ export default function AdminInvoice() {
                     </Button>
                 </div>
 
-                {/* Invoice Preview */}
+                {/* Pratinjau Invoice */}
                 <Card className="print:shadow-none print:border-none">
                     <CardContent className="p-8">
                         {/* Header */}
@@ -178,7 +191,7 @@ export default function AdminInvoice() {
                             </div>
                         </div>
 
-                        {/* Summary Section */}
+                        {/* Bagian Ringkasan Total */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                             <Card>
                                 <CardContent className="p-4 text-center">
@@ -206,7 +219,7 @@ export default function AdminInvoice() {
                             </Card>
                         </div>
 
-                        {/* Sales Details Table */}
+                        {/* Tabel Detail Penjualan */}
                         <div className="mb-8">
                             <h2 className="text-xl font-bold mb-4">Sales Details</h2>
                             <div className="overflow-x-auto">
@@ -256,7 +269,7 @@ export default function AdminInvoice() {
                             </div>
                         </div>
 
-                        {/* Footer */}
+                        {/* Footer Pratinjau */}
                         <div className="text-center mt-8 pt-6 border-t border-border">
                             <p className="text-sm text-muted-foreground">
                                 Faktur ini dibuat secara otomatis oleh Sistem Manajemen Lamore Cake
@@ -271,4 +284,3 @@ export default function AdminInvoice() {
         </AppLayout>
     );
 }
-

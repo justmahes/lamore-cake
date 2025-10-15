@@ -1,3 +1,14 @@
+/**
+ * Halaman ini berfungsi sebagai form login untuk pengguna.
+ * Pengguna memasukkan email dan kata sandi untuk masuk ke akun mereka.
+ * Fitur utama:
+ * - Form input untuk email dan kata sandi.
+ * - Validasi sederhana di sisi klien untuk format email.
+ * - Tombol untuk menampilkan/menyembunyikan kata sandi.
+ * - Opsi "Ingat saya" (Remember me).
+ * - Tautan untuk lupa kata sandi dan mendaftar akun baru.
+ * - Menangani proses login dengan mengirim data ke server.
+ */
 import { Head, useForm } from "@inertiajs/react";
 import { LoaderCircle, Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { FormEventHandler, useMemo, useState } from "react";
@@ -22,23 +33,27 @@ interface LoginProps {
 }
 
 export default function Login({ status, canResetPassword }: LoginProps) {
+    // SECTION: Inisialisasi form untuk data login (email, password, remember me).
     const { data, setData, post, processing, errors, reset } = useForm<Required<LoginForm>>({
         email: "",
         password: "",
         remember: false,
     });
 
+    // State untuk mengatur visibilitas kata sandi.
     const [showPassword, setShowPassword] = useState(false);
 
+    // Validasi format email sederhana di sisi klien untuk UX.
     const isEmailValid = useMemo(() => {
         if (!data.email) return undefined;
-        // Simple email pattern for UX hint only; server remains source of truth
         const pattern = /.+@.+\..+/i;
         return pattern.test(data.email);
     }, [data.email]);
 
+    // SECTION: Fungsi yang dijalankan saat form login disubmit.
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+        // Mengirim data login ke server.
         post(route("login"), {
             onFinish: () => reset("password"),
         });
@@ -48,8 +63,10 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         <AuthLayout title="Masuk ke akun Anda" description="Masukkan email dan kata sandi Anda di bawah untuk masuk">
             <Head title="Masuk" />
 
+            {/* SECTION: Form login utama */}
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
+                    {/* Input Email */}
                     <div className="grid gap-2">
                         <Label htmlFor="email">Alamat Email</Label>
                         <div className="relative">
@@ -74,6 +91,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         <InputError message={errors.email} />
                     </div>
 
+                    {/* Input Password */}
                     <div className="grid gap-2">
                         <div className="flex items-center">
                             <Label htmlFor="password">Kata Sandi</Label>
@@ -97,6 +115,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 aria-invalid={errors.password ? true : undefined}
                                 className="pl-9 pr-9"
                             />
+                            {/* Tombol untuk melihat/menyembunyikan password */}
                             <button
                                 type="button"
                                 onClick={() => setShowPassword((s) => !s)}
@@ -110,6 +129,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         <InputError message={errors.password} />
                     </div>
 
+                    {/* Opsi "Ingat saya" */}
                     <div className="flex items-center space-x-3">
                         <Checkbox
                             id="remember"
@@ -129,6 +149,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </Button>
                 </div>
 
+                {/* Tautan untuk mendaftar jika belum punya akun */}
                 <div className="text-center text-sm text-muted-foreground">
                     Belum punya akun?{" "}
                     <TextLink href={route("register")} tabIndex={5}>

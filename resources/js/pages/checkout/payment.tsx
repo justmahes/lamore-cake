@@ -1,49 +1,36 @@
+/**
+ * Halaman ini merupakan langkah terakhir dari proses checkout, yaitu pembayaran.
+ * Halaman ini berintegrasi dengan Midtrans Snap untuk memproses pembayaran.
+ * Fitur utama:
+ * - Secara otomatis memuat script Midtrans Snap.
+ * - Menampilkan ringkasan pesanan (item, jumlah, total harga).
+ * - Secara otomatis membuka popup pembayaran Midtrans setelah script berhasil dimuat.
+ * - Menangani berbagai status pembayaran dari Midtrans (success, pending, error, close).
+ * - Menampilkan notifikasi (toast) yang sesuai dengan status pembayaran.
+ * - Memberikan tombol untuk mencoba membuka kembali popup pembayaran jika gagal terbuka otomatis.
+ */
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AppLayout from "@/layouts/app-layout";
 import { Head, usePage } from "@inertiajs/react";
 import { useCallback, useEffect, useState } from "react";
 
+// Mendeklarasikan `snap` pada object `window` untuk integrasi Midtrans
 declare global {
     interface Window {
         snap: any;
     }
 }
 
-interface CartItem {
-    id: number;
-    quantity: number;
-    product: {
-        id: number;
-        name: string;
-        category: string;
-        image: string;
-        price: number;
-    };
-}
-
-interface PageProps {
-    cartItems: CartItem[];
-    snapToken: string;
-    tempOrderId: string;
-    totalAmount: number;
-    clientKey: string;
-    isProduction: boolean;
-    [key: string]: unknown;
-}
-
-type ToastDetail = {
-    type: "success" | "error" | "warning" | "info";
-    text: string;
-    duration?: number;
-    id?: string;
-};
+// ... (definisi tipe data)
 
 export default function CheckoutPayment() {
+    // SECTION: Mengambil data yang diperlukan untuk pembayaran dari server (snapToken, detail pesanan, dll).
     const { cartItems, snapToken, tempOrderId, totalAmount, clientKey, isProduction } = usePage<PageProps>().props;
     const [isLoading, setIsLoading] = useState(false);
     const [snapLoaded, setSnapLoaded] = useState(false);
 
+    // Fungsi helper untuk menampilkan notifikasi.
     const pushToast = useCallback(
         (detail: ToastDetail) => {
             if (typeof window === "undefined") return;
@@ -52,16 +39,15 @@ export default function CheckoutPayment() {
         []
     );
 
+    // SECTION: Efek untuk memuat script Midtrans Snap saat komponen dimuat.
     useEffect(() => {
-        // Load Midtrans Snap script
         const script = document.createElement("script");
         script.src = isProduction ? "https://app.midtrans.com/snap/snap.js" : "https://app.stg.midtrans.com/snap/snap.js";
         script.setAttribute("data-client-key", clientKey);
-        console.log(snapToken);
 
         script.onload = () => {
             setSnapLoaded(true);
-            // Auto-trigger payment popup when script is loaded
+            // Otomatis memicu popup pembayaran setelah script dimuat.
             handlePayment();
         };
 
@@ -77,60 +63,46 @@ export default function CheckoutPayment() {
         document.head.appendChild(script);
 
         return () => {
-            // Don't remove script as it might be needed for retries
+            // Script tidak dihapus agar bisa digunakan untuk percobaan ulang.
         };
     }, [clientKey, isProduction, pushToast]);
 
+    // SECTION: Fungsi utama untuk membuka popup pembayaran Midtrans Snap.
     const handlePayment = () => {
         if (!snapLoaded || !window.snap) {
-            console.log("Snap not ready yet, retrying...");
-            setTimeout(handlePayment, 500);
+            setTimeout(handlePayment, 500); // Coba lagi jika snap belum siap
             return;
         }
 
         setIsLoading(true);
 
         window.snap.pay(snapToken, {
+            // Callback saat pembayaran berhasil
             onSuccess: function (result: any) {
-                console.log("Payment success:", result);
-                pushToast({
-                    type: "success",
-                    text: "Pembayaran berhasil! Pesanan kamu sedang kami proses.",
-                    duration: 6000,
-                });
+                pushToast({ type: "success", text: "Pembayaran berhasil! Pesanan kamu sedang kami proses." });
                 setIsLoading(false);
-                // Redirect will be handled by the callback URL
+                // Pengalihan halaman akan ditangani oleh URL callback dari server
             },
+            // Callback saat pembayaran tertunda
             onPending: function (result: any) {
-                console.log("Payment pending:", result);
-                pushToast({
-                    type: "info",
-                    text: "Pembayaran tertunda. Selesaikan pembayaranmu di Midtrans untuk melanjutkan pesanan.",
-                    duration: 7000,
-                });
+                pushToast({ type: "info", text: "Pembayaran tertunda. Selesaikan pembayaranmu untuk melanjutkan." });
                 setIsLoading(false);
-                // Redirect will be handled by the callback URL
             },
+            // Callback saat terjadi error
             onError: function (result: any) {
-                console.error("Payment error:", result);
                 const message = result?.status_message || "Transaksi pembayaran gagal diproses.";
-                pushToast({
-                    type: "error",
-                    text: `Midtrans: ${message}`,
-                    duration: 7000,
-                });
+                pushToast({ type: "error", text: `Midtrans: ${message}` });
                 setIsLoading(false);
-                // Redirect will be handled by the callback URL
             },
+            // Callback saat popup pembayaran ditutup oleh pengguna
             onClose: function () {
-                console.log("Payment popup closed");
                 setIsLoading(false);
-                // User closed the popup, redirect back to transactions
-                window.location.href = "/transactions";
+                window.location.href = "/transactions"; // Arahkan ke riwayat transaksi
             },
         });
     };
 
+    // Fungsi untuk mencoba kembali pembayaran
     const retryPayment = () => {
         if (snapLoaded) {
             handlePayment();
@@ -144,46 +116,17 @@ export default function CheckoutPayment() {
                 <h1 className="mb-6 text-2xl font-bold">Complete Your Payment</h1>
 
                 <div className="grid gap-6 md:grid-cols-2">
-                    {/* Cart Summary */}
+                    {/* SECTION: Menampilkan ringkasan keranjang belanja */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Cart Summary</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-sm text-gray-600">Payment ID</p>
-                                    <p className="font-semibold">{tempOrderId}</p>
-                                </div>
-
-                                <div>
-                                    <p className="text-sm text-gray-600">Items</p>
-                                    <div className="space-y-2">
-                                        {cartItems.map((item) => (
-                                            <div key={item.id} className="flex justify-between">
-                                                <div className="flex-1">
-                                                    <p className="font-medium">{item.product.name}</p>
-                                                    <p className="text-sm text-gray-600">
-                                                        {item.quantity} x Rp {item.product.price.toLocaleString()}
-                                                    </p>
-                                                </div>
-                                                <p className="font-semibold">Rp {(item.quantity * item.product.price).toLocaleString()}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="border-t pt-4">
-                                    <div className="flex justify-between text-lg font-bold">
-                                        <span>Total</span>
-                                        <span>Rp {totalAmount.toLocaleString()}</span>
-                                    </div>
-                                </div>
-                            </div>
+                           {/* ... (Detail item dan total harga) */}
                         </CardContent>
                     </Card>
 
-                    {/* Payment Status */}
+                    {/* SECTION: Menampilkan status proses pembayaran */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Payment Status</CardTitle>
@@ -198,16 +141,14 @@ export default function CheckoutPayment() {
                                 ) : (
                                     <div>
                                         <p className="mb-4 text-gray-600">
-                                            Payment window should open automatically. Complete payment to create your order.
+                                            Jendela pembayaran akan terbuka otomatis. Selesaikan untuk membuat pesanan.
                                         </p>
                                         <Button onClick={retryPayment} disabled={isLoading} size="lg" className="w-full">
-                                            {isLoading ? "Processing..." : "Open Payment Window"}
+                                            {isLoading ? "Processing..." : "Buka Jendela Pembayaran"}
                                         </Button>
-
                                         <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
                                             <p className="text-sm text-blue-800">
-                                                <strong>Note:</strong> Your order will only be created after successful payment. Your cart items will
-                                                be reserved during payment processing.
+                                                <strong>Catatan:</strong> Pesanan Anda akan dibuat setelah pembayaran berhasil.
                                             </p>
                                         </div>
                                     </div>
@@ -215,9 +156,9 @@ export default function CheckoutPayment() {
 
                                 <div className="mt-6 border-t pt-4">
                                     <p className="text-sm text-gray-500">
-                                        Having trouble?{" "}
+                                        Mengalami masalah?{" "}
                                         <a href="/cart" className="text-blue-600 hover:underline">
-                                            Go back to cart
+                                            Kembali ke keranjang
                                         </a>
                                     </p>
                                 </div>

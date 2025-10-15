@@ -1,3 +1,14 @@
+/**
+ * Halaman ini berfungsi sebagai form pendaftaran untuk pengguna baru.
+ * Pengguna memasukkan nama, email, dan kata sandi untuk membuat akun baru.
+ * Fitur utama:
+ * - Form input untuk nama, email, kata sandi, dan konfirmasi kata sandi.
+ * - Tombol untuk menampilkan/menyembunyikan kata sandi dan konfirmasinya.
+ * - Indikator kekuatan kata sandi untuk membantu pengguna membuat kata sandi yang aman.
+ * - Validasi sederhana di sisi klien untuk format email dan kecocokan kata sandi.
+ * - Menangani proses pendaftaran dengan mengirim data ke server.
+ * - Tautan untuk beralih ke halaman login jika pengguna sudah memiliki akun.
+ */
 import { Head, useForm } from "@inertiajs/react";
 import { LoaderCircle, Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { FormEventHandler, useMemo, useState } from "react";
@@ -17,6 +28,7 @@ type RegisterForm = {
 };
 
 export default function Register() {
+    // SECTION: Inisialisasi form untuk data pendaftaran.
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         name: "",
         email: "",
@@ -24,15 +36,18 @@ export default function Register() {
         password_confirmation: "",
     });
 
+    // State untuk mengatur visibilitas kata sandi.
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
+    // Validasi format email di sisi klien.
     const isEmailValid = useMemo(() => {
         if (!data.email) return undefined;
         const pattern = /.+@.+\..+/i;
         return pattern.test(data.email);
     }, [data.email]);
 
+    // SECTION: Logika untuk menghitung dan menampilkan kekuatan kata sandi.
     const passwordStrength = useMemo(() => {
         const pwd = data.password || "";
         let score = 0;
@@ -41,12 +56,13 @@ export default function Register() {
         if (/[a-z]/.test(pwd)) score++;
         if (/[0-9]/.test(pwd)) score++;
         if (/[^A-Za-z0-9]/.test(pwd)) score++;
-        // Map to 0..3 for UI simplicity
         return Math.min(3, Math.floor(score / 2));
     }, [data.password]);
 
+    // SECTION: Fungsi yang dijalankan saat form pendaftaran disubmit.
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+        // Mengirim data pendaftaran ke server.
         post(route("register"), {
             onFinish: () => reset("password", "password_confirmation"),
         });
@@ -55,8 +71,10 @@ export default function Register() {
     return (
         <AuthLayout title="Buat akun" description="Masukkan detail Anda di bawah untuk membuat akun">
             <Head title="Daftar" />
+            {/* SECTION: Form pendaftaran utama */}
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
+                    {/* Input Nama */}
                     <div className="grid gap-2">
                         <Label htmlFor="name">Nama</Label>
                         <div className="relative">
@@ -78,6 +96,7 @@ export default function Register() {
                         <InputError message={errors.name} className="mt-2" />
                     </div>
 
+                    {/* Input Email */}
                     <div className="grid gap-2">
                         <Label htmlFor="email">Alamat Email</Label>
                         <div className="relative">
@@ -102,6 +121,7 @@ export default function Register() {
                         <InputError message={errors.email} />
                     </div>
 
+                    {/* Input Kata Sandi */}
                     <div className="grid gap-2">
                         <Label htmlFor="password">Kata Sandi</Label>
                         <div className="relative">
@@ -129,7 +149,7 @@ export default function Register() {
                                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                             </button>
                         </div>
-                        {/* Strength meter */}
+                        {/* Indikator kekuatan kata sandi */}
                         {data.password && (
                             <div className="flex items-center gap-2">
                                 <div className="h-1 w-full overflow-hidden rounded bg-muted">
@@ -160,6 +180,7 @@ export default function Register() {
                         <InputError message={errors.password} />
                     </div>
 
+                    {/* Input Konfirmasi Kata Sandi */}
                     <div className="grid gap-2">
                         <Label htmlFor="password_confirmation">Konfirmasi kata sandi</Label>
                         <div className="relative">
@@ -199,6 +220,7 @@ export default function Register() {
                     </Button>
                 </div>
 
+                {/* Tautan untuk beralih ke halaman login */}
                 <div className="text-center text-sm text-muted-foreground">
                     Sudah punya akun?{" "}
                     <TextLink href={route("login")} tabIndex={6}>

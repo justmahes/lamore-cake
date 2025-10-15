@@ -1,3 +1,12 @@
+/**
+ * Halaman ini adalah bagian dari pengaturan akun, khusus untuk mengubah kata sandi.
+ * Pengguna harus memasukkan kata sandi saat ini sebelum dapat mengatur kata sandi baru.
+ * Fitur utama:
+ * - Form untuk memasukkan kata sandi saat ini, kata sandi baru, dan konfirmasi kata sandi baru.
+ * - Menangani pengiriman data ke server untuk validasi dan pembaruan.
+ * - Menampilkan pesan error jika validasi gagal (misal: kata sandi saat ini salah).
+ * - Menampilkan pesan "Tersimpan" sesaat setelah kata sandi berhasil diubah.
+ */
 import InputError from "@/components/input-error";
 import AppLayout from "@/layouts/app-layout";
 import SettingsLayout from "@/layouts/settings/layout";
@@ -19,22 +28,27 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Password() {
+    // SECTION: Refs untuk mengarahkan fokus ke input jika terjadi error.
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
+    // SECTION: Inisialisasi form untuk data perubahan kata sandi.
     const { data, setData, errors, put, reset, processing, recentlySuccessful } = useForm({
         current_password: "",
         password: "",
         password_confirmation: "",
     });
 
+    // SECTION: Fungsi yang dijalankan saat form disubmit.
     const updatePassword: FormEventHandler = (e) => {
         e.preventDefault();
 
+        // Mengirim data ke server untuk memperbarui kata sandi.
         put(route("password.update"), {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => reset(), // Reset form setelah berhasil
             onError: (errors) => {
+                // Fokus ke input yang relevan jika ada error
                 if (errors.password) {
                     reset("password", "password_confirmation");
                     passwordInput.current?.focus();
@@ -56,67 +70,34 @@ export default function Password() {
                 <div className="space-y-6">
                     <HeadingSmall title="Perbarui kata sandi" description="Pastikan akun Anda menggunakan kata sandi yang panjang dan acak untuk tetap aman" />
 
+                    {/* SECTION: Form untuk mengubah kata sandi */}
                     <form onSubmit={updatePassword} className="space-y-6">
+                        {/* Input Kata Sandi Saat Ini */}
                         <div className="grid gap-2">
                             <Label htmlFor="current_password">Kata sandi saat ini</Label>
-
-                            <Input
-                                id="current_password"
-                                ref={currentPasswordInput}
-                                value={data.current_password}
-                                onChange={(e) => setData("current_password", e.target.value)}
-                                type="password"
-                                className="mt-1 block w-full"
-                                autoComplete="current-password"
-                                placeholder="Kata sandi saat ini"
-                            />
-
+                            <Input id="current_password" ref={currentPasswordInput} type="password" ... />
                             <InputError message={errors.current_password} />
                         </div>
 
+                        {/* Input Kata Sandi Baru */}
                         <div className="grid gap-2">
                             <Label htmlFor="password">Kata sandi baru</Label>
-
-                            <Input
-                                id="password"
-                                ref={passwordInput}
-                                value={data.password}
-                                onChange={(e) => setData("password", e.target.value)}
-                                type="password"
-                                className="mt-1 block w-full"
-                                autoComplete="new-password"
-                                placeholder="Kata sandi baru"
-                            />
-
+                            <Input id="password" ref={passwordInput} type="password" ... />
                             <InputError message={errors.password} />
                         </div>
 
+                        {/* Input Konfirmasi Kata Sandi Baru */}
                         <div className="grid gap-2">
                             <Label htmlFor="password_confirmation">Konfirmasi kata sandi</Label>
-
-                            <Input
-                                id="password_confirmation"
-                                value={data.password_confirmation}
-                                onChange={(e) => setData("password_confirmation", e.target.value)}
-                                type="password"
-                                className="mt-1 block w-full"
-                                autoComplete="new-password"
-                                placeholder="Konfirmasi kata sandi"
-                            />
-
+                            <Input id="password_confirmation" type="password" ... />
                             <InputError message={errors.password_confirmation} />
                         </div>
 
                         <div className="flex items-center gap-4">
                             <Button disabled={processing}>Simpan kata sandi</Button>
 
-                            <Transition
-                                show={recentlySuccessful}
-                                enter="transition ease-in-out"
-                                enterFrom="opacity-0"
-                                leave="transition ease-in-out"
-                                leaveTo="opacity-0"
-                            >
+                            {/* Pesan konfirmasi yang muncul sesaat setelah berhasil */}
+                            <Transition show={recentlySuccessful} ...>
                                 <p className="text-sm text-neutral-600">Tersimpan</p>
                             </Transition>
                         </div>
